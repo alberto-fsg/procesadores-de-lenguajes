@@ -1,0 +1,72 @@
+------------------------------------------------------------------------
+--  expresiones_bool.al
+--  Todas son correctas
+------------------------------------------------------------------------
+Programa cambio_base
+------------------------------------------------------------------------
+	entero i1,i2,i3,i4,i5;
+	booleano b1,b2,b3,b4,b5,b6;
+	entero numFormulas,numTrues;
+------------------------------------------------------------------------	
+evalua(booleano b; entero ref numFormulas, numTrues)
+------------------------------------------------------------------------
+principio
+	sel
+        caso b:
+		    numTrues := numTrues + 1;
+	fsel
+	numFormulas := numFormulas + 1;
+fin
+------------------------------------------------------------------------
+principio
+    escribir_lin("-----------------------------------------------------");
+	numFormulas := 0;
+	numTrues := 0;
+	b1 := verdadero; b2 := verdadero; b3 := verdadero; b4 := verdadero; b5 := verdadero; b6 := verdadero;
+	i1 := 1; i2 := 2; i3 := 3; i4 := 4; i5 := 5;
+	escribir_lin("Este programa evalúa un conjunto de expresiones booleanas correctas");
+	evalua(verdadero & verdadero & ! verdadero & 3>5 & 6>5,numFormulas,numTrues);
+	evalua(b1 & (b2 | b3),numFormulas,numTrues);
+	evalua(((! b1) | b2) & (b3 | b4) & (b5 & b6),numFormulas,numTrues);
+	evalua((b1 & b2) | ((b3 | b4) & (! b5)),numFormulas,numTrues);
+	evalua((b1 & ! b2) | (b3 | b4),numFormulas,numTrues);
+	evalua((! b1) & (! b2) & (! b3),numFormulas,numTrues);
+	evalua((b1 & b2) | (b3 & b4),numFormulas,numTrues);
+	evalua((b1 & b2) | (! b3) | (b4 & b5),numFormulas,numTrues);
+	evalua(! (b1 & b2) | (b3 & ! b4),numFormulas,numTrues);
+	evalua((b1 & b2) = (b3 | b4),numFormulas,numTrues);
+	evalua((b1 | b2) | (! b3),numFormulas,numTrues);
+	evalua((b1 | b2) & (b3 | b4) & (b5 | b6),numFormulas,numTrues);
+	evalua(! ((b1 & b2) = (b3 | b4)),numFormulas,numTrues);
+	evalua((b1 | b2) | (b3 | b4) | (b5 | b6),numFormulas,numTrues);
+	evalua((b1 & b2) & ! (b3 & b4),numFormulas,numTrues);
+	evalua(! (b1 | b2) | (b3 & b4),numFormulas,numTrues);
+	evalua((b1 & b2) = (b3 & b4),numFormulas,numTrues);
+	evalua((b1 | b2) & (b3 | b4) & (b5 | b6),numFormulas,numTrues);
+	evalua(! (b1 | b2 | b3),numFormulas,numTrues);
+
+	evalua(i1 > 10 & i2 <= 5,numFormulas,numTrues);
+	evalua((i1 + i2) * 2 >= i3 - i4,numFormulas,numTrues);
+	evalua((i1 > 0 & i2 < 100) | i3 = 42,numFormulas,numTrues);
+	evalua((i1 * i2) = (i3 + i4),numFormulas,numTrues);
+	evalua((i1 >= 20 & (i2 < 5 | i3 >= 10)),numFormulas,numTrues);
+	evalua(i1 mod 3 = 0 | i2 mod 2 = 1,numFormulas,numTrues);
+	evalua((i1 / 2) > 10 & i3 = 7,numFormulas,numTrues);
+	evalua((i1 - i2) >= 5 | (i3 + i4) < 100,numFormulas,numTrues);
+	evalua((i1 / 5) = (i2 / 2) & i3 > 10,numFormulas,numTrues);
+	evalua((i1 + i2 * 3) >= (i3 / 2) | i4 = 7,numFormulas,numTrues);
+	evalua((i1 / 10) = (i2 mod 4) & i3 > 20,numFormulas,numTrues);
+	evalua((10 <= i1) & (i2 < 5 | i3 >= 15),numFormulas,numTrues);
+	evalua((i1 * i2) > (i3 + i4),numFormulas,numTrues);
+	evalua(! (i1 >= 0) & (i2 < 100),numFormulas,numTrues);
+	evalua((i1 = i2) | (i3 = i4),numFormulas,numTrues);
+	evalua((i1 / 2) <> i2 & i3 > 5,numFormulas,numTrues);
+	evalua((i1 + i2) mod 7 = (i3 * i4) mod 10 | i5 >= 3,numFormulas,numTrues);
+	evalua((i1 + i2) > 50 | (i3 + i4) < 100,numFormulas,numTrues);
+	evalua((i1 = i2) & (i3 > i4),numFormulas,numTrues);
+	------------------------------------------------------------------------
+	escribir_lin("Debería haber llegado aquí sin problemas léxicos o sintácticos");
+	escribir_lin("y dar 38 fórmulas y 19 TRUES.");
+	escribir_lin(entAcar(9),"numFormulas: ",numFormulas);
+	escribir_lin(entAcar(9),"num TRUES:   ",numTrues);
+fin

@@ -1,0 +1,65 @@
+------------------------------------------------------------------------
+--  fibonacci.gcl
+------------------------------------------------------------------------
+Programa fibonacci
+------------------------------------------------------------------------
+    entero i, n, r;
+------------------------------------------------------------------------
+cambiar_de_linea()
+------------------------------------------------------------------------
+Principio
+    escribir (entAcar (13), entAcar (10)); 
+Fin
+------------------------------------------------------------------------
+dato(entero ref dato)
+------------------------------------------------------------------------
+    booleano correcto;
+Principio
+    dato := 0;
+    correcto := falso;
+
+    Mq ! correcto 
+        escribir ("Escribe un numero positivo: ");
+        leer (dato);
+        correcto := dato > 0;
+        Sel 
+            caso ! correcto :
+                escribir_lin ("El número debe ser positivo.");
+        FSel
+    FMq
+Fin
+------------------------------------------------------------------------
+fib(entero n; entero ref r)
+------------------------------------------------------------------------
+    entero r1,r2;
+Principio
+    escribir_lin("Valores de fib: ", n, r);
+    r1 := 0;
+    r2 := 0;
+    Sel 
+        caso n > 1 :
+            fib (n - 1, r1);
+            fib (n - 2, r2);
+            r := r1 + r2;
+      dlc:
+            r := n;
+    FSel
+Fin
+------------------------------------------------------------------------
+Principio
+    escribir_lin("Este programa pide un número positivo n y calcula fib(n) con la fórmula recursiva fib(n) = fib(n-1) + fib(n-2)");
+    escribir_lin("A partir de 30 será muy lento por la recursividad.");
+    escribir_lin();
+    dato(n);
+    escribir_lin(n);
+
+    i := 1;
+    r := 0;
+    Mq i <= n
+        fib(i, r);
+        escribir_lin("fib(", i,") = ", r);
+        i := i + 1;
+    FMq
+
+    cambiar_de_linea();
+Fin

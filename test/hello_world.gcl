@@ -1,0 +1,9 @@
+-- hello_world.gcl
+--------------------------------------------------------------------------
+Programa hello_world
+--------------------------------------------------------------------------
+Principio
+    escribir("Hello World!");
+    escribir_lin();
+    escribir_lin("Hello World!");
+Fin

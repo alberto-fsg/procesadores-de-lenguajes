@@ -1,0 +1,131 @@
+------------------------------------------------------------------------
+--  numero_pi_leibnitz.gcl
+------------------------------------------------------------------------
+Programa numero_pi_leibnitz
+------------------------------------------------------------------------
+    entero n, limite_n, digitos;
+    entero [101] pi, sumanloop, resultaloop;
+    booleano sumo;
+------------------------------------------------------------------------
+iniciar(entero[101] ref s)
+------------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i <= digitos
+        s[i] := 0;
+        i := i + 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+mostrar_numero(entero[101] ref s)
+------------------------------------------------------------------------
+    entero i;
+Principio
+    escribir (s[0],'.');
+    i := 1;
+    Mq i <= digitos
+        Sel 
+            caso (((i-1) mod 5) = 0):
+                escribir (" ");
+        FSel
+        escribir (s[i]);
+        i := i + 1;
+    FMq
+    escribir_lin();
+Fin
+------------------------------------------------------------------------
+sumar(entero[101] ref s; entero[101] r)
+------------------------------------------------------------------------
+    entero i, n;
+Principio
+    i := digitos;
+    Mq i >= 0
+        n := s[i] + r[i];
+        Sel 
+            caso n > 9 :
+                s[i] := n mod 10;
+                Sel 
+                    caso i > 0 :
+                        s[i-1] := s[i-1] + (n / 10);
+                FSel
+            dlc:
+                s[i] := n;
+        FSel
+        i := i - 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+restar(entero[101] ref s; entero[101] r)
+-- s = s - r
+------------------------------------------------------------------------
+    entero i, n;
+    booleano llevo_uno;
+Principio
+    i := digitos;
+    llevo_uno := falso;
+    
+    Mq i >= 0
+        Sel 
+            caso llevo_uno :
+                n := (s[i] - 1) - r[i];
+            dlc:
+                n := s[i] - r[i];
+        FSel
+        Sel 
+            caso n < 0 :
+                s[i] := n + 10;
+                llevo_uno := verdadero;
+            dlc:
+                s[i] := n;
+                llevo_uno := falso;
+        FSel
+        i := i - 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+dividir(entero[101] s; entero[101] ref  r; entero n)
+------------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i < digitos
+        Sel 
+            caso (s[i] / n) > 0 :
+                r[i] := s[i] / n;
+                s[i+1] := (((s[i] mod n) * 10)) + s[i+1];
+                dlc:
+                r[i] := 0;
+                s[i+1] := (s[i] * 10) + s[i+1];
+        FSel
+        i := i + 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+Principio
+    escribir_lin("Aproximación del número Pi utilizanloop la serie infinita e = 4 - 4/3 + 4/5 - 4/7 + 4/9 ...");
+    escribir_lin();
+    iniciar(sumanloop);
+    iniciar(pi);
+    sumanloop[0] := 4;
+    pi[0] := 4;
+    n := 3;
+    digitos := 50;
+    limite_n := 100;
+    sumo := falso;
+    Mq n < limite_n
+        dividir(sumanloop, resultaloop, n);
+        Sel 
+            caso sumo :
+                sumar(pi, resultaloop);
+            dlc:
+                restar(pi, resultaloop);
+        FSel
+        sumo := ! sumo;
+        escribir("Pi con ", (n - 1) / 2, " componentes de la serie: ");
+        mostrar_numero(pi);
+        n := n + 2;
+    FMq
+    escribir_lin();
+    escribir_lin("La convergencia es lenta porque los términos de la suma son proprcionales a 1/k");
+Fin

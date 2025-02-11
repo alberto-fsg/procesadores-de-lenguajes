@@ -1,0 +1,110 @@
+--------------------------------------------------------------------------
+-- quicksort.cgl
+-- https://en.wikipedia.org/wiki/Quicksort
+--------------------------------------------------------------------
+Programa quicksort
+--------------------------------------------------------------------
+    entero n, iteraciones;
+    entero[20] t;
+--------------------------------------------------------------------
+inicializar(entero[20] ref t)
+--------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i < n
+        t[i] := n - i;
+        i := i + 1;
+    FMq
+Fin
+--------------------------------------------------------------------
+mostrar(entero[20] t)
+--------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i < n
+        escribir(t[i], " ");
+        i := i + 1;
+    FMq
+    escribir(entAcar(13), entAcar(10));
+Fin
+--------------------------------------------------------------------
+intercambiar(entero ref i, j)
+--------------------------------------------------------------------
+    entero k;
+Principio
+    k := i;
+    i := j;
+    j := k;
+Fin
+--------------------------------------------------------------------
+ordenar(entero ref i, j)
+--------------------------------------------------------------------
+Principio
+    Sel  
+        caso i > j:
+            intercambiar(i, j);
+    FSel
+Fin
+--------------------------------------------------------------------
+divide(entero[20] ref t; entero izq, der; entero ref me)
+--------------------------------------------------------------------
+    entero p,k;
+Principio
+    p := t[izq];
+    k := izq;
+    me := der + 1;
+    k := k + 1;
+    Mq (t[k] <= p) & (k < der)
+        k := k + 1;
+    FMq
+    me := me - 1;
+    Mq (t[me] > p)
+        me := me - 1;
+    FMq
+    Mq k < me
+        intercambiar(t[k], t[me]);
+        k := k + 1;
+        Mq t[k] <= p
+            k := k + 1;
+        FMq
+        me := me - 1;
+        Mq t[me] > p
+            me := me - 1;
+        FMq
+    FMq
+    intercambiar(t[izq], t[me]);
+Fin
+--------------------------------------------------------------------
+quicksort(entero[20] ref t; entero izq, der)
+--------------------------------------------------------------------
+    entero me;
+Principio
+    Sel 
+        caso der > izq :
+            mostrar(t);
+            Sel 
+                caso (der - izq) = 1:
+                    ordenar(t[izq], t[der]);
+                dlc:
+                    divide(t, izq, der, me);
+                    quicksort(t, izq, me - 1);
+                    quicksort(t, me + 1, der);
+                    iteraciones := iteraciones + 1;
+            FSel
+    FSel
+Fin
+--------------------------------------------------------------------
+Principio
+    escribir_lin("Ilustración del funcionamiento del algoritmo quicksort para ordenar 20 enteros.");
+    escribir_lin();
+
+    n := 20;
+    iteraciones := 0;
+    inicializar(t);
+    quicksort(t, 0, n-1);
+
+    escribir_lin();
+    escribir_lin("Iteraciones: ", iteraciones);
+Fin

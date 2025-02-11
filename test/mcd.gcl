@@ -1,0 +1,42 @@
+-- mcd.gcl
+------------------------------------------------------------------------
+Programa calcular_mcd
+------------------------------------------------------------------------
+    entero i, j;
+------------------------------------------------------------------------
+dato(entero ref d)
+------------------------------------------------------------------------
+Principio
+    d:= 0;
+    Mq d <= 0
+        escribir ("Escribe un numero (>0): ");
+        leer (d);
+        Sel
+            caso d <= 0 :
+                escribir_lin("El numero debe ser > 0.");
+        FSel
+    FMq
+Fin
+------------------------------------------------------------------------
+entero mcd(entero a, b)
+------------------------------------------------------------------------
+    entero i, j, k;
+Principio
+    j := a;
+    k := b;
+    i := a mod b;
+    Mq i <> 0
+        j := k;
+        k := i;
+        i := j mod k;
+    FMq
+    mcd:= k;
+Fin
+------------------------------------------------------------------------
+Principio
+    escribir_lin("Este programa pide dos números positivos y calcula su máximo común divisor.");
+    dato(i);
+    dato(j);
+    escribir_lin();
+    escribir_lin("mcd(", i, ", ", j, ") = ", mcd(i, j));
+Fin

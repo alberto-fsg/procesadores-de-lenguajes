@@ -1,0 +1,59 @@
+-- fibonacci_iterativo.gcl
+-- Ejemplo fibonacci iterativo
+-----------------------------------------------------------
+Programa fibonacci
+-----------------------------------------------------------
+    entero i, n, fn, fnm1, fnm2;
+-----------------------------------------------------------
+pedir_dato(entero ref dato)
+-----------------------------------------------------------
+Principio
+    dato := 0;
+    
+    Mq dato <= 0
+        escribir ("Escribe un numero positivo: ");
+        leer (dato);
+    FMq
+Fin
+-----------------------------------------------------------
+dato(entero ref dato)
+-----------------------------------------------------------
+    booleano correcto;
+Principio
+    dato := 0;
+    correcto := falso;
+
+    Mq ! correcto
+        pedir_dato (dato);
+        correcto := dato > 0;
+        Sel 
+          caso ! correcto :
+            escribir ("El numero debe ser postivo.");
+        FSel
+    FMq
+Fin
+-----------------------------------------------------------
+Principio
+    escribir_lin();
+    escribir_lin("Este programa pide un número positivo n y calcula fib(n) con la fórmula recursiva fib(n) = fib(n-1) + fib(n-2)");
+    escribir_lin("Es muy rápido porque la implementación es iterativa.");
+    escribir_lin("Habrá MATH overflow en fib(47) porque los enteros en la máquina p son de 4 bytes).");
+    escribir_lin();
+    dato(n);
+    escribir_lin();
+
+    escribir_lin("fib(1) = 1");
+    escribir_lin("fib(2) = 1");
+
+    i := 3;
+    fnm1 := 1;
+    fnm2 := 1;
+    Mq i <= n
+        fn := fnm1 + fnm2;
+        escribir_lin("fib(", i,") = ", fn);
+        fnm2 := fnm1;
+        fnm1 := fn;
+        i := i + 1;
+    FMq
+    escribir_lin();
+Fin

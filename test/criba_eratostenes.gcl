@@ -1,0 +1,93 @@
+------------------------------------------------------------------------
+--  criba_eratostenes.gcl
+------------------------------------------------------------------------
+Programa eratostenes
+------------------------------------------------------------------------
+    entero n;
+    booleano [101] criba;
+------------------------------------------------------------------------
+entero pedir_entero()
+------------------------------------------------------------------------
+    entero n;
+Principio
+    n := 0;
+    Mq (n < 1) | (n > 100)
+        escribir("Dame un numero entre 1 y 100: ");
+        leer(n);
+    FMq
+    pedir_entero:= n;
+Fin
+-----------------------------------------------------------------------
+escrib_vect(booleano [101] v)
+------------------------------------------------------------------------
+    entero m,i;
+    booleano salir;
+Principio
+    i := 2;
+    m := 0;
+    salir := falso;
+    escribir_lin();
+    escribir_lin("Numeros primos hasta ", n, ": ");
+    escribir_lin();
+    Mq ! salir
+        Sel 
+            caso i > n :
+                salir := verdadero;
+        dlc:
+            Sel 
+                caso v[i] :
+                    escribir_lin(i, " es primo.");
+                    m := m + 1;
+            FSel
+            i := i + 1;
+        FSel
+    FMq
+    escribir_lin();
+    escribir_lin("Hasta ", n, " hay ", m, " números primos.");
+Fin
+----------------------------------------------------------------
+inicializar(booleano [101] ref v)
+----------------------------------------------------------------
+   entero i;
+Principio
+    i := 1;
+    Mq i <= n
+        v[i] := verdadero;
+        i := i + 1;
+    FMq
+Fin
+----------------------------------------------------------------
+eliminar_no_primos(booleano [101] ref v)
+----------------------------------------------------------------
+    entero i,j;
+Principio
+    i := 2;
+    Mq i <= n / 2
+        Sel  
+            caso v[i] :
+                j := 2 * i;
+                Mq j <= n
+                    v[j] := falso;
+                    j := j + i;
+                FMq
+        FSel
+        i := i + 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+procesar(booleano [101] ref v)
+------------------------------------------------------------------------
+Principio
+    inicializar (v);
+    eliminar_no_primos (v);
+    escrib_vect (v);
+Fin
+------------------------------------------------------------------------
+Principio
+    escribir_lin("Criba de Eratóstenes: primos hasta un n dado");
+--  escribir_lin("https://es.wikipedia.org/wiki/Criba_de_Erat%C3%B3stenes");
+    escribir_lin();
+
+    n := pedir_entero();
+    procesar(criba);
+Fin

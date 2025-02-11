@@ -1,0 +1,210 @@
+------------------------------------------------------------------------
+-- reinas_ajedrez
+------------------------------------------------------------------------
+Programa ajedrez
+------------------------------------------------------------------------
+    entero tamano_tablero, nreinas, fila, columna, f, c;
+    entero[1000] tablero, reinas;
+------------------------------------------------------------------------
+entero min(entero x, y)
+------------------------------------------------------------------------
+Principio
+    Sel 
+        caso x > y:
+            min := y; 
+        dlc: 
+            min := x; 
+    FSel
+Fin
+------------------------------------------------------------------------
+entero max(entero x, y)
+------------------------------------------------------------------------
+Principio
+    Sel 
+        caso x > y:
+            max := x; 
+        dlc: 
+            max := y; 	
+    FSel
+Fin
+------------------------------------------------------------------------
+entero sitio(entero fila, columna)
+------------------------------------------------------------------------
+Principio
+    sitio := (fila * tamano_tablero) + columna;
+Fin
+------------------------------------------------------------------------
+entero componente(entero[1000] ref tablero; entero fila, columna)
+------------------------------------------------------------------------
+Principio
+    componente := tablero[sitio(fila, columna)];
+Fin
+------------------------------------------------------------------------
+booleano ocupada(entero[1000] ref tablero; entero fila, columna)
+------------------------------------------------------------------------
+Principio
+    ocupada := tablero[sitio(fila, columna)] > 0;
+Fin
+------------------------------------------------------------------------
+asignar_componente(entero[1000] ref tablero; entero fila, columna, valor)
+------------------------------------------------------------------------
+Principio
+    tablero[sitio(fila, columna)] := valor;
+Fin
+------------------------------------------------------------------------
+marcar_componente(entero[1000] ref tablero; entero fila, columna) 
+------------------------------------------------------------------------
+Principio
+    tablero[sitio(fila, columna)] := tablero[sitio(fila, columna)] + 1;
+Fin
+------------------------------------------------------------------------
+desmarcar_componente(entero[1000] ref tablero; entero fila, columna) 
+------------------------------------------------------------------------
+Principio
+    tablero[sitio(fila, columna)] := tablero[sitio(fila, columna)] - 1;
+Fin
+------------------------------------------------------------------------
+colocar_reina(entero fila, columna)
+------------------------------------------------------------------------
+    entero f, c;
+Principio
+    marcar_componente(reinas, fila, columna);
+
+    -- Marcar fila
+    f := 0;
+    Mq f < tamano_tablero
+        marcar_componente(tablero, f, columna);
+           f := f + 1;
+    FMq
+
+    -- Marcar columna
+    c := 0;
+    Mq c < tamano_tablero
+        marcar_componente(tablero, fila, c);
+           c := c + 1;
+    FMq
+
+    -- Marcar diagonal
+    f := fila;
+    c := columna;
+    Mq (f > 0) & (c > 0)
+           f := f - 1;
+           c := c - 1;
+    FMq
+
+    Mq (f < tamano_tablero) & (c < tamano_tablero)
+        marcar_componente(tablero, f, c);
+           f := f + 1;
+           c := c + 1;
+    FMq
+
+    -- Marcar diagonal
+    f := fila;
+    c := columna;
+    Mq (f > 0) & (c < tamano_tablero)
+           f := f - 1;
+           c := c + 1;
+    FMq
+
+    Mq (f < tamano_tablero) & (c >= 0)
+        marcar_componente(tablero, f, c);
+           f := f + 1;
+           c := c - 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+iniciar_tablero()
+------------------------------------------------------------------------
+    entero f, c;
+Principio
+    f := 0;
+    Mq f < tamano_tablero
+          c := 0;
+          Mq c < tamano_tablero
+            asignar_componente(tablero, f, c, 0);
+            asignar_componente(reinas, f, c, 0);
+              c := c + 1;
+        FMq
+        f := f + 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+mostrar_tablero(entero[1000] ref tablero)
+------------------------------------------------------------------------
+    entero f, c;
+Principio
+    escribir_lin("Esta es una solución para n: ", tamano_tablero);
+    f := 0;
+    Mq f < tamano_tablero
+          c := 0;
+          Mq c < tamano_tablero
+            Sel 
+                caso componente(tablero, f, c) > 0 :
+                    escribir(" o");
+                dlc:
+                    escribir(" .");	
+            FSel
+            c := c + 1;
+          FMq
+          escribir_lin();
+          f := f + 1;
+    FMq
+Fin
+------------------------------------------------------------------------
+booleano libre(entero ref fila, columna)
+------------------------------------------------------------------------
+    booleano endal;
+Principio
+    fila := 0;
+    columna := 0;
+    endal := falso;
+    Mq !endal
+        Sel 
+            caso fila >= tamano_tablero:
+                endal := verdadero;
+            caso columna >= tamano_tablero:
+                columna := 0; 
+                fila := fila + 1;
+            caso ocupada(tablero, fila, columna):
+                columna := columna + 1;
+            dlc: 
+                endal := verdadero;
+        FSel
+    FMq
+    libre := (fila < tamano_tablero);
+Fin
+------------------------------------------------------------------------
+Principio
+      tamano_tablero := 4;
+      
+      escribir_lin ("Este programa intenta colocar ", tamano_tablero, 
+                " reinas en un tablero de ajedrez de ", tamano_tablero, '*', 
+                tamano_tablero, " sin que se ataquen.");
+
+    Mq tamano_tablero <= 10
+        fila := 0;
+        nreinas := 0;
+        escribir_lin ("Prueba con n: ", tamano_tablero);
+        Mq (fila < tamano_tablero) & (nreinas < tamano_tablero)
+            columna := 0;
+            Mq (columna < tamano_tablero) & (nreinas < tamano_tablero)
+                nreinas := 1;
+                iniciar_tablero();
+                colocar_reina(fila, columna);
+                Mq (nreinas < tamano_tablero) & libre(f, c)
+                    colocar_reina(f, c);
+                    nreinas := nreinas + 1;
+                FMq
+                Sel 
+                    caso nreinas = tamano_tablero:
+                        mostrar_tablero(reinas);
+                FSel
+                columna := columna + 1;
+            FMq
+            fila := fila + 1;
+        FMq
+
+        tamano_tablero := tamano_tablero + 1;
+    FMq
+      escribir_lin();
+Fin

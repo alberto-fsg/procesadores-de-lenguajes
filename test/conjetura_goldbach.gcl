@@ -1,0 +1,80 @@
+------------------------------------------------------------------------
+--  conjetura_goldbach.gcl
+------------------------------------------------------------------------
+Programa goldbach
+------------------------------------------------------------------------
+    entero n, i;
+------------------------------------------------------------------------
+entero pedir_entero()
+------------------------------------------------------------------------
+    entero n;
+Principio
+    n := 0;
+    Mq (n <= 2) | (n mod 2 <> 0)
+        escribir("Dame un numero PAR mayor que 2: ");
+        leer(n);
+    FMq
+    pedir_entero:= n;
+Fin
+------------------------------------------------------------------------
+booleano es_primo (entero k)
+------------------------------------------------------------------------
+    entero i;
+    booleano primo;
+Principio
+    i := 2;
+    primo := verdadero;
+    Mq (i <= (k / 2)) & (primo)
+        primo := (k mod i) <> 0;
+        i := i + 1;
+    FMq
+    es_primo:= primo;
+Fin
+------------------------------------------------------------------------
+booleano hay_un_par (entero k)
+------------------------------------------------------------------------
+    entero i, n, a, b;
+Principio
+    a := 2;
+    b := 2;
+    n := 0;
+    escribir(k, " es la suma de: ");
+
+    Mq (a < k) & (b < k) 
+        Sel 
+            caso es_primo(a) & es_primo(b) & ((a + b) = k):
+                escribir(a, "+", b,", ");
+                n := n + 1;
+        FSel
+
+        a := a + 1;
+
+        Sel 
+            caso a = k:
+                b := b + 1;
+                a := b;
+        FSel
+    FMq
+
+    escribir_lin(n, " parejas de primos en total.");
+
+    hay_un_par:= n > 0;
+Fin
+------------------------------------------------------------------------
+Principio
+    escribir_lin("Conjetura de Golbach: todo número par mayor que 2 puede escribirse como suma de dos números primos.");
+    --escribir_lin("https://es.wikipedia.org/wiki/Conjetura_de_Goldbach");
+    escribir_lin();
+    escribir_lin("Este programa comprueba si es cierta hasta el número que le digas.");
+    escribir_lin();
+
+    n := pedir_entero();
+    i := 4;
+    Mq i <= n 
+        Sel 
+            caso !hay_un_par(i):
+                escribir_lin("L conjetura no se cumple para ", i, "! (Seguro que por error del compilador!)");
+        FSel
+        i := i + 2;
+    FMq
+Fin

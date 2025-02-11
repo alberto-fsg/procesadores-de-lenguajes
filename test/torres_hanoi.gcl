@@ -1,0 +1,37 @@
+--------------------------------------------------------------------------
+-- algoritmo recurso para resolver las torres de hanoi
+-- https://en.wikipedia.org/wiki/Tower_of_Hanoi#Recursive_solution
+--------------------------------------------------------------------------
+Programa hanoi_towers
+    entero steps,n;
+--------------------------------------------------------------------------
+hanoi(entero n; caracter source, target, spare)
+Principio
+    Sel 
+        caso n = 1:
+            escribir_lin("Move disk from tower ",source," to tower ",target,". ");
+            steps := steps + 1;
+        dlc:
+            hanoi(n - 1,source,spare,target);
+            hanoi(1,source,target,spare);
+            hanoi(n - 1,spare,target,source);
+    FSel
+Fin
+--------------------------------------------------------------------------
+Principio
+    escribir_lin();
+    escribir_lin("Recursive algorithm to solve the Hanoi Towers problem.");
+    escribir_lin("https://en.wikipedia.org/wiki/Tower_of_Hanoi#Recursive_solution");
+    escribir_lin();
+
+    steps := 0;
+    n := 3;
+
+    escribir_lin("Solving for ",n," disks.");
+    escribir_lin();
+
+    hanoi(n,'A','C','B');
+
+    escribir_lin();
+    escribir_lin("Finished in ",steps," steps.");
+Fin

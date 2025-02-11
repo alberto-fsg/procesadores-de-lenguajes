@@ -1,0 +1,45 @@
+--Ejemplo de cambio de bases numéricas
+Programa cambio_base
+	entero num, base;
+	entero enb;
+------------------------------------------------------
+entero b_dec(entero n, b)
+	entero uc;
+	entero valRec;
+Principio
+    Sel
+        caso n = 0:
+            b_dec := 0;
+        dlc: 
+            uc := n mod 10;
+            valRec := b_dec (n / 10, b);
+            b_dec := valRec*b + uc;
+    FSel
+Fin
+------------------------------------------------------
+entero dec_b(entero n, b)
+	entero resto,valRec;
+Principio
+    Sel
+        caso n < b:
+            dec_b := n;
+        dlc: 
+            resto := n mod b;
+            valRec := dec_b (n / b, b);
+		    dec_b := valRec*10 + resto;
+    FSel
+Fin
+------------------------------------------------------
+Principio
+	num := 4;
+	Base := 2;
+
+	escribir("Este programa convierte n=",num," a base b=", base);
+	escribir_lin(", y luego efectúa la conversión inversa.");
+	escribir_lin();
+	escribir_lin("n: ",num);
+	escribir_lin("b: ",base);
+	enB := dec_b(num,base);
+	escribir_lin("dec_b(",num,",",base,"): ",enB);
+	escribir_lin("b_dec(",enB,",",base,"): ",b_dec(enB,base));
+Fin

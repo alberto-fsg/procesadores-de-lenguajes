@@ -1,0 +1,89 @@
+------------------------------------------------------------------------
+--  juego_de_la_vida.gcl
+------------------------------------------------------------------------
+Programa juego_de_la_vida
+--------------------------------------------------------------------------
+    booleano [80] Colonia;
+    entero i, iteraciones, elementos;
+--------------------------------------------------------------------------
+inicializar(booleano[80] ref colonia)
+--------------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i < elementos
+        colonia[i] := (i mod 20) = 0;
+        i := i + 1;
+    FMq
+Fin
+--------------------------------------------------------------------------
+asignar(booleano[80] ref colonia; booleano[80] siguiente)
+--------------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i < elementos
+        colonia[i] := siguiente[i];
+        i := i + 1;
+    FMq
+Fin
+--------------------------------------------------------------------------
+booleano vivira(booleano[80] ref colonia; entero i)
+------------------------------------------------------------------------
+Principio
+    Sel
+        caso i = 0:
+            vivira := falso;
+        caso i = elementos - 1:
+            vivira := falso;
+        dlc:
+            vivira := (! colonia[i] & ((colonia[i - 1] & ! colonia[i + 1]) |
+                        (! colonia[i - 1] & colonia[i + 1])));
+    FSel
+Fin
+--------------------------------------------------------------------------
+siguientegeneracion(booleano[80] ref colonia)
+--------------------------------------------------------------------------
+    entero i;
+    booleano [80] siguiente;
+Principio
+    i := 0;
+    Mq i < elementos
+        siguiente[i] := vivira (colonia, i);
+        i := i + 1;
+    FMq
+    asignar (colonia, siguiente);
+Fin
+--------------------------------------------------------------------------
+mostrarcolonia(booleano[80] colonia)
+--------------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i < elementos
+        Sel 
+            caso colonia[i]:
+                escribir ('*');
+            dlc:
+                escribir (' ');
+        FSel
+        i := i + 1;
+    FMq
+    escribir(entAcar (13), entAcar (10));
+Fin
+--------------------------------------------------------------------------
+Principio
+    escribir_lin("Implementación de la versión 1D del Juego de la Vida de Conway.");
+    escribir_lin("https://en.wikipedia.|g/wiki/Conway%27s_Game_of_LSele");
+    escribir_lin();
+    elementos := 80;
+    inicializar(colonia);
+    mostrarcolonia(colonia);
+    i := 0;
+    iteraciones := 50;
+    Mq i <= iteraciones
+        siguientegeneracion(colonia);
+        mostrarcolonia(colonia);
+        i := i + 1;
+    FMq
+Fin

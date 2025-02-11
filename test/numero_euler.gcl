@@ -1,0 +1,106 @@
+-- numero_euler.gcl
+-- e aproximado con una serie infinita
+-- https://en.wikipedia.org/wiki/List_of_representations_of_e#As_an_infinite_series
+--------------------------------------------------------------------
+Programa numero_euler
+--------------------------------------------------------------------
+    entero[101] e, sumando, resultado;
+    entero n, ndigitos;
+--------------------------------------------------------------------
+iniciar(entero[101] ref s)
+--------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i <= ndigitos
+        s[i] := 0;
+        i := i + 1;
+    FMq
+Fin
+--------------------------------------------------------------------
+mostrar_numero(entero[101] ref s)
+--------------------------------------------------------------------
+    entero i;
+Principio
+    escribir (s[0],'.');
+    i := 1;
+    Mq i <= ndigitos
+        Sel 
+            caso (((i-1) mod 5) = 0) :
+                escribir (" ");
+        FSel
+        escribir (s[i]);
+        i := i + 1;
+    FMq
+    escribir_lin();
+Fin
+--------------------------------------------------------------------
+sumar(entero[101] ref s,r)
+--------------------------------------------------------------------
+    entero i, n;
+Principio
+    i := ndigitos;
+    Mq i > 0
+        n := s[i] + r[i];
+        Sel 
+            caso n > 9 :
+                s[i] := n mod 10;
+                s[i-1] := s[i-1] + (n / 10);
+            dlc:
+                s[i] := n;
+        FSel
+        i := i - 1;
+    FMq
+Fin
+--------------------------------------------------------------------
+dividir(entero[101] ref s,r; entero n)
+--------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i < ndigitos
+        Sel
+            caso (s[i]/ n) > 0 :
+                r[i] := s[i] / n;
+                s[i+1] := (((s[i] mod n) * 10)) + s[i+1];
+            dlc:
+                r[i] := 0;
+                s[i+1] := (s[i] * 10) + s[i+1];
+        FSel
+        i := i + 1;
+    FMq
+Fin
+--------------------------------------------------------------------
+asignar(entero[101] ref s,r)
+--------------------------------------------------------------------
+    entero i;
+Principio
+    i := 0;
+    Mq i <= ndigitos
+        s[i] := r[i];
+        i := i + 1;
+    FMq
+Fin
+--------------------------------------------------------------------
+Principio
+    ndigitos := 20;
+   
+    escribir_lin("Aproximación del número de Euler e utilizando la serie infinita e = 1/0! + 1/1! + 1/2! + 1/3! ...");
+    escribir_lin();
+    
+    iniciar(sumando);
+    iniciar(e);
+    sumando[0] := 1;
+    e[0] := 2;
+    n := 1;
+    Mq n < ndigitos
+        dividir(sumando, resultado, n);
+        sumar (e, resultado);
+        n := n + 1;
+        escribir("e con ", n, " componentes de la serie: ");
+        mostrar_numero(e);
+        asignar(sumando, resultado);
+    FMq
+    escribir_lin();
+    escribir_lin("La convergencia es rápida porque los términos de la suma son 1/k!");
+Fin
