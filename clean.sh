@@ -1,3 +1,3 @@
 #/bin/bash
 
-ant clean -f practica_1_esqueleto_proyecto
+ant clean -f practica1
