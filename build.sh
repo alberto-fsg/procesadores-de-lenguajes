@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ant -f practica_1_esqueleto_proyecto
+ant -f practica1
