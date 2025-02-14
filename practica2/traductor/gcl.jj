@@ -146,10 +146,10 @@ void Programa() :
 {
     < tPROGRAMA >
     < tIDENTIFICADOR >
-    ( declaracion_variables() )?
-    ( declaracion_procs_funcs() )?
+    declaracion_variables()
+    declaracion_procs_funcs()
     < tBEGGINING >
-    //instrucciones
+    instrucciones()
     < tEND >
 }
 //---------------------------------------------------------
@@ -165,6 +165,14 @@ void declaracion() :
     tipo()
     lista_ids()
     < tSEMICOLON >
+}
+
+void asignacion() :
+{}
+{
+    < tIDENTIFICADOR >
+    < tASSIGN >
+    expresion()
 }
 
 void lista_ids() :
@@ -267,16 +275,19 @@ void primario() :
 void declaracion_procs_funcs() :
 {}
 {
-    ( declaracion_proc() | declaracion_func() )+
+    ( declaracion_proc() | declaracion_func() )*
 }
 
 void declaracion_proc() :
 {}
 {
     <tIDENTIFICADOR>
+    < tOPENING_PARENTHESIS >
+    //parametros_declarar_funcion()
+    < tCLOSING_PARENTHESIS >
     ( declaracion_variables() )*
     < tBEGGINING >
-    // instrucciones()
+    instrucciones()
     < tEND >
 }
 
@@ -287,12 +298,64 @@ void declaracion_func() :
     <tIDENTIFICADOR>
     ( declaracion_variables() )*
     < tBEGGINING >
-    // instrucciones()
+    instrucciones()
     < tEND >
 }
 //---------------------------------------------------------
 void instrucciones() :
 {}
 {
-    
+    ( instruccion() )*
+}
+
+void instruccion() :
+{}
+{
+    LOOKAHEAD(2)
+    llamar_funcion()
+|   asignacion()
+|   seleccion()
+|   bucle()
+//|   llamar_escribir()
+//|   llamar_escribir_lin()
+//|   llamar_leer()
+//|   llamar_leer_lin()
+//|   llamar_entacar()
+//|   llamar_caraent()
+}
+
+void llamar_funcion() :
+{}
+{
+    < tIDENTIFICADOR >
+    < tOPENING_PARENTHESIS >
+    ( parametros_llamar_funcion() )?
+    < tCLOSING_PARENTHESIS >
+}
+
+void parametros_llamar_funcion() :
+{}
+{
+    ( tipo() ( < tREF > )? lista_ids() )
+    ( <tSEMICOLON> tipo() ( < tREF > )? lista_ids() )*
+}
+
+void seleccion() :
+{
+}
+{
+    < tSELECTION > 
+    ( < tCASE > expresion() < tCOLON > instrucciones() )+
+    [ < tOTHERWISE > < tCOLON > instrucciones() ]
+    < tEND_SELECTION >
+}
+
+void bucle() :
+{
+}
+{
+    < tITERATION >
+    expresion()
+    instrucciones()
+    < tEND_ITERATION >
 }

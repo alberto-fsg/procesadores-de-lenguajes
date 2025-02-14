@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.10.13
-Created-By: 17.0.13+11-Debian-2deb12u1 (Debian)
+Ant-Version: Apache Ant 1.10.15
+Created-By: 23.0.2 (Arch Linux)
 Main-Class: traductor/gcl
 Class-Path: traductor/gcl.jar
 
