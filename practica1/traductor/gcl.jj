@@ -203,4 +203,91 @@ void Programa() :
    }
 }
 
+//---------------------------------------------------------
+void programa() :
+{}
+{
+    < tPROGRAMA >
+    < tIDENTIFICADOR >
+    ( declaracion_variables() )?
+    ( declaracion_procs_funcs() )?
+    < tBEGGINING >
+    ( instrucciones )
+    < tEND >
+}
+//---------------------------------------------------------
+void declaracion_variables() :
+{}
+{
+    ( declaracion() )+
+}
+
+void declaracion() :
+{}
+{
+    tipo()
+    lista_ids()
+    < tSEMICOLON >
+}
+
+void lista_ids() :
+{}
+{
+    < tIDENTIFICADOR >
+    ( <tCOMA> < tIDENTIFICADOR > )*
+}
+//---------------------------------------------------------
+void expresion() :
+{}
+{
+    relacion()
+    ( ( < tAND > | < tOR > ) relacion() )*
+}
+
+void relacion() :
+{}
+{
+    expresion_simple()
+    ( operador_relacional() expresion_simple() )?
+}
+
+void operador_relacional() :
+{}
+{
+    < tEQUAL > | < tNOTEQUAL > | < tLT > | < tLE > | < tGT > | < tGE > 
+}
+
+void expresion_simple() :
+{}
+{
+    termino()
+    ( ( < tPLUS > | < tMINUS > ) termino() )*
+}
+
+void termino() :
+{}
+{
+    factor()
+    ( operador_multiplicativo() factor() )*
+}
+
+void operador_multiplicativo() :
+{}
+{
+    < tTIMES > | < tDIVIDE > | < tMOD >
+}
+
+void factor() :
+{}
+{
+    ( <tNOT> | < tPLUS > | < tMINUS > )?
+    ( < tOPENING_PARENTHESIS > expresion() < tCLOSING_PARENTHESIS > | primario() )
+}
+
+void primario() :
+{}
+{
+    
+}
+
 
