@@ -75,6 +75,7 @@ TOKEN : {
 |   < tLEER: "tleer" >
 |   < tLEER_LIN: "leer_lin" >
 |   < tSTRING: "\"" (~["\""])* "\"" >
+|   < tCHAR: "\'" (~["\'"]) "\'" >
 | 	< tINTEGER: "entero" >
 |   < tCHARACTER: "caracter" >
 |	< tBOOLEAN: "booleano" >
@@ -132,11 +133,78 @@ TOKEN_MGR_DECLS : {
             case gclConstants.tASSIGN: return "operador asignación";
             case gclConstants.tCONSTANT: return "constante entera";
             case gclConstants.tSTRING: return "cadena";
+            case gclConstants.tCHAR: return "caracter";
             default: return "token"; // todos los tokens sin lexema relevante
         }
     }
 }
 
+
+//------------ Símbolo inicial de la gramática. Para análisis léxico no hace falta más
+
+void Programa() : 
+{
+
+}
+{
+   (
+       < tPROGRAMA >
+     | < tENTACAR >
+     | < tENTAENT >
+     | < tESCRIBIR >
+     | < tESCRIBIR_LIN >
+     | < tLEER >
+     | < tLEER_LIN >
+     | < tSTRING >
+     | < tCHAR >
+     | < tINTEGER > 
+     | < tCHARACTER > 
+     | < tBOOLEAN > 
+     | < tCOMA > 
+     | < tSEMICOLON > 
+     | < tUNDERSCORE >
+     | < tASSIGN >
+     | < tSINGLE_QUOTE >
+     | < tOPENING_SQUARE_BRACKET >
+     | < tCLOSING_SQUARE_BRACKET >
+     | < tSELECTION >
+     | < tEND_SELECTION >
+     | < tCASE >
+     | < tCOLON >
+     | < tOTHERWISE >
+     | < tITERATION >
+     | < tEND_ITERATION >
+     | < tNO_INSTRUCTION >
+     | < tOPENING_PARENTHESIS >
+     | < tCLOSING_PARENTHESIS >
+     | < tBEGGINING >
+     | < tEND >
+     | < tPLUS >
+     | < tMINUS >
+     | < tTIMES >
+     | < tDIVIDE >
+     | < tMOD >
+     | < tAND >
+     | < tOR >
+     | < tNOT >
+     | < tGT >
+     | < tGE >
+     | < tLT >
+     | < tLE >
+     | < tEQUAL >
+     | < tNOTEQUAL >
+     | < tDOT >
+     | < tCONSTANT >
+     | < tTRUE >
+     | < tFALSE >
+     | < tIDENTIFICADOR >
+     // | < tOTHER >
+   )+
+   < EOF >
+   {
+
+   }
+}
 
 //------------ Símbolo inicial de la gramática. Para análisis léxico no hace falta más
 
@@ -287,7 +355,16 @@ void factor() :
 void primario() :
 {}
 {
-    
+    <tENTACAR> <tAPAR> expresion <tCPAR>
+|   <tCARAENT> <tAPAR> expresion <tCPAR>
+|   LOOKAHEAD(2)
+|   <tID> <tAPAR> lista_una_o_mas_exps <tCPAR> //invoc a func.
+|   LOOKAHEAD(2)
+|   <tID> <tACOR> expresion <tCCOR> //comp. array
+|   <tCONSTANT>
+|   <tSTRING>
+|   <tCHAR>
+|   <tTRUE>
+|   <tFALSE>
+|   <tIDENTIFICADOR>
 }
-
-
