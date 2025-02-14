@@ -1,3 +1,3 @@
 #/bin/bash
 
-ant clean -f practica1
+ant clean -f practica2
