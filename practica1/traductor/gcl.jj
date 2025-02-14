@@ -67,7 +67,14 @@ TOKEN : {
 // todos los tokens de gcl
 // tOTHER no es léxicamente válido, el resto de tokens si
 TOKEN : {
-    < tSTRING: "\"" (~["\""])* "\"" >
+    < tPROGRAMA: "Programa" >
+|   < tENTACAR: "entAcar" >
+|   < tENTAENT: "entAent" >
+|   < tESCRIBIR: "tescribir" >
+|   < tESCRIBIR_LIN: "tescribir_lin" >
+|   < tLEER: "tleer" >
+|   < tLEER_LIN: "leer_lin" >
+|   < tSTRING: "\"" (~["\""])* "\"" >
 | 	< tINTEGER: "entero" >
 |   < tCHARACTER: "caracter" >
 |	< tBOOLEAN: "booleano" >
@@ -109,7 +116,6 @@ TOKEN : {
 |   < tTRUE: "verdadero" >
 |   < tFALSE: "falso" >
 |	< tIDENTIFICADOR: ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )* >
-// leer, leer_lin, escribir, escribir_lin, entAcar, entAent ?
 |   < tOTHER: ~[] >
 }
 
@@ -140,7 +146,14 @@ void Programa() :
 }
 {
    (
-       < tSTRING >
+       < tPROGRAMA >
+     | < tENTACAR >
+     | < tENTAENT >
+     | < tESCRIBIR >
+     | < tESCRIBIR_LIN >
+     | < tLEER >
+     | < tLEER_LIN >
+     | < tSTRING >
      | < tINTEGER > 
      | < tCHARACTER > 
      | < tBOOLEAN > 
