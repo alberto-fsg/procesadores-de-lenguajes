@@ -6,8 +6,8 @@
 //*****************************************************************
 
 options {
-	IGNORE_CASE = true;
-	COMMON_TOKEN_ACTION = true; // para invocar a CommonTokenAction
+    IGNORE_CASE = true;
+    COMMON_TOKEN_ACTION = true;
 }
 
 PARSER_BEGIN(gcl)
@@ -68,12 +68,12 @@ TOKEN : {
 // tOTHER no es léxicamente válido, el resto de tokens si
 TOKEN : {
     < tPROGRAMA: "Programa" >
-|   < tENTACAR: "entAcar" >
-|   < tCARAENT: "carAent" >
-|   < tESCRIBIR: "tescribir" >
-|   < tESCRIBIR_LIN: "tescribir_lin" >
-|   < tLEER: "tleer" >
-|   < tLEER_LIN: "leer_lin" >
+//|   < tENTACAR: "entAcar" >
+//|   < tCARAENT: "carAent" >
+//|   < tESCRIBIR_LIN: "escribir_lin" >
+//|   < tESCRIBIR: "escribir" >
+//|   < tLEER_LIN: "leer_lin" >
+//|   < tLEER: "leer" >
 |   < tSTRING: "\"" (~["\""])* "\"" >
 |   < tCHAR: "\'" (~["\'"]) "\'" >
 |   < tREF: "ref" > 
@@ -146,8 +146,10 @@ void Programa() :
 {
     < tPROGRAMA >
     < tIDENTIFICADOR >
-    ( LOOKAHEAD(3) declaracion_variables() )* |
+
+    ( LOOKAHEAD(3) declaracion_variables() )*
     ( declaracion_procs_funcs() )*
+
     < tBEGGINING >
     instrucciones()
     < tEND >
@@ -260,11 +262,17 @@ void factor() :
 void primario() :
 { System.out.println("Primario"); }
 {
-    <tENTACAR> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
-|   <tCARAENT> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
-|   <tSTRING>
+//    <tENTACAR> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
+//|   <tCARAENT> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
+//|   
+    <tSTRING>
 |   LOOKAHEAD(2)
-        <tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
+        //<tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
+        //llamar_funcion()
+            < tIDENTIFICADOR >
+            < tOPENING_PARENTHESIS >
+            parametros_llamada_funcion()
+            < tCLOSING_PARENTHESIS >
 |   LOOKAHEAD(2)
         <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion() <tCLOSING_SQUARE_BRACKET> //comp. array
 |   <tCONSTANT>
@@ -301,6 +309,7 @@ void declaracion_func() :
     < tOPENING_PARENTHESIS >
     ( parametros_declaraciones() )*
     < tCLOSING_PARENTHESIS >
+    ( declaracion_variables() )*
     < tBEGGINING >
     instrucciones()
     < tEND >
