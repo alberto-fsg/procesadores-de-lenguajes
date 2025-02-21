@@ -146,8 +146,8 @@ void Programa() :
 {
     < tPROGRAMA >
     < tIDENTIFICADOR >
-    declaracion_variables()
-    declaracion_procs_funcs()
+    ( declaracion_variables() )*
+    ( declaracion_procs_funcs() )*
     < tBEGGINING >
     instrucciones()
     < tEND >
@@ -171,8 +171,10 @@ void asignacion() :
 {}
 {
     < tIDENTIFICADOR >
+    ( < tOPENING_SQUARE_BRACKET > expresion_simple() < tCLOSING_SQUARE_BRACKET > )?
     < tASSIGN >
     expresion()
+    < tSEMICOLON >
 }
 
 void lista_ids() :
@@ -185,7 +187,7 @@ void lista_ids() :
 void tipo() :
 {}
 {
-    LOOKAHEAD(2) tipoEscalar() | tipoArray()
+    LOOKAHEAD(2) tipoArray() | tipoEscalar()
 }
 
 void tipoEscalar() :
@@ -209,7 +211,7 @@ void lista_una_o_mas_exps() :
 }
 
 void expresion() :
-{}
+{{ System.out.println("expresion"); }}
 {
     relacion()
     ( ( < tAND > | < tOR > ) relacion() )*
@@ -260,12 +262,12 @@ void primario() :
 {
     <tENTACAR> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
 |   <tCARAENT> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
+|   <tSTRING>
 |   LOOKAHEAD(2)
         <tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
 |   LOOKAHEAD(2)
         <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion() <tCLOSING_SQUARE_BRACKET> //comp. array
 |   <tCONSTANT>
-|   <tSTRING>
 |   <tCHAR>
 |   <tTRUE>
 |   <tFALSE>
@@ -275,7 +277,7 @@ void primario() :
 void declaracion_procs_funcs() :
 {}
 {
-    ( declaracion_proc() | declaracion_func() )*
+    ( declaracion_proc() | declaracion_func() )+
 }
 
 void declaracion_proc() :
@@ -283,7 +285,7 @@ void declaracion_proc() :
 {
     <tIDENTIFICADOR>
     < tOPENING_PARENTHESIS >
-    //parametros_declarar_funcion()
+    ( parametros_declaraciones() )*
     < tCLOSING_PARENTHESIS >
     ( declaracion_variables() )*
     < tBEGGINING >
@@ -296,7 +298,9 @@ void declaracion_func() :
 {
     tipoEscalar()
     <tIDENTIFICADOR>
-    ( declaracion_variables() )*
+    < tOPENING_PARENTHESIS >
+    ( parametros_declaraciones() )*
+    < tCLOSING_PARENTHESIS >
     < tBEGGINING >
     instrucciones()
     < tEND >
@@ -316,12 +320,6 @@ void instruccion() :
 |   asignacion()
 |   seleccion()
 |   bucle()
-//|   llamar_escribir()
-//|   llamar_escribir_lin()
-//|   llamar_leer()
-//|   llamar_leer_lin()
-//|   llamar_entacar()
-//|   llamar_caraent()
 }
 
 void llamar_funcion() :
@@ -329,15 +327,16 @@ void llamar_funcion() :
 {
     < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >
-    ( parametros_llamar_funcion() )?
+    parametros_llamada_funcion()
     < tCLOSING_PARENTHESIS >
+    < tSEMICOLON >
 }
 
-void parametros_llamar_funcion() :
-{}
+void parametros_llamada_funcion() :
+{ System.out.println("Parametros llamada función"); }
 {
-    ( tipo() ( < tREF > )? lista_ids() )
-    ( <tSEMICOLON> tipo() ( < tREF > )? lista_ids() )*
+    ( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
+    (<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )*)
 }
 
 void seleccion() :
@@ -358,4 +357,18 @@ void bucle() :
     expresion()
     instrucciones()
     < tEND_ITERATION >
+}
+
+void parametros_declaraciones() :
+{}
+{
+    tipo()
+    ( < tREF > )?
+    lista_ids()
+    (
+        < tSEMICOLON >
+        tipo()
+        ( < tREF > )?
+        lista_ids()
+    )*
 }

@@ -37,18 +37,8 @@ public class gcl implements gclConstants {
   static final public void Programa() throws ParseException {
     jj_consume_token(tPROGRAMA);
     jj_consume_token(tIDENTIFICADOR);
-    declaracion_variables();
-    declaracion_procs_funcs();
-    jj_consume_token(tBEGGINING);
-    instrucciones();
-    jj_consume_token(tEND);
-  }
-
-//---------------------------------------------------------
-  static final public void declaracion_variables() throws ParseException {
     label_1:
     while (true) {
-      declaracion();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tINTEGER:
       case tCHARACTER:
@@ -58,6 +48,43 @@ public class gcl implements gclConstants {
       default:
         jj_la1[0] = jj_gen;
         break label_1;
+      }
+      declaracion_variables();
+    }
+    label_2:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case tINTEGER:
+      case tCHARACTER:
+      case tBOOLEAN:
+      case tIDENTIFICADOR:
+        ;
+        break;
+      default:
+        jj_la1[1] = jj_gen;
+        break label_2;
+      }
+      declaracion_procs_funcs();
+    }
+    jj_consume_token(tBEGGINING);
+    instrucciones();
+    jj_consume_token(tEND);
+  }
+
+//---------------------------------------------------------
+  static final public void declaracion_variables() throws ParseException {
+    label_3:
+    while (true) {
+      declaracion();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case tINTEGER:
+      case tCHARACTER:
+      case tBOOLEAN:
+        ;
+        break;
+      default:
+        jj_la1[2] = jj_gen;
+        break label_3;
       }
     }
   }
@@ -70,21 +97,32 @@ public class gcl implements gclConstants {
 
   static final public void asignacion() throws ParseException {
     jj_consume_token(tIDENTIFICADOR);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case tOPENING_SQUARE_BRACKET:
+      jj_consume_token(tOPENING_SQUARE_BRACKET);
+      expresion_simple();
+      jj_consume_token(tCLOSING_SQUARE_BRACKET);
+      break;
+    default:
+      jj_la1[3] = jj_gen;
+      ;
+    }
     jj_consume_token(tASSIGN);
     expresion();
+    jj_consume_token(tSEMICOLON);
   }
 
   static final public void lista_ids() throws ParseException {
     jj_consume_token(tIDENTIFICADOR);
-    label_2:
+    label_4:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tCOMA:
         ;
         break;
       default:
-        jj_la1[1] = jj_gen;
-        break label_2;
+        jj_la1[4] = jj_gen;
+        break label_4;
       }
       jj_consume_token(tCOMA);
       jj_consume_token(tIDENTIFICADOR);
@@ -93,16 +131,16 @@ public class gcl implements gclConstants {
 
   static final public void tipo() throws ParseException {
     if (jj_2_1(2)) {
-      tipoEscalar();
+      tipoArray();
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tINTEGER:
       case tCHARACTER:
       case tBOOLEAN:
-        tipoArray();
+        tipoEscalar();
         break;
       default:
-        jj_la1[2] = jj_gen;
+        jj_la1[5] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -121,7 +159,7 @@ public class gcl implements gclConstants {
       jj_consume_token(tINTEGER);
       break;
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[6] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -139,7 +177,7 @@ public class gcl implements gclConstants {
       jj_consume_token(tINTEGER);
       break;
     default:
-      jj_la1[4] = jj_gen;
+      jj_la1[7] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -150,14 +188,14 @@ public class gcl implements gclConstants {
       jj_consume_token(tCLOSING_SQUARE_BRACKET);
       break;
     default:
-      jj_la1[5] = jj_gen;
+      jj_la1[8] = jj_gen;
       ;
     }
   }
 
 //---------------------------------------------------------
   static final public void lista_una_o_mas_exps() throws ParseException {
-    label_3:
+    label_5:
     while (true) {
       expresion();
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -176,15 +214,16 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[6] = jj_gen;
-        break label_3;
+        jj_la1[9] = jj_gen;
+        break label_5;
       }
     }
   }
 
   static final public void expresion() throws ParseException {
+ { System.out.println("expresion"); }
     relacion();
-    label_4:
+    label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tAND:
@@ -192,8 +231,8 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[7] = jj_gen;
-        break label_4;
+        jj_la1[10] = jj_gen;
+        break label_6;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tAND:
@@ -203,7 +242,7 @@ public class gcl implements gclConstants {
         jj_consume_token(tOR);
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -224,7 +263,7 @@ public class gcl implements gclConstants {
       expresion_simple();
       break;
     default:
-      jj_la1[9] = jj_gen;
+      jj_la1[12] = jj_gen;
       ;
     }
   }
@@ -250,7 +289,7 @@ public class gcl implements gclConstants {
       jj_consume_token(tGE);
       break;
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[13] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -258,7 +297,7 @@ public class gcl implements gclConstants {
 
   static final public void expresion_simple() throws ParseException {
     termino();
-    label_5:
+    label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tPLUS:
@@ -266,8 +305,8 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[11] = jj_gen;
-        break label_5;
+        jj_la1[14] = jj_gen;
+        break label_7;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tPLUS:
@@ -277,7 +316,7 @@ public class gcl implements gclConstants {
         jj_consume_token(tMINUS);
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[15] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -287,7 +326,7 @@ public class gcl implements gclConstants {
 
   static final public void termino() throws ParseException {
     factor();
-    label_6:
+    label_8:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tTIMES:
@@ -296,8 +335,8 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[13] = jj_gen;
-        break label_6;
+        jj_la1[16] = jj_gen;
+        break label_8;
       }
       operador_multiplicativo();
       factor();
@@ -316,7 +355,7 @@ public class gcl implements gclConstants {
       jj_consume_token(tMOD);
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -338,13 +377,13 @@ public class gcl implements gclConstants {
         jj_consume_token(tMINUS);
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[18] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[19] = jj_gen;
       ;
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -364,7 +403,7 @@ public class gcl implements gclConstants {
       primario();
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[20] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -384,8 +423,11 @@ public class gcl implements gclConstants {
       expresion();
       jj_consume_token(tCLOSING_PARENTHESIS);
       break;
+    case tSTRING:
+      jj_consume_token(tSTRING);
+      break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[21] = jj_gen;
       if (jj_2_2(2)) {
         jj_consume_token(tIDENTIFICADOR);
         jj_consume_token(tOPENING_PARENTHESIS);
@@ -401,9 +443,6 @@ public class gcl implements gclConstants {
         case tCONSTANT:
           jj_consume_token(tCONSTANT);
           break;
-        case tSTRING:
-          jj_consume_token(tSTRING);
-          break;
         case tCHAR:
           jj_consume_token(tCHAR);
           break;
@@ -417,7 +456,7 @@ public class gcl implements gclConstants {
           jj_consume_token(tIDENTIFICADOR);
           break;
         default:
-          jj_la1[19] = jj_gen;
+          jj_la1[22] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -427,19 +466,8 @@ public class gcl implements gclConstants {
 
 //---------------------------------------------------------
   static final public void declaracion_procs_funcs() throws ParseException {
-    label_7:
+    label_9:
     while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case tINTEGER:
-      case tCHARACTER:
-      case tBOOLEAN:
-      case tIDENTIFICADOR:
-        ;
-        break;
-      default:
-        jj_la1[20] = jj_gen;
-        break label_7;
-      }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tIDENTIFICADOR:
         declaracion_proc();
@@ -450,9 +478,20 @@ public class gcl implements gclConstants {
         declaracion_func();
         break;
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[23] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case tINTEGER:
+      case tCHARACTER:
+      case tBOOLEAN:
+      case tIDENTIFICADOR:
+        ;
+        break;
+      default:
+        jj_la1[24] = jj_gen;
+        break label_9;
       }
     }
   }
@@ -460,8 +499,7 @@ public class gcl implements gclConstants {
   static final public void declaracion_proc() throws ParseException {
     jj_consume_token(tIDENTIFICADOR);
     jj_consume_token(tOPENING_PARENTHESIS);
-    jj_consume_token(tCLOSING_PARENTHESIS);
-    label_8:
+    label_10:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tINTEGER:
@@ -470,8 +508,23 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[22] = jj_gen;
-        break label_8;
+        jj_la1[25] = jj_gen;
+        break label_10;
+      }
+      parametros_declaraciones();
+    }
+    jj_consume_token(tCLOSING_PARENTHESIS);
+    label_11:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case tINTEGER:
+      case tCHARACTER:
+      case tBOOLEAN:
+        ;
+        break;
+      default:
+        jj_la1[26] = jj_gen;
+        break label_11;
       }
       declaracion_variables();
     }
@@ -483,7 +536,8 @@ public class gcl implements gclConstants {
   static final public void declaracion_func() throws ParseException {
     tipoEscalar();
     jj_consume_token(tIDENTIFICADOR);
-    label_9:
+    jj_consume_token(tOPENING_PARENTHESIS);
+    label_12:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tINTEGER:
@@ -492,11 +546,12 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[23] = jj_gen;
-        break label_9;
+        jj_la1[27] = jj_gen;
+        break label_12;
       }
-      declaracion_variables();
+      parametros_declaraciones();
     }
+    jj_consume_token(tCLOSING_PARENTHESIS);
     jj_consume_token(tBEGGINING);
     instrucciones();
     jj_consume_token(tEND);
@@ -504,7 +559,7 @@ public class gcl implements gclConstants {
 
 //---------------------------------------------------------
   static final public void instrucciones() throws ParseException {
-    label_10:
+    label_13:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case tSELECTION:
@@ -513,8 +568,8 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[24] = jj_gen;
-        break label_10;
+        jj_la1[28] = jj_gen;
+        break label_13;
       }
       instruccion();
     }
@@ -535,7 +590,7 @@ public class gcl implements gclConstants {
         bucle();
         break;
       default:
-        jj_la1[25] = jj_gen;
+        jj_la1[29] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -545,57 +600,117 @@ public class gcl implements gclConstants {
   static final public void llamar_funcion() throws ParseException {
     jj_consume_token(tIDENTIFICADOR);
     jj_consume_token(tOPENING_PARENTHESIS);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case tINTEGER:
-    case tCHARACTER:
-    case tBOOLEAN:
-      parametros_llamar_funcion();
-      break;
-    default:
-      jj_la1[26] = jj_gen;
-      ;
-    }
+    parametros_llamada_funcion();
     jj_consume_token(tCLOSING_PARENTHESIS);
+    jj_consume_token(tSEMICOLON);
   }
 
-  static final public void parametros_llamar_funcion() throws ParseException {
-    tipo();
+  static final public void parametros_llamada_funcion() throws ParseException {
+  System.out.println("Parametros llamada funci\u00f3n");
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case tREF:
-      jj_consume_token(tREF);
+    case tENTACAR:
+    case tCARAENT:
+    case tSTRING:
+    case tCHAR:
+    case tOPENING_PARENTHESIS:
+    case tPLUS:
+    case tMINUS:
+    case tNOT:
+    case tCONSTANT:
+    case tTRUE:
+    case tFALSE:
+    case tIDENTIFICADOR:
+      if (jj_2_5(2)) {
+        jj_consume_token(tIDENTIFICADOR);
+        jj_consume_token(tOPENING_SQUARE_BRACKET);
+        expresion_simple();
+        jj_consume_token(tCLOSING_SQUARE_BRACKET);
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case tIDENTIFICADOR:
+          jj_consume_token(tIDENTIFICADOR);
+          break;
+        case tENTACAR:
+        case tCARAENT:
+        case tSTRING:
+        case tCHAR:
+        case tOPENING_PARENTHESIS:
+        case tPLUS:
+        case tMINUS:
+        case tNOT:
+        case tCONSTANT:
+        case tTRUE:
+        case tFALSE:
+          expresion();
+          break;
+        default:
+          jj_la1[30] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      }
       break;
     default:
-      jj_la1[27] = jj_gen;
+      jj_la1[31] = jj_gen;
       ;
     }
-    lista_ids();
-    label_11:
+    jj_consume_token(tCOMA);
+    label_14:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case tSEMICOLON:
+      case tENTACAR:
+      case tCARAENT:
+      case tSTRING:
+      case tCHAR:
+      case tOPENING_PARENTHESIS:
+      case tPLUS:
+      case tMINUS:
+      case tNOT:
+      case tCONSTANT:
+      case tTRUE:
+      case tFALSE:
+      case tIDENTIFICADOR:
         ;
         break;
       default:
-        jj_la1[28] = jj_gen;
-        break label_11;
+        jj_la1[32] = jj_gen;
+        break label_14;
       }
-      jj_consume_token(tSEMICOLON);
-      tipo();
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case tREF:
-        jj_consume_token(tREF);
-        break;
-      default:
-        jj_la1[29] = jj_gen;
-        ;
+      if (jj_2_6(2)) {
+        jj_consume_token(tIDENTIFICADOR);
+        jj_consume_token(tOPENING_SQUARE_BRACKET);
+        expresion_simple();
+        jj_consume_token(tCLOSING_SQUARE_BRACKET);
+      } else {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case tIDENTIFICADOR:
+          jj_consume_token(tIDENTIFICADOR);
+          break;
+        case tENTACAR:
+        case tCARAENT:
+        case tSTRING:
+        case tCHAR:
+        case tOPENING_PARENTHESIS:
+        case tPLUS:
+        case tMINUS:
+        case tNOT:
+        case tCONSTANT:
+        case tTRUE:
+        case tFALSE:
+          expresion();
+          break;
+        default:
+          jj_la1[33] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
       }
-      lista_ids();
     }
   }
 
   static final public void seleccion() throws ParseException {
     jj_consume_token(tSELECTION);
-    label_12:
+    label_15:
     while (true) {
       jj_consume_token(tCASE);
       expresion();
@@ -606,8 +721,8 @@ public class gcl implements gclConstants {
         ;
         break;
       default:
-        jj_la1[30] = jj_gen;
-        break label_12;
+        jj_la1[34] = jj_gen;
+        break label_15;
       }
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -617,7 +732,7 @@ public class gcl implements gclConstants {
       instrucciones();
       break;
     default:
-      jj_la1[31] = jj_gen;
+      jj_la1[35] = jj_gen;
       ;
     }
     jj_consume_token(tEND_SELECTION);
@@ -628,6 +743,41 @@ public class gcl implements gclConstants {
     expresion();
     instrucciones();
     jj_consume_token(tEND_ITERATION);
+  }
+
+  static final public void parametros_declaraciones() throws ParseException {
+    tipo();
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case tREF:
+      jj_consume_token(tREF);
+      break;
+    default:
+      jj_la1[36] = jj_gen;
+      ;
+    }
+    lista_ids();
+    label_16:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case tSEMICOLON:
+        ;
+        break;
+      default:
+        jj_la1[37] = jj_gen;
+        break label_16;
+      }
+      jj_consume_token(tSEMICOLON);
+      tipo();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case tREF:
+        jj_consume_token(tREF);
+        break;
+      default:
+        jj_la1[38] = jj_gen;
+        ;
+      }
+      lista_ids();
+    }
   }
 
   static private boolean jj_2_1(int xla) {
@@ -658,20 +808,23 @@ public class gcl implements gclConstants {
     finally { jj_save(3, xla); }
   }
 
+  static private boolean jj_2_5(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_5(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(4, xla); }
+  }
+
+  static private boolean jj_2_6(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_6(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(5, xla); }
+  }
+
   static private boolean jj_3_3() {
     if (jj_scan_token(tIDENTIFICADOR)) return true;
     if (jj_scan_token(tOPENING_SQUARE_BRACKET)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    if (jj_scan_token(tIDENTIFICADOR)) return true;
-    if (jj_scan_token(tOPENING_PARENTHESIS)) return true;
     return false;
   }
 
@@ -681,7 +834,40 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3R_13() {
+  static private boolean jj_3R_18() {
+    if (jj_scan_token(tIDENTIFICADOR)) return true;
+    if (jj_scan_token(tOPENING_PARENTHESIS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_6() {
+    if (jj_scan_token(tIDENTIFICADOR)) return true;
+    if (jj_scan_token(tOPENING_SQUARE_BRACKET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_19() {
+    if (jj_scan_token(tOPENING_SQUARE_BRACKET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_5() {
+    if (jj_scan_token(tIDENTIFICADOR)) return true;
+    if (jj_scan_token(tOPENING_SQUARE_BRACKET)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(19)) {
@@ -691,11 +877,8 @@ public class gcl implements gclConstants {
     if (jj_scan_token(18)) return true;
     }
     }
-    return false;
-  }
-
-  static private boolean jj_3_4() {
-    if (jj_3R_14()) return true;
+    xsp = jj_scanpos;
+    if (jj_3R_19()) jj_scanpos = xsp;
     return false;
   }
 
@@ -714,7 +897,7 @@ public class gcl implements gclConstants {
   static private boolean jj_lookingAhead = false;
   static private boolean jj_semLA;
   static private int jj_gen;
-  static final private int[] jj_la1 = new int[32];
+  static final private int[] jj_la1 = new int[39];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -722,12 +905,12 @@ public class gcl implements gclConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1c0000,0x200000,0x1c0000,0x1c0000,0x1c0000,0x4000000,0x18600,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x18600,0x600,0x18000,0x1c0000,0x1c0000,0x1c0000,0x1c0000,0x10000000,0x10000000,0x1c0000,0x20000,0x400000,0x20000,0x40000000,0x0,};
+      jj_la1_0 = new int[] {0x1c0000,0x1c0000,0x1c0000,0x4000000,0x200000,0x1c0000,0x1c0000,0x1c0000,0x4000000,0x18600,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x18600,0x8600,0x10000,0x1c0000,0x1c0000,0x1c0000,0x1c0000,0x1c0000,0x10000000,0x10000000,0x18600,0x18600,0x18600,0x18600,0x40000000,0x0,0x20000,0x400000,0x20000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x7808310,0x6000,0x6000,0x3f0000,0x3f0000,0x300,0x300,0x1c00,0x1c00,0x8300,0x8300,0x7800010,0x0,0x7800000,0x4000000,0x4000000,0x0,0x0,0x4000002,0x4000002,0x0,0x0,0x0,0x0,0x0,0x1,};
+      jj_la1_1 = new int[] {0x0,0x4000000,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x7808310,0x6000,0x6000,0x3f0000,0x3f0000,0x300,0x300,0x1c00,0x1c00,0x8300,0x8300,0x7800010,0x0,0x7800000,0x4000000,0x4000000,0x0,0x0,0x0,0x4000002,0x4000002,0x7808310,0x7808310,0x7808310,0x7808310,0x0,0x1,0x0,0x0,0x0,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[4];
+  static final private JJCalls[] jj_2_rtns = new JJCalls[6];
   static private boolean jj_rescan = false;
   static private int jj_gc = 0;
 
@@ -749,7 +932,7 @@ public class gcl implements gclConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 32; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -764,7 +947,7 @@ public class gcl implements gclConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 32; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -782,7 +965,7 @@ public class gcl implements gclConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 32; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -793,7 +976,7 @@ public class gcl implements gclConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 32; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -810,7 +993,7 @@ public class gcl implements gclConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 32; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -820,7 +1003,7 @@ public class gcl implements gclConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 32; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -940,7 +1123,7 @@ public class gcl implements gclConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 39; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -979,7 +1162,7 @@ public class gcl implements gclConstants {
 
   static private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 6; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -990,6 +1173,8 @@ public class gcl implements gclConstants {
             case 1: jj_3_2(); break;
             case 2: jj_3_3(); break;
             case 3: jj_3_4(); break;
+            case 4: jj_3_5(); break;
+            case 5: jj_3_6(); break;
           }
         }
         p = p.next;
