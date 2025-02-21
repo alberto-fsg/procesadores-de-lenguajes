@@ -142,11 +142,11 @@ TOKEN_MGR_DECLS : {
 
 //---------------------------------------------------------
 void Programa() :
-{}
+{ System.out.println("Programa"); }
 {
     < tPROGRAMA >
     < tIDENTIFICADOR >
-    ( declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracion_variables() )* |
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
     instrucciones()
@@ -154,13 +154,13 @@ void Programa() :
 }
 //---------------------------------------------------------
 void declaracion_variables() :
-{}
+{ System.out.println("Declaracion de variables"); }
 {
-    ( declaracion() )+
+    ( LOOKAHEAD(3) declaracion() )+
 }
 
 void declaracion() :
-{}
+{ System.out.println("Declaracion"); }
 {
     tipo()
     lista_ids()
@@ -168,7 +168,7 @@ void declaracion() :
 }
 
 void asignacion() :
-{}
+{ System.out.println("Asignacion"); }
 {
     < tIDENTIFICADOR >
     ( < tOPENING_SQUARE_BRACKET > expresion_simple() < tCLOSING_SQUARE_BRACKET > )?
@@ -178,87 +178,87 @@ void asignacion() :
 }
 
 void lista_ids() :
-{}
+{ System.out.println("Lista de identificadores"); }
 {
     < tIDENTIFICADOR >
     ( <tCOMA> < tIDENTIFICADOR > )*
 }
 
 void tipo() :
-{}
+{ System.out.println("Tipo"); }
 {
     LOOKAHEAD(2) tipoArray() | tipoEscalar()
 }
 
 void tipoEscalar() :
-{}
+{ System.out.println("Tipo escalar"); }
 {
     ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
 }
 
 void tipoArray() :
-{}
+{ System.out.println("Tipo array"); }
 {
     ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
-    ( <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> )?
+    <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET>
 }
 
 //---------------------------------------------------------
 void lista_una_o_mas_exps() :
-{}
+{ System.out.println("Lista de una o más expresiones"); }
 {
     ( expresion() )+
 }
 
 void expresion() :
-{{ System.out.println("expresion"); }}
+{ System.out.println("Expresión"); }
 {
     relacion()
     ( ( < tAND > | < tOR > ) relacion() )*
 }
 
 void relacion() :
-{}
+{ System.out.println("Relación"); }
 {
     expresion_simple()
     ( operador_relacional() expresion_simple() )?
 }
 
 void operador_relacional() :
-{}
+{ System.out.println("Operador relacional"); }
 {
     < tEQUAL > | < tNOTEQUAL > | < tLT > | < tLE > | < tGT > | < tGE > 
 }
 
 void expresion_simple() :
-{}
+{ System.out.println("Expresión simple"); }
 {
     termino()
     ( ( < tPLUS > | < tMINUS > ) termino() )*
 }
 
 void termino() :
-{}
+{ System.out.println("Término"); }
 {
     factor()
     ( operador_multiplicativo() factor() )*
 }
 
 void operador_multiplicativo() :
-{}
+{ System.out.println("Operador multiplicativo"); }
 {
     < tTIMES > | < tDIVIDE > | < tMOD >
 }
 
 void factor() :
-{}
+{ System.out.println("Factor"); }
 {
     ( <tNOT> | < tPLUS > | < tMINUS > )?
     ( < tOPENING_PARENTHESIS > expresion() < tCLOSING_PARENTHESIS > | primario() )
 }
 
 void primario() :
-{}
+{ System.out.println("Primario"); }
 {
     <tENTACAR> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
 |   <tCARAENT> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
@@ -275,13 +275,13 @@ void primario() :
 }
 //---------------------------------------------------------
 void declaracion_procs_funcs() :
-{}
+{ System.out.println("Declaración de procedimientos/funciones"); }
 {
-    ( declaracion_proc() | declaracion_func() )+
+    ( LOOKAHEAD(3) declaracion_proc() | declaracion_func() )+
 }
 
 void declaracion_proc() :
-{}
+{ System.out.println("Declaración de procedimiento"); }
 {
     <tIDENTIFICADOR>
     < tOPENING_PARENTHESIS >
@@ -294,7 +294,7 @@ void declaracion_proc() :
 }
 
 void declaracion_func() :
-{}
+{ System.out.println("Declaración de función"); }
 {
     tipoEscalar()
     <tIDENTIFICADOR>
@@ -307,13 +307,13 @@ void declaracion_func() :
 }
 //---------------------------------------------------------
 void instrucciones() :
-{}
+{ System.out.println("Instrucciones"); }
 {
     ( instruccion() )*
 }
 
 void instruccion() :
-{}
+{ System.out.println("Instrucción"); }
 {
     LOOKAHEAD(2)
     llamar_funcion()
@@ -323,7 +323,7 @@ void instruccion() :
 }
 
 void llamar_funcion() :
-{}
+{ System.out.println("Llamar función"); }
 {
     < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >
@@ -333,15 +333,16 @@ void llamar_funcion() :
 }
 
 void parametros_llamada_funcion() :
-{ System.out.println("Parametros llamada función"); }
+{ System.out.println("Parámetros llamada función"); }
 {
-    ( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
-    (<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )*)
+    ( expresion() )?
+    (<tCOMA> expresion() )*
+    //( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
+    //(<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() ))*
 }
 
 void seleccion() :
-{
-}
+{ System.out.println("Selección"); }
 {
     < tSELECTION > 
     ( < tCASE > expresion() < tCOLON > instrucciones() )+
@@ -350,8 +351,7 @@ void seleccion() :
 }
 
 void bucle() :
-{
-}
+{ System.out.println("Bucle"); }
 {
     < tITERATION >
     expresion()
@@ -360,7 +360,7 @@ void bucle() :
 }
 
 void parametros_declaraciones() :
-{}
+{ System.out.println("Parámetros declaraciones"); }
 {
     tipo()
     ( < tREF > )?
