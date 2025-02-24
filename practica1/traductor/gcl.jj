@@ -1,0 +1,207 @@
+//*****************************************************************
+// File:   gcl.jj
+// Author: Procesadores de Lenguajes-University of Zaragoza
+// Date:   enero 25
+// Coms:   compilar mediante "ant"
+//*****************************************************************
+
+///////////////////////////////////////////////////////////////////////////////
+// 1. ANALIZADOR LÉXICO
+///////////////////////////////////////////////////////////////////////////////
+
+options {
+    IGNORE_CASE = true;
+    COMMON_TOKEN_ACTION = true;
+}
+
+PARSER_BEGIN(gcl)
+
+package traductor;
+
+//...
+
+public class gcl {
+   //...
+   
+   public static void main(String[] args) {
+	   gcl parser = null;
+	   
+	   try {
+		   if(args.length == 0) {
+			   parser = new gcl(System.in);
+		   }
+		   else {
+			   parser = new gcl(new java.io.FileInputStream(args[0]));
+		   }
+		   //Programa es el símbolo inicial de la gramática
+		   parser.Programa();
+		   //...
+		   System.out.println("***** Análisis terminado con éxito *****");
+	   }
+	   catch (java.io.FileNotFoundException e) {
+		   System.err.println ("Fichero " + args[0] + " no encontrado.");
+	   }
+	   catch (TokenMgrError e) {
+		   System.err.println("LEX_ERROR: " + e.getMessage());
+	   }
+	   catch (Exception e) {
+			// Handle the exception
+			System.err.println("An exception occurred: " + e.getMessage());
+	   }
+	}
+}
+PARSER_END(gcl)
+
+// sacado de https://cs.lmu.edu/~ray/notes/javacc/
+// "preprocesado"
+SKIP: {
+  " "
+| "\t"
+| "\n"
+| "\r"
+| <"--" (~["\n","\r"])* ("\n"|"\r")> // comentarios monolínea
+}
+
+// auxiliares
+TOKEN : {
+	< #LETTER: (["a"-"z","A"-"Z"]) >
+|	< #DIGIT: ["0"-"9"] >
+}
+
+// todos los tokens de gcl
+// tOTHER no es léxicamente válido, el resto de tokens si
+TOKEN : {
+     // palabras reservadas
+     < tPROGRAMA: "Programa" >
+|    < tREF: "ref" > 
+|    < tINTEGER: "entero" >
+|    < tCHARACTER: "caracter" >
+|    < tBOOLEAN: "booleano" >
+|    < tSELECTION: "Sel" >
+|    < tEND_SELECTION: "Fsel" >
+|    < tCASE: "caso" >
+|    < tITERATION: "Mq" >
+|    < tEND_ITERATION: "FMq" >
+|    < tBEGGINING: "Principio" >
+|    < tEND: "Fin" >
+|    < tTRUE: "verdadero" >
+|    < tFALSE: "falso" >
+|    < tOTHERWISE: "dlc" >
+|    < tABANDONAR: "abandonar" > 
+|    < tNADA: "nada" >
+    
+     // literales
+|    < tSTRING: "\"" ( ("\"\"") | ~["\""] )* "\"" >
+|    < tCHAR: "'''" | "'" ~[] "'" > 
+|    < tCONSTANT: ( <DIGIT> )+ >
+    
+     // operadores y símbolos
+|    < tCOMA: "," >
+|    < tSEMICOLON: ";" >
+|    < tUNDERSCORE: "_" >
+|    < tASSIGN: ":=" >
+|    < tOPENING_SQUARE_BRACKET: "[" >
+|    < tCLOSING_SQUARE_BRACKET: "]" >
+|    < tCOLON: ":" >
+|    < tOPENING_PARENTHESIS: "(" >
+|    < tCLOSING_PARENTHESIS: ")" >
+|    < tPLUS: "+" >
+|    < tMINUS: "-" >
+|    < tTIMES: "*" >
+|    < tDIVIDE: "/" >
+|    < tMOD: "mod" >
+|    < tAND: "&" >
+|    < tOR: "|" >
+|    < tNOT: "!" >
+|    < tGT: ">" >
+|    < tGE: ">=" >
+|    < tLT: "<" >
+|    < tLE: "<=" >
+|    < tEQUAL: "=" >
+|    < tNOTEQUAL: "<>" >
+|    < tDOT: "." >
+
+|    < tIDENTIFICADOR: ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )* >
+
+|    < tOTHER: ~[] >  // tOTHER no es léxicamente válido, el resto de tokens si
+}
+
+// deprecado al parecer, https://parsers.org/javacc21/token-hooks-revisited/
+TOKEN_MGR_DECLS : {
+    public static void CommonTokenAction(Token t) {
+        System.out.printf("(%d,%d): %s \"%s\"%n", 
+            t.beginLine, t.beginColumn, getTokenType(t.kind), t.image);
+    }
+
+    private static String getTokenType(int kind) {
+        switch(kind) {
+            case gclConstants.tIDENTIFICADOR: return "identificador";
+            case gclConstants.tASSIGN: return "operador asignación";
+            case gclConstants.tCONSTANT: return "constante entera";
+            case gclConstants.tSTRING: return "cadena";
+            case gclConstants.tCHAR: return "caracter";
+            default: return "token"; // todos los tokens sin lexema relevante
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// 2. ANALIZADOR SINTÁCTICO
+///////////////////////////////////////////////////////////////////////////////
+
+// --- Estructura principal ---------------------------------------------------
+void Programa() :
+{ }
+{
+     // palabras reservadas
+     (< tPROGRAMA >
+|    < tREF > 
+|    < tINTEGER >
+|    < tCHARACTER >
+|    < tBOOLEAN >
+|    < tSELECTION >
+|    < tEND_SELECTION >
+|    < tCASE >
+|    < tITERATION >
+|    < tEND_ITERATION >
+|    < tBEGGINING >
+|    < tEND >
+|    < tTRUE >
+|    < tFALSE >
+|    < tOTHERWISE >
+|    < tABANDONAR > 
+|    < tNADA >
+    
+     // literales
+|    < tSTRING >
+|    < tCHAR > 
+|    < tCONSTANT >
+    
+     // operadores y símbolos
+|    < tCOMA >
+|    < tSEMICOLON >
+|    < tUNDERSCORE >
+|    < tASSIGN >
+|    < tOPENING_SQUARE_BRACKET >
+|    < tCLOSING_SQUARE_BRACKET >
+|    < tCOLON >
+|    < tOPENING_PARENTHESIS >
+|    < tCLOSING_PARENTHESIS >
+|    < tPLUS >
+|    < tMINUS >
+|    < tTIMES >
+|    < tDIVIDE >
+|    < tMOD >
+|    < tAND >
+|    < tOR >
+|    < tNOT >
+|    < tGT >
+|    < tGE >
+|    < tLT >
+|    < tLE >
+|    < tEQUAL >
+|    < tNOTEQUAL >
+|    < tDOT >
+
+|    < tIDENTIFICADOR >)*
+}

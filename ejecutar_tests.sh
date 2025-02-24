@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RUTA_TEST="test"
-RUTA_ANALIZADOR_LEXICO="practica2/dist"
+RUTA_ANALIZADOR_LEXICO="practica1/dist"
 
 # Compilar el proyecto
 echo -e "\033[0;33mCompilando el proyecto\033[0m\n"
@@ -17,9 +17,6 @@ execute_test() {
 
 # Lista de tests
 TESTS=(
-  "test_1.al"
-  "test_2.al"
-  "test_3.al"
   "cambio_base.gcl"
   "conjetura_goldbach.gcl"
   "criba_eratostenes.gcl"
