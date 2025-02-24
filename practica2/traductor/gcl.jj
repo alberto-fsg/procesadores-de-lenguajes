@@ -78,16 +78,17 @@ TOKEN : {
 |    < tCASE: "caso" >
 |    < tITERATION: "Mq" >
 |    < tEND_ITERATION: "FMq" >
-|    < tNO_INSTRUCTION: "nada" >
 |    < tBEGGINING: "Principio" >
 |    < tEND: "Fin" >
 |    < tTRUE: "verdadero" >
 |    < tFALSE: "falso" >
 |    < tOTHERWISE: "dlc" >
+|    < tABANDONAR: "abandonar" > 
+|    < tNADA: "nada" >
     
      // literales
-|    < tSTRING: "\"" (~["\""])* "\"" >
-|    < tCHAR: "\'" (~["\'"]) "\'" >
+|    < tSTRING: "\"" ( ("\"\"") | ~["\""] )* "\"" >
+|    < tCHAR: "'''" | "'" ~[] "'" > 
 |    < tCONSTANT: ( <DIGIT> )+ >
     
      // operadores y símbolos
@@ -295,7 +296,8 @@ void declaracion_proc() :
     < tOPENING_PARENTHESIS >
     ( parametros_declaraciones() )*
     < tCLOSING_PARENTHESIS >
-    ( declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( declaracion_procs_funcs() )*
     < tBEGGINING >
     instrucciones()
     < tEND >
@@ -309,7 +311,8 @@ void declaracion_func() :
     < tOPENING_PARENTHESIS >
     ( parametros_declaraciones() )*
     < tCLOSING_PARENTHESIS >
-    ( declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( declaracion_procs_funcs() )*
     < tBEGGINING >
     instrucciones()
     < tEND >
@@ -329,6 +332,9 @@ void instruccion() :
 |   asignacion()
 |   seleccion()
 |   bucle()
+|   declaracion_procs_funcs()
+|   < tABANDONAR > < tSEMICOLON>
+|   < tNADA > < tSEMICOLON>
 }
 
 void llamar_funcion() :
