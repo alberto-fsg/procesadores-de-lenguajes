@@ -285,7 +285,7 @@ void primario() :
 void declaracion_procs_funcs() :
 { System.out.println("Declaración de procedimientos/funciones"); }
 {
-    ( LOOKAHEAD(3) declaracion_proc() | declaracion_func() )+
+    ( declaracion_proc() | declaracion_func() )+
 }
 
 void declaracion_proc() :
