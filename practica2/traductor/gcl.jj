@@ -67,58 +67,58 @@ TOKEN : {
 // todos los tokens de gcl
 // tOTHER no es léxicamente válido, el resto de tokens si
 TOKEN : {
-    < tPROGRAMA: "Programa" >
-//|   < tENTACAR: "entAcar" >
-//|   < tCARAENT: "carAent" >
-//|   < tESCRIBIR_LIN: "escribir_lin" >
-//|   < tESCRIBIR: "escribir" >
-//|   < tLEER_LIN: "leer_lin" >
-//|   < tLEER: "leer" >
-|   < tSTRING: "\"" (~["\""])* "\"" >
-|   < tCHAR: "\'" (~["\'"]) "\'" >
-|   < tREF: "ref" > 
-| 	< tINTEGER: "entero" >
-|   < tCHARACTER: "caracter" >
-|	< tBOOLEAN: "booleano" >
-|	< tCOMA: "," >
-|	< tSEMICOLON: ";" >
-|	< tUNDERSCORE: "_" >
-|	< tASSIGN: ":=" >
-|	< tSINGLE_QUOTE: "'" >
-|	< tOPENING_SQUARE_BRACKET: "[" >
-|	< tCLOSING_SQUARE_BRACKET: "]" >
-|	< tSELECTION: "Sel" >
-|	< tEND_SELECTION: "Fsel" >
-|   < tCASE: "caso" >
-|   < tCOLON: ":" >
-|	< tOTHERWISE: "dlc" >
-|	< tITERATION: "Mq" >
-|	< tEND_ITERATION: "FMq" >
-|	< tNO_INSTRUCTION: "nada" >
-|	< tOPENING_PARENTHESIS: "(" >
-|	< tCLOSING_PARENTHESIS: ")" >
-|	< tBEGGINING: "Principio" >
-|	< tEND: "Fin" >
-|	< tPLUS: "+" >
-|	< tMINUS: "-" >
-|	< tTIMES: "*" >
-|	< tDIVIDE: "/" >
-|	< tMOD: "mod" >
-|	< tAND: "&" >
-|	< tOR: "|" >
-|	< tNOT: "!" >
-|	< tGT: ">" >
-|	< tGE: ">=" >
-|	< tLT: "<" >
-|	< tLE: "<=" >
-|	< tEQUAL: "=" >
-|	< tNOTEQUAL: "<>" >
-|	< tDOT: "." >
-|	< tCONSTANT: ( <DIGIT> )+ >
-|   < tTRUE: "verdadero" >
-|   < tFALSE: "falso" >
-|	< tIDENTIFICADOR: ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )* >
-|   < tOTHER: ~[] >
+     // palabras reservadas
+     < tPROGRAMA: "Programa" >
+|    < tREF: "ref" > 
+|    < tINTEGER: "entero" >
+|    < tCHARACTER: "caracter" >
+|    < tBOOLEAN: "booleano" >
+|    < tSELECTION: "Sel" >
+|    < tEND_SELECTION: "Fsel" >
+|    < tCASE: "caso" >
+|    < tITERATION: "Mq" >
+|    < tEND_ITERATION: "FMq" >
+|    < tNO_INSTRUCTION: "nada" >
+|    < tBEGGINING: "Principio" >
+|    < tEND: "Fin" >
+|    < tTRUE: "verdadero" >
+|    < tFALSE: "falso" >
+|    < tOTHERWISE: "dlc" >
+    
+     // literales
+|    < tSTRING: "\"" (~["\""])* "\"" >
+|    < tCHAR: "\'" (~["\'"]) "\'" >
+|    < tCONSTANT: ( <DIGIT> )+ >
+    
+     // operadores y símbolos
+|    < tCOMA: "," >
+|    < tSEMICOLON: ";" >
+|    < tUNDERSCORE: "_" >
+|    < tASSIGN: ":=" >
+|    < tOPENING_SQUARE_BRACKET: "[" >
+|    < tCLOSING_SQUARE_BRACKET: "]" >
+|    < tCOLON: ":" >
+|    < tOPENING_PARENTHESIS: "(" >
+|    < tCLOSING_PARENTHESIS: ")" >
+|    < tPLUS: "+" >
+|    < tMINUS: "-" >
+|    < tTIMES: "*" >
+|    < tDIVIDE: "/" >
+|    < tMOD: "mod" >
+|    < tAND: "&" >
+|    < tOR: "|" >
+|    < tNOT: "!" >
+|    < tGT: ">" >
+|    < tGE: ">=" >
+|    < tLT: "<" >
+|    < tLE: "<=" >
+|    < tEQUAL: "=" >
+|    < tNOTEQUAL: "<>" >
+|    < tDOT: "." >
+
+|    < tIDENTIFICADOR: ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )* >
+
+|    < tOTHER: ~[] >  // tOTHER no es léxicamente válido, el resto de tokens si
 }
 
 // deprecado al parecer, https://parsers.org/javacc21/token-hooks-revisited/
