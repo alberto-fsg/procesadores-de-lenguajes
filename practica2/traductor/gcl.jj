@@ -277,10 +277,6 @@ void factor() :
 void primario() :
 { System.out.println("Primario"); }
 {
-
-//    <tENTACAR> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS> ???
-//|   <tCARAENT> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS> ???
-
     <tSTRING>
 |   LOOKAHEAD(2)
         //<tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
@@ -298,7 +294,7 @@ void primario() :
 |   <tIDENTIFICADOR>
 }
 
-// --- Funciones y procedimiento ----------------------------------------------
+// --- Funciones y procedimientos ---------------------------------------------
 void declaracion_procs_funcs() :
 { System.out.println("Declaración de procedimientos/funciones"); }
 {
