@@ -5,6 +5,10 @@
 // Coms:   compilar mediante "ant"
 //*****************************************************************
 
+///////////////////////////////////////////////////////////////////////////////
+// 1. ANALIZADOR LÉXICO
+///////////////////////////////////////////////////////////////////////////////
+
 options {
     IGNORE_CASE = true;
     COMMON_TOKEN_ACTION = true;
@@ -141,7 +145,11 @@ TOKEN_MGR_DECLS : {
     }
 }
 
-//---------------------------------------------------------
+///////////////////////////////////////////////////////////////////////////////
+// 2. ANALIZADOR SINTÁCTICO
+///////////////////////////////////////////////////////////////////////////////
+
+// --- Estructura principal ---------------------------------------------------
 void Programa() :
 { System.out.println("Programa"); }
 {
@@ -155,7 +163,28 @@ void Programa() :
     instrucciones()
     < tEND >
 }
-//---------------------------------------------------------
+
+// --- Tipos ------------------------------------------------------------------
+void tipo() :
+{ System.out.println("Tipo"); }
+{
+    LOOKAHEAD(2) tipoArray() | tipoEscalar()
+}
+
+void tipoEscalar() :
+{ System.out.println("Tipo escalar"); }
+{
+    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
+}
+
+void tipoArray() :
+{ System.out.println("Tipo array"); }
+{
+    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
+    <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET>
+}
+
+// --- Variables --------------------------------------------------------------
 void declaracion_variables() :
 { System.out.println("Declaracion de variables"); }
 {
@@ -187,26 +216,11 @@ void lista_ids() :
     ( <tCOMA> < tIDENTIFICADOR > )*
 }
 
-void tipo() :
-{ System.out.println("Tipo"); }
-{
-    LOOKAHEAD(2) tipoArray() | tipoEscalar()
-}
+// --- Expresiones y operaciones ----------------------------------------------
 
-void tipoEscalar() :
-{ System.out.println("Tipo escalar"); }
-{
-    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
-}
+// orden de prioridad de expansión (cuanto más izquierda, más prioridad)
+// primario - factor - termino - expresion_simple - relacion - expresion
 
-void tipoArray() :
-{ System.out.println("Tipo array"); }
-{
-    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
-    <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET>
-}
-
-//---------------------------------------------------------
 void lista_una_o_mas_exps() :
 { System.out.println("Lista de una o más expresiones"); }
 {
@@ -263,9 +277,10 @@ void factor() :
 void primario() :
 { System.out.println("Primario"); }
 {
-//    <tENTACAR> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
-//|   <tCARAENT> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS>
-//|   
+
+//    <tENTACAR> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS> ???
+//|   <tCARAENT> <tOPENING_PARENTHESIS> expresion() <tCLOSING_PARENTHESIS> ???
+
     <tSTRING>
 |   LOOKAHEAD(2)
         //<tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
@@ -282,7 +297,8 @@ void primario() :
 |   <tFALSE>
 |   <tIDENTIFICADOR>
 }
-//---------------------------------------------------------
+
+// --- Funciones y procedimiento ----------------------------------------------
 void declaracion_procs_funcs() :
 { System.out.println("Declaración de procedimientos/funciones"); }
 {
@@ -317,25 +333,6 @@ void declaracion_func() :
     instrucciones()
     < tEND >
 }
-//---------------------------------------------------------
-void instrucciones() :
-{ System.out.println("Instrucciones"); }
-{
-    ( instruccion() )*
-}
-
-void instruccion() :
-{ System.out.println("Instrucción"); }
-{
-    LOOKAHEAD(2)
-    llamar_funcion()
-|   asignacion()
-|   seleccion()
-|   bucle()
-|   declaracion_procs_funcs()
-|   < tABANDONAR > < tSEMICOLON>
-|   < tNADA > < tSEMICOLON>
-}
 
 void llamar_funcion() :
 { System.out.println("Llamar función"); }
@@ -354,6 +351,26 @@ void parametros_llamada_funcion() :
     (<tCOMA> expresion() )*
     //( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
     //(<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() ))*
+}
+
+// --- Instrucciones ----------------------------------------------------------
+void instrucciones() :
+{ System.out.println("Instrucciones"); }
+{
+    ( instruccion() )*
+}
+
+void instruccion() :
+{ System.out.println("Instrucción"); }
+{
+    LOOKAHEAD(2)
+    llamar_funcion()
+|   asignacion()
+|   seleccion()
+|   bucle()
+|   declaracion_procs_funcs()
+|   < tABANDONAR > < tSEMICOLON>
+|   < tNADA > < tSEMICOLON>
 }
 
 void seleccion() :
