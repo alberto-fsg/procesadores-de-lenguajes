@@ -280,7 +280,7 @@ void primario() :
     <tSTRING>
 |   LOOKAHEAD(2)
         //<tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
-        //llamar_funcion()
+        //llamar_funcion_o_procedimiento()
             < tIDENTIFICADOR >
             < tOPENING_PARENTHESIS >
             parametros_llamada_funcion()
@@ -330,7 +330,7 @@ void declaracion_func() :
     < tEND >
 }
 
-void llamar_funcion() :
+void llamar_funcion_o_procedimiento() :
 { System.out.println("Llamar función"); }
 {
     < tIDENTIFICADOR >
@@ -360,7 +360,7 @@ void instruccion() :
 { System.out.println("Instrucción"); }
 {
     LOOKAHEAD(2)
-    llamar_funcion()
+    llamar_funcion_o_procedimiento()
 |   asignacion()
 |   seleccion()
 |   bucle()
