@@ -18,10 +18,14 @@ PARSER_BEGIN(gcl)
 
 package traductor;
 
-//...
+import lib.symbolTable.*;
+import lib.symbolTable.exceptions.*;
+
+import java.util.*;
 
 public class gcl {
-   //...
+   	//tabla de símbolos global
+	static SymbolTable st;
    
    public static void main(String[] args) {
 	   gcl parser = null;

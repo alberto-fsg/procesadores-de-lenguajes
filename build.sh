@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ant -f practica2
+ant -f practica3
