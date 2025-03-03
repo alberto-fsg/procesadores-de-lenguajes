@@ -24,13 +24,15 @@ import lib.symbolTable.exceptions.*;
 import java.util.*;
 
 public class gcl {
-   	//tabla de símbolos global
+    // tabla de símbolos global
 	static SymbolTable st;
    
    public static void main(String[] args) {
 	   gcl parser = null;
 	   
 	   try {
+           st = new SymbolTable(); 
+
 		   if(args.length == 0) {
 			   parser = new gcl(System.in);
 		   }
@@ -169,23 +171,45 @@ void Programa() :
 }
 
 // --- Tipos ------------------------------------------------------------------
-void tipo() :
-{ System.out.println("Tipo"); }
+Symbol.Types tipo() :
 {
-    LOOKAHEAD(2) tipoArray() | tipoEscalar()
+    Symbol.Types tipo;
+}
+{
+    (
+        LOOKAHEAD(2) 
+        tipo = tipoArray() 
+    |   
+        tipo = tipoEscalar()
+    )
+    { return tipo; }
 }
 
-void tipoEscalar() :
-{ System.out.println("Tipo escalar"); }
+Symbol.Types tipoEscalar() :
 {
-    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
+    Token t;
+}
+{
+    (
+        t=<tCHARACTER>   { return Symbol.Types.CHAR; }
+      | t=<tBOOLEAN>     { return Symbol.Types.BOOL; }
+      | t=<tINTEGER>     { return Symbol.Types.INT; }
+    )
 }
 
-void tipoArray() :
-{ System.out.println("Tipo array"); }
+Symbol.Types tipoArray() :
 {
-    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
+    Symbol.Types tipo_base;
+    Token t;
+}
+{
+    (
+        t=<tCHARACTER>   { tipo_base = Symbol.Types.CHAR; }
+      | t=<tBOOLEAN>     { tipo_base = Symbol.Types.BOOL; }
+      | t=<tINTEGER>     { tipo_base = Symbol.Types.INT; }
+    )
     <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET>
+    { return Symbol.Types.ARRAY; }
 }
 
 // --- Variables --------------------------------------------------------------
@@ -196,11 +220,47 @@ void declaracion_variables() :
 }
 
 void declaracion() :
-{ System.out.println("Declaracion"); }
 {
-    tipo()
-    lista_ids()
+    Symbol.Types tipo;
+    List<String> ids;
+}
+{
+    tipo = tipo()
+    ids = lista_ids()
     < tSEMICOLON >
+    {
+        for (String id : ids) {
+            try {
+                Symbol s;
+                switch (tipo) {
+                    case INT:
+                        s = new SymbolInt(id);
+                        break;
+                    case BOOL:
+                        s = new SymbolBool(id);
+                        break;
+                    case CHAR:
+                        s = new SymbolChar(id);
+                        break;
+                    case ARRAY:
+                        // VALORES HARDCODED, PARA HACER LA PRUEBA
+                        int min_indice = 0;
+                        int max_indice = 10;
+                        Symbol.Types tipo_base = Symbol.Types.UNDEFINED;
+                        s = new SymbolArray(id, min_indice, max_indice, tipo_base);
+                        break;
+                    default:
+                        throw new RuntimeException("Tipo no válido: " + tipo);
+                }
+                System.out.println("adasdad");
+                st.insertSymbol(s);
+                System.out.println("[TABLA DE SÍMBOLOS] Añadido: " + s.toString());
+            } 
+            catch (AlreadyDefinedSymbolException e) {
+                System.err.println("Error: " + id + " ya está declarado");
+            }
+        }
+    }
 }
 
 void asignacion() :
@@ -213,11 +273,17 @@ void asignacion() :
     < tSEMICOLON >
 }
 
-void lista_ids() :
-{ System.out.println("Lista de identificadores"); }
+List<String> lista_ids() :
 {
-    < tIDENTIFICADOR >
-    ( <tCOMA> < tIDENTIFICADOR > )*
+    List<String> ids = new ArrayList<String>();
+}
+{
+    <tIDENTIFICADOR> { ids.add(token.image); }
+    (
+        <tCOMA>
+        <tIDENTIFICADOR> { ids.add(token.image); }
+    )*
+    { return ids; }
 }
 
 // --- Expresiones y operaciones ----------------------------------------------
@@ -284,7 +350,7 @@ void primario() :
     <tSTRING>
 |   LOOKAHEAD(2)
         //<tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
-        //llamar_funcion_o_procedimiento()
+        //llamar_funcion()
             < tIDENTIFICADOR >
             < tOPENING_PARENTHESIS >
             parametros_llamada_funcion()
@@ -334,7 +400,7 @@ void declaracion_func() :
     < tEND >
 }
 
-void llamar_funcion_o_procedimiento() :
+void llamar_funcion() :
 { System.out.println("Llamar función"); }
 {
     < tIDENTIFICADOR >
@@ -364,7 +430,7 @@ void instruccion() :
 { System.out.println("Instrucción"); }
 {
     LOOKAHEAD(2)
-    llamar_funcion_o_procedimiento()
+    llamar_funcion()
 |   asignacion()
 |   seleccion()
 |   bucle()

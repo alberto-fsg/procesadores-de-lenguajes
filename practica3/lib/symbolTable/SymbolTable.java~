@@ -95,16 +95,6 @@ public class SymbolTable {
     	return findSymbol(name) != null; 
     }
     
-    //para usar en "getSymbol" y "containsSymbol"
-    private Symbol findSymbol (String name) {
-    	for (int i=st.size()-1; i>=0; i--) {
-            if (st.get(i).containsKey(name)) {
-                return st.get(i).get(name);
-            }
-        }
-        return null; 
-    }
-
     //devuelve la tabla como un string
     public String toString() {
     	final String linea = "------------------------------------------------\n";
