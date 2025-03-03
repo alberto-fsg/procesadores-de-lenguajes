@@ -169,44 +169,23 @@ void Programa() :
 }
 
 // --- Tipos ------------------------------------------------------------------
-
-Symbol.Types tipo() :
+void tipo() :
+{ System.out.println("Tipo"); }
 {
-    Symbol.Types type;
-}
-{
-    LOOKAHEAD(2) 
-    { type = tipoArray(); }
-  |
-    { type = tipoEscalar(); }
-    { return type; }
+    LOOKAHEAD(2) tipoArray() | tipoEscalar()
 }
 
-Symbol.Types tipoEscalar() :
+void tipoEscalar() :
+{ System.out.println("Tipo escalar"); }
 {
-    Token t;
-}
-{
-    (
-        t=<tCHARACTER>   { return Symbol.Types.CHAR; }
-      | t=<tBOOLEAN>     { return Symbol.Types.BOOL; }
-      | t=<tINTEGER>     { return Symbol.Types.INT; }
-    )
+    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
 }
 
-Symbol.Types tipoArray() :
+void tipoArray() :
+{ System.out.println("Tipo array"); }
 {
-    Symbol.Types baseType;
-    Token t;
-}
-{
-    (
-        t=<tCHARACTER>   { baseType = Symbol.Types.CHAR; }
-      | t=<tBOOLEAN>     { baseType = Symbol.Types.BOOL; }
-      | t=<tINTEGER>     { baseType = Symbol.Types.INT; }
-    )
+    ( < tCHARACTER > |< tBOOLEAN > | < tINTEGER > )
     <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET>
-    { return Symbol.Types.ARRAY; }
 }
 
 // --- Variables --------------------------------------------------------------
@@ -234,17 +213,11 @@ void asignacion() :
     < tSEMICOLON >
 }
 
-List<String> lista_ids() :
+void lista_ids() :
+{ System.out.println("Lista de identificadores"); }
 {
-    List<String> ids = new ArrayList<String>();
-}
-{
-    <tIDENTIFICADOR> { ids.add(token.image); }
-    (
-        <tCOMA>
-        <tIDENTIFICADOR> { ids.add(token.image); }
-    )*
-    { return ids; }
+    < tIDENTIFICADOR >
+    ( <tCOMA> < tIDENTIFICADOR > )*
 }
 
 // --- Expresiones y operaciones ----------------------------------------------
