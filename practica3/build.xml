@@ -52,10 +52,11 @@
 		</copy>
 	</target>
 
+	<!-- "${user.home}/aplicaciones/javacc/target" -->
 	<target name="jcc" depends="init"> 
 	  	<!-- Generar el código fuente del traductor desde ${src_compiler} hasta ${jcc_files} -->
 	  	<javacc target="${jcc_src}/${project}.jj"
-	      	javacchome="${user.home}/aplicaciones/javacc/target"
+	      	javacchome="/opt/javacc-javacc-7.0.13/bootstrap"
 	      	outputdirectory="${jcc_files}"
 	      	static="true"
 	  	/>

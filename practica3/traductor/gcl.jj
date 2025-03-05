@@ -151,117 +151,235 @@ TOKEN_MGR_DECLS : {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // 2. ANALIZADOR SINTÁCTICO
 ///////////////////////////////////////////////////////////////////////////////
 
-// --- Estructura principal ---------------------------------------------------
+/** Programa */
+
 void Programa() :
-{ System.out.println("Programa"); }
+{}
 {
     < tPROGRAMA >
     < tIDENTIFICADOR >
-
     ( LOOKAHEAD(3) declaracion_variables() )*
     ( declaracion_procs_funcs() )*
-
     < tBEGGINING >
     instrucciones()
     < tEND >
 }
 
-// --- Tipos ------------------------------------------------------------------
-Symbol.Types tipo() :
+///////////////////////////////////////////////////////////////////////////////
+
+/** Tipos */
+
+AtribTipo tipo() :
 {
-    Symbol.Types tipo;
+    AtribTipo aT;
 }
 {
     (
         LOOKAHEAD(2) 
-        tipo = tipoArray() 
-    |   
-        tipo = tipoEscalar()
+        aT = tipoArray() 
+        | aT = tipoEscalar()
     )
-    { return tipo; }
+    { return aT; }
 }
 
-Symbol.Types tipoEscalar() :
+AtribTipo tipoEscalar() :
+{}
 {
-    Token t;
+    <tINTEGER>      { return new AtribTipo(Symbol.Types.INT ); }
+    | <tCHARACTER>  { return new AtribTipo(Symbol.Types.CHAR); }
+    | <tBOOLEAN>    { return new AtribTipo(Symbol.Types.BOOL); }
+}
+
+AtribTipo tipoArray() :
+{
+    Symbol.Types t;
+    AtribExp aE;
 }
 {
     (
-        t=<tCHARACTER>   { return Symbol.Types.CHAR; }
-      | t=<tBOOLEAN>     { return Symbol.Types.BOOL; }
-      | t=<tINTEGER>     { return Symbol.Types.INT; }
+        <tCHARACTER> { t = Symbol.Types.CHAR; }
+        | <tBOOLEAN> { t = Symbol.Types.BOOL; }
+        | <tINTEGER> { t = Symbol.Types.INT; }
     )
+    <tOPENING_SQUARE_BRACKET>
+    aE = expresion_simple()
+    <tCLOSING_SQUARE_BRACKET>
+    {
+        return new AtribTipo(t, Integer.parseInt(aE.image));
+    }
 }
 
-Symbol.Types tipoArray() :
-{
-    Symbol.Types tipo_base;
-    Token t;
-}
-{
-    (
-        t=<tCHARACTER>   { tipo_base = Symbol.Types.CHAR; }
-      | t=<tBOOLEAN>     { tipo_base = Symbol.Types.BOOL; }
-      | t=<tINTEGER>     { tipo_base = Symbol.Types.INT; }
-    )
-    <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET>
-    { return Symbol.Types.ARRAY; }
-}
+///////////////////////////////////////////////////////////////////////////////
 
-// --- Variables --------------------------------------------------------------
+/** Declaración variables */
+
 void declaracion_variables() :
-{ System.out.println("Declaracion de variables"); }
+{}
 {
     ( LOOKAHEAD(3) declaracion() )+
 }
 
-void declaracion() :
+ArrayList<String> lista_ids() :
 {
-    Symbol.Types tipo;
-    List<String> ids;
+    ArrayList<String> lVars = new ArrayList<String>();
+    Token t;
 }
 {
-    tipo = tipo()
-    ids = lista_ids()
-    < tSEMICOLON >
+    t = <tIDENTIFICADOR>
+    { lVars.add(t.image); }
+    (
+        <tCOMA>
+        t = <tIDENTIFICADOR>
+        { lVars.add(t.image); }
+    )*
+    { return lVars; }
+}
+
+void declaracion() :
+{
+    AtribTipo aT;
+    ArrayList<String> lVars;
+}
+{
+    aT = tipo()
+    lVars = lista_ids()
+    <tSEMICOLON>
     {
-        for (String id : ids) {
+        for(String id : lVars) {
             try {
-                Symbol s;
-                switch (tipo) {
-                    case INT:
-                        s = new SymbolInt(id);
-                        break;
-                    case BOOL:
-                        s = new SymbolBool(id);
-                        break;
-                    case CHAR:
-                        s = new SymbolChar(id);
-                        break;
-                    case ARRAY:
-                        // VALORES HARDCODED, PARA HACER LA PRUEBA
-                        int min_indice = 0;
-                        int max_indice = 10;
-                        Symbol.Types tipo_base = Symbol.Types.UNDEFINED;
-                        s = new SymbolArray(id, min_indice, max_indice, tipo_base);
-                        break;
-                    default:
-                        throw new RuntimeException("Tipo no válido: " + tipo);
+                Symbol sV = null;
+                if(aT.isArray) {
+                    sV = new SymbolArray(id, 0, aT.size-1, aT.type);
+                } else {
+                    switch(aT.type) {
+                        case INT:
+                            sV = new SymbolInt(id); break;
+                        case BOOL:
+                            sV = new SymbolBool(id); break;
+                        case CHAR:
+                            sV = new SymbolChar(id); break;
+                        default:
+                            System.out.println("Error: tipo no definido para variable \"" +
+                                id + "\".");
+                    }
                 }
-                System.out.println("adasdad");
-                st.insertSymbol(s);
-                System.out.println("[TABLA DE SÍMBOLOS] Añadido: " + s.toString());
-            } 
-            catch (AlreadyDefinedSymbolException e) {
-                System.err.println("Error: " + id + " ya está declarado");
+                if(sV != null) st.insertSymbol(sV);
+            } catch(AlreadyDefinedSymbolException e) {
+                System.out.println("Error: ya existe variable con identificador \"" +
+                    id + "\".");
             }
         }
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+/** Expresiones */
+
+// orden de prioridad de expansión (cuanto más izquierda, más prioridad)
+// primario - factor - termino - expresion_simple - relacion - expresion
+
+void primario() :
+{}
+{
+    (
+    LOOKAHEAD(2)
+    < tIDENTIFICADOR >
+    < tOPENING_PARENTHESIS >
+    parametros_llamada_funcion()
+    < tCLOSING_PARENTHESIS >
+    |
+    LOOKAHEAD(2)
+    < tIDENTIFICADOR >
+    < tOPENING_SQUARE_BRACKET >
+    expresion()
+    < tCLOSING_SQUARE_BRACKET >
+    |
+    < tIDENTIFICADOR >
+    |
+    < tCONSTANT >
+    |
+    < tCHAR >
+    |
+    < tSTRING >
+    |
+    < tTRUE >
+    |
+    < tFALSE >
+    )
+}
+
+void factor() :
+{}
+{
+    ( <tNOT> | < tPLUS > | < tMINUS > )?
+    ( < tOPENING_PARENTHESIS > expresion() < tCLOSING_PARENTHESIS > | primario() )
+}
+
+void termino() :
+{}
+{
+    factor()
+    ( operador_multiplicativo() factor() )*
+}
+
+AtribExp expresion_simple() :
+{ System.out.println("Expresión simple"); }
+{
+    termino()
+    ( ( < tPLUS > | < tMINUS > ) termino() )*
+    { return new AtribExp(Symbol.Types.INT, "2"); }
+}
+
+void relacion() :
+{}
+{
+    expresion_simple()
+    ( operador_relacional() expresion_simple() )?
+}
+
+void expresion() :
+{}
+{
+    relacion()
+    ( ( < tAND > | < tOR > ) relacion() )*
+}
+
+void lista_una_o_mas_exps() :
+{}
+{
+    ( expresion() )+
+}
+
+void operador_multiplicativo() :
+{}
+{
+    < tTIMES > | < tDIVIDE > | < tMOD >
+}
+
+void operador_relacional() :
+{}
+{
+    < tEQUAL > | < tNOTEQUAL > | < tLT > | < tLE > | < tGT > | < tGE > 
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/** Asignación */
 
 void asignacion() :
 { System.out.println("Asignacion"); }
@@ -273,98 +391,10 @@ void asignacion() :
     < tSEMICOLON >
 }
 
-List<String> lista_ids() :
-{
-    List<String> ids = new ArrayList<String>();
-}
-{
-    <tIDENTIFICADOR> { ids.add(token.image); }
-    (
-        <tCOMA>
-        <tIDENTIFICADOR> { ids.add(token.image); }
-    )*
-    { return ids; }
-}
+///////////////////////////////////////////////////////////////////////////////
 
-// --- Expresiones y operaciones ----------------------------------------------
+/** Funciones y procedimientos */
 
-// orden de prioridad de expansión (cuanto más izquierda, más prioridad)
-// primario - factor - termino - expresion_simple - relacion - expresion
-
-void lista_una_o_mas_exps() :
-{ System.out.println("Lista de una o más expresiones"); }
-{
-    ( expresion() )+
-}
-
-void expresion() :
-{ System.out.println("Expresión"); }
-{
-    relacion()
-    ( ( < tAND > | < tOR > ) relacion() )*
-}
-
-void relacion() :
-{ System.out.println("Relación"); }
-{
-    expresion_simple()
-    ( operador_relacional() expresion_simple() )?
-}
-
-void operador_relacional() :
-{ System.out.println("Operador relacional"); }
-{
-    < tEQUAL > | < tNOTEQUAL > | < tLT > | < tLE > | < tGT > | < tGE > 
-}
-
-void expresion_simple() :
-{ System.out.println("Expresión simple"); }
-{
-    termino()
-    ( ( < tPLUS > | < tMINUS > ) termino() )*
-}
-
-void termino() :
-{ System.out.println("Término"); }
-{
-    factor()
-    ( operador_multiplicativo() factor() )*
-}
-
-void operador_multiplicativo() :
-{ System.out.println("Operador multiplicativo"); }
-{
-    < tTIMES > | < tDIVIDE > | < tMOD >
-}
-
-void factor() :
-{ System.out.println("Factor"); }
-{
-    ( <tNOT> | < tPLUS > | < tMINUS > )?
-    ( < tOPENING_PARENTHESIS > expresion() < tCLOSING_PARENTHESIS > | primario() )
-}
-
-void primario() :
-{ System.out.println("Primario"); }
-{
-    <tSTRING>
-|   LOOKAHEAD(2)
-        //<tIDENTIFICADOR> <tOPENING_PARENTHESIS> lista_una_o_mas_exps() <tCLOSING_PARENTHESIS> //invoc a func.
-        //llamar_funcion()
-            < tIDENTIFICADOR >
-            < tOPENING_PARENTHESIS >
-            parametros_llamada_funcion()
-            < tCLOSING_PARENTHESIS >
-|   LOOKAHEAD(2)
-        <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion() <tCLOSING_SQUARE_BRACKET> //comp. array
-|   <tCONSTANT>
-|   <tCHAR>
-|   <tTRUE>
-|   <tFALSE>
-|   <tIDENTIFICADOR>
-}
-
-// --- Funciones y procedimientos ---------------------------------------------
 void declaracion_procs_funcs() :
 { System.out.println("Declaración de procedimientos/funciones"); }
 {
