@@ -56,7 +56,7 @@
 	<target name="jcc" depends="init"> 
 	  	<!-- Generar el código fuente del traductor desde ${src_compiler} hasta ${jcc_files} -->
 	  	<javacc target="${jcc_src}/${project}.jj"
-	      	javacchome="/opt/javacc-javacc-7.0.13/bootstrap"
+	      	javacchome="${user.home}/aplicaciones/javacc/target"
 	      	outputdirectory="${jcc_files}"
 	      	static="true"
 	  	/>

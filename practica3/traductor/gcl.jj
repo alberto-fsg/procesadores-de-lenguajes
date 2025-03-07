@@ -277,7 +277,10 @@ void declaracion() :
                                 id + "\".");
                     }
                 }
-                if(sV != null) st.insertSymbol(sV);
+                if(sV != null) {
+                    st.insertSymbol(sV);
+                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                }
             } catch(AlreadyDefinedSymbolException e) {
                 System.out.println("Error: ya existe variable con identificador \"" +
                     id + "\".");
@@ -293,41 +296,98 @@ void declaracion() :
 // orden de prioridad de expansión (cuanto más izquierda, más prioridad)
 // primario - factor - termino - expresion_simple - relacion - expresion
 
-void primario() :
-{}
+AtribExp primario() :
+{
+ Token t;
+}
 {
     (
     LOOKAHEAD(2)
-    < tIDENTIFICADOR >
+    t = < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >
     parametros_llamada_funcion()
     < tCLOSING_PARENTHESIS >
+        { return null; }
     |
     LOOKAHEAD(2)
-    < tIDENTIFICADOR >
+    t = < tIDENTIFICADOR >
     < tOPENING_SQUARE_BRACKET >
     expresion()
     < tCLOSING_SQUARE_BRACKET >
+        { return null; }
     |
-    < tIDENTIFICADOR >
+    t = < tIDENTIFICADOR >
+        { 
+            Symbol s = null;
+            try {
+                s = st.getSymbol(t.image);
+                return new AtribExp(s.type, t.image, true, false);
+            } catch(SymbolNotFoundException e) {
+                System.out.println("Error: no definido \"" + t.image + "\".");
+                return new AtribExp(Symbol.Types.UNDEFINED, t.image, false, false);
+            }
+        }
     |
-    < tCONSTANT >
+    t = < tCONSTANT >
+        { return new AtribExp(Symbol.Types.INT, t.image, false, true); }  
     |
-    < tCHAR >
+    t = < tCHAR >
+        { return new AtribExp(Symbol.Types.CHAR, t.image, false, true); }  
     |
-    < tSTRING >
+    t = < tSTRING >
+        { return new AtribExp(Symbol.Types.STRING, t.image, false, true); }  
     |
-    < tTRUE >
+    t = < tTRUE >
+        { return new AtribExp(Symbol.Types.BOOL, t.image, false, true); }  
     |
-    < tFALSE >
+    t = < tFALSE >
+        { return new AtribExp(Symbol.Types.BOOL, t.image, false, true); }  
     )
 }
 
-void factor() :
-{}
+AtribExp factor() :
 {
-    ( <tNOT> | < tPLUS > | < tMINUS > )?
-    ( < tOPENING_PARENTHESIS > expresion() < tCLOSING_PARENTHESIS > | primario() )
+    Token op;
+    AtribExp ae;
+}
+{
+    ( op = <tNOT> | op = < tPLUS > | op = < tMINUS > )?
+    ( < tOPENING_PARENTHESIS > ae = expresion() < tCLOSING_PARENTHESIS > | ae = primario() )
+    {
+        switch(op.image) {
+            case "!":
+                if(ae.type == Symbol.Types.BOOL) {
+
+                } else {
+
+                }
+                break;
+
+            case "+":
+                if(ae.type == Symbol.Types.INT) {
+
+                } else {
+                    
+             }            
+                break;
+
+            case "-":
+                if(ae.type == Symbol.Types.INT) {
+
+                } else {
+
+                }
+                break;
+        }
+
+
+        if(op.image == "!" && ae.type != Symbol.Types.BOOL) {
+            System.out.println("Error");
+        } else if(t.image == "!") {
+
+        } else if(t.image)
+        return ae;
+    }
 }
 
 void termino() :
@@ -342,7 +402,7 @@ AtribExp expresion_simple() :
 {
     termino()
     ( ( < tPLUS > | < tMINUS > ) termino() )*
-    { return new AtribExp(Symbol.Types.INT, "2"); }
+    { return new AtribExp(Symbol.Types.INT, "2", false, true); }
 }
 
 void relacion() :
@@ -352,11 +412,17 @@ void relacion() :
     ( operador_relacional() expresion_simple() )?
 }
 
-void expresion() :
-{}
+AtribExp expresion() :
 {
-    relacion()
-    ( ( < tAND > | < tOR > ) relacion() )*
+    AtribExp ae;
+    Token op 
+}
+{
+    ae = relacion()
+    ( ( op = < tAND > | op = < tOR > ) ae = relacion() )*
+    {
+        return ae;
+    }
 }
 
 void lista_una_o_mas_exps() :
