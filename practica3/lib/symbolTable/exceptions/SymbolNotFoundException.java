@@ -16,4 +16,8 @@ public class SymbolNotFoundException extends Error {
 
 	}
 
+	public SymbolNotFoundException(String mensaje) {
+	System.out.println(mensaje);
+	}
+
 }

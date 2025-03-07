@@ -304,46 +304,60 @@ AtribExp primario() :
 }
 {
     (
+        // Caso: llamada a función
         LOOKAHEAD(2)
         t = <tIDENTIFICADOR>
         <tOPENING_PARENTHESIS>
-        parametros_llamada_funcion() // Validate parameters
+        parametros_llamada_funcion()
         <tCLOSING_PARENTHESIS>
         {
-            s = st.getSymbol(t.image);
-            if (s == null || s.type != Symbol.Types.FUNCTION) {
-                System.out.println("Error: " + t.image + " is not a function.");
+            try {
+                s = st.getSymbol(t.image);
+            } catch(SymbolNotFoundException e) {
+                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            }
+            if (s.type != Symbol.Types.FUNCTION) {
+                System.out.println("Error: Se esperaba que '" + t.image + "' fuera una función, pero se encontró: " + s.type + ".");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             return new AtribExp(s.type, null, false, false);
         }
     |
+        // Caso: acceso a array
         LOOKAHEAD(2)
         t = <tIDENTIFICADOR>
         <tOPENING_SQUARE_BRACKET>
         ae = expresion()
         <tCLOSING_SQUARE_BRACKET>
         {
-            s = st.getSymbol(t.image);
-            if (s == null || s.type != Symbol.Types.ARRAY) {
-                System.out.println("Error: " + t.image + " is not an array.");
+            try {
+                s = st.getSymbol(t.image);
+            } catch(SymbolNotFoundException e) {
+                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            }
+            if (s.type != Symbol.Types.ARRAY) {
+                System.out.println("Error: Se esperaba que '" + t.image + "' fuera un arreglo, pero se encontró: " + s.type + ".");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             if (ae.type != Symbol.Types.INT) {
-                System.out.println("Error: Array index must be integer.");
+                System.out.println("Error: Se esperaba que el índice del arreglo fuera un entero, pero se evaluó: tipo " 
+                    + ae.type + " con valor '" + ae.image + "'.");
             }
-            Symbol.Types elemType = Symbol.Types.values()[(int)s.dir];
+            Symbol.Types elemType = s.type;  
             return new AtribExp(elemType, null, false, ae.isConst && s.constant);
         }
     |
+        // Caso: identificador
         t = <tIDENTIFICADOR>
         {
             try {
                 s = st.getSymbol(t.image);
-                String image = s.constant ? String.valueOf(s.dir) : t.image;
+                String image = t.image;
                 return new AtribExp(s.type, image, true, s.constant);
             } catch (SymbolNotFoundException e) {
-                System.out.println("Error: undefined '" + t.image + "'.");
+                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
         }
@@ -360,7 +374,6 @@ AtribExp primario() :
         t = <tTRUE> | t = <tFALSE>
         { return new AtribExp(Symbol.Types.BOOL, t.image, false, true); }
     )
-
     {
         return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
     }
@@ -384,7 +397,7 @@ AtribExp factor() :
             switch (op.image) {
                 case "!":
                     if (ae.type != Symbol.Types.BOOL) {
-                        throw new TypesDontMatchException("! requires boolean");
+                        throw new TypesDontMatchException("Error: El operador '!' requiere un valor booleano, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
                     }
                     if (ae.isConst) {
                         boolean val = Boolean.parseBoolean(ae.image);
@@ -393,12 +406,12 @@ AtribExp factor() :
                     return new AtribExp(Symbol.Types.BOOL, null, false, false);
                 case "+":
                     if (ae.type != Symbol.Types.INT) {
-                        throw new TypesDontMatchException("+ requires integer");
+                        throw new TypesDontMatchException("Error: El operador '+' requiere un valor entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
                     }
-                    return ae; // + doesn't change value
+                    return ae;
                 case "-":
                     if (ae.type != Symbol.Types.INT) {
-                        throw new TypesDontMatchException("- requires integer");
+                        throw new TypesDontMatchException("Error: El operador '-' requiere un valor entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
                     }
                     if (ae.isConst) {
                         int val = Integer.parseInt(ae.image);
@@ -423,7 +436,7 @@ AtribExp termino() :
         right = factor()
         {
             if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                throw new TypesDontMatchException("Multiplicative ops require integers");
+                throw new TypesDontMatchException("Error: Los operadores multiplicativos requieren valores enteros. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
             }
             boolean isConst = left.isConst && right.isConst;
             String val = null;
@@ -456,7 +469,7 @@ AtribExp expresion_simple() :
         right = termino()
         {
             if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                throw new TypesDontMatchException("Additive ops require integers");
+                throw new TypesDontMatchException("Error: Los operadores aditivos requieren valores enteros. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
             }
             isConst = isConst && right.isConst;
             if (isConst) {
@@ -483,13 +496,13 @@ AtribExp relacion() :
         op = operador_relacional()
         right = expresion_simple()
         {
-            if (op.image.matches("==|!=")) {
+            if (op.image.matches("=|!=")) {
                 if (left.type != right.type) {
-                    throw new TypesDontMatchException("Operands must be same type");
+                    throw new TypesDontMatchException("Error: Los operandos para el operador '" + op.image + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
                 }
             } else {
                 if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                    throw new TypesDontMatchException("Relational ops require integers");
+                    throw new TypesDontMatchException("Error: Los operadores relacionales requieren valores enteros. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
                 }
             }
             
@@ -502,7 +515,7 @@ AtribExp relacion() :
                         int l = Integer.parseInt(left.image);
                         int r = Integer.parseInt(right.image);
                         switch (op.image) {
-                            case "==": result = (l == r); break;
+                            case "=": result = (l == r); break;
                             case "!=": result = (l != r); break;
                             case "<": result = (l < r); break;
                             case "<=": result = (l <= r); break;
@@ -513,7 +526,7 @@ AtribExp relacion() :
                     case BOOL:
                         boolean bl = Boolean.parseBoolean(left.image);
                         boolean br = Boolean.parseBoolean(right.image);
-                        result = (op.image.equals("==")) ? (bl == br) : (bl != br);
+                        result = (op.image.equals("=")) ? (bl == br) : (bl != br);
                         break;
                 }
                 val = String.valueOf(result);
@@ -538,7 +551,7 @@ AtribExp expresion() :
         right = relacion()
         {
             if (left.type != Symbol.Types.BOOL || right.type != Symbol.Types.BOOL) {
-                throw new TypesDontMatchException("Logical ops require booleans");
+                throw new TypesDontMatchException("Error: Los operadores lógicos requieren valores booleanos. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'. Al menos uno de ellos no es booleano.");
             }
             isConst = isConst && right.isConst;
             if (isConst) {
