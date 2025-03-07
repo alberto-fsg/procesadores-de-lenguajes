@@ -298,131 +298,262 @@ void declaracion() :
 
 AtribExp primario() :
 {
- Token t;
+    Token t;
+    AtribExp ae;
+    Symbol s;
 }
 {
     (
-    LOOKAHEAD(2)
-    t = < tIDENTIFICADOR >
-    < tOPENING_PARENTHESIS >
-    parametros_llamada_funcion()
-    < tCLOSING_PARENTHESIS >
-        { return null; }
+        LOOKAHEAD(2)
+        t = <tIDENTIFICADOR>
+        <tOPENING_PARENTHESIS>
+        parametros_llamada_funcion() // Validate parameters
+        <tCLOSING_PARENTHESIS>
+        {
+            s = st.getSymbol(t.image);
+            if (s == null || s.type != Symbol.Types.FUNCTION) {
+                System.out.println("Error: " + t.image + " is not a function.");
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            }
+            return new AtribExp(s.type, null, false, false);
+        }
     |
-    LOOKAHEAD(2)
-    t = < tIDENTIFICADOR >
-    < tOPENING_SQUARE_BRACKET >
-    expresion()
-    < tCLOSING_SQUARE_BRACKET >
-        { return null; }
+        LOOKAHEAD(2)
+        t = <tIDENTIFICADOR>
+        <tOPENING_SQUARE_BRACKET>
+        ae = expresion()
+        <tCLOSING_SQUARE_BRACKET>
+        {
+            s = st.getSymbol(t.image);
+            if (s == null || s.type != Symbol.Types.ARRAY) {
+                System.out.println("Error: " + t.image + " is not an array.");
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            }
+            if (ae.type != Symbol.Types.INT) {
+                System.out.println("Error: Array index must be integer.");
+            }
+            Symbol.Types elemType = Symbol.Types.values()[(int)s.dir];
+            return new AtribExp(elemType, null, false, ae.isConst && s.constant);
+        }
     |
-    t = < tIDENTIFICADOR >
-        { 
-            Symbol s = null;
+        t = <tIDENTIFICADOR>
+        {
             try {
                 s = st.getSymbol(t.image);
-                return new AtribExp(s.type, t.image, true, false);
-            } catch(SymbolNotFoundException e) {
-                System.out.println("Error: no definido \"" + t.image + "\".");
-                return new AtribExp(Symbol.Types.UNDEFINED, t.image, false, false);
+                String image = s.constant ? String.valueOf(s.dir) : t.image;
+                return new AtribExp(s.type, image, true, s.constant);
+            } catch (SymbolNotFoundException e) {
+                System.out.println("Error: undefined '" + t.image + "'.");
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
         }
     |
-    t = < tCONSTANT >
-        { return new AtribExp(Symbol.Types.INT, t.image, false, true); }  
+        t = <tCONSTANT>
+        { return new AtribExp(Symbol.Types.INT, t.image, false, true); }
     |
-    t = < tCHAR >
-        { return new AtribExp(Symbol.Types.CHAR, t.image, false, true); }  
+        t = <tCHAR>
+        { return new AtribExp(Symbol.Types.CHAR, t.image, false, true); }
     |
-    t = < tSTRING >
-        { return new AtribExp(Symbol.Types.STRING, t.image, false, true); }  
+        t = <tSTRING>
+        { return new AtribExp(Symbol.Types.STRING, t.image, false, true); }
     |
-    t = < tTRUE >
-        { return new AtribExp(Symbol.Types.BOOL, t.image, false, true); }  
-    |
-    t = < tFALSE >
-        { return new AtribExp(Symbol.Types.BOOL, t.image, false, true); }  
+        t = <tTRUE> | t = <tFALSE>
+        { return new AtribExp(Symbol.Types.BOOL, t.image, false, true); }
     )
+
+    {
+        return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+    }
 }
+
 
 AtribExp factor() :
 {
-    Token op;
+    Token op = null;
     AtribExp ae;
 }
 {
-    ( op = <tNOT> | op = < tPLUS > | op = < tMINUS > )?
-    ( < tOPENING_PARENTHESIS > ae = expresion() < tCLOSING_PARENTHESIS > | ae = primario() )
+    ( op = <tNOT> | op = <tPLUS> | op = <tMINUS> )?
+    (
+        <tOPENING_PARENTHESIS> ae = expresion() <tCLOSING_PARENTHESIS>
+    |
+        ae = primario()
+    )
     {
-        switch(op.image) {
-            case "!":
-                if(ae.type == Symbol.Types.BOOL) {
-
-                } else {
-
-                }
-                break;
-
-            case "+":
-                if(ae.type == Symbol.Types.INT) {
-
-                } else {
-                    
-             }            
-                break;
-
-            case "-":
-                if(ae.type == Symbol.Types.INT) {
-
-                } else {
-
-                }
-                break;
+        if (op != null) {
+            switch (op.image) {
+                case "!":
+                    if (ae.type != Symbol.Types.BOOL) {
+                        throw new TypesDontMatchException("! requires boolean");
+                    }
+                    if (ae.isConst) {
+                        boolean val = Boolean.parseBoolean(ae.image);
+                        return new AtribExp(Symbol.Types.BOOL, String.valueOf(!val), false, true);
+                    }
+                    return new AtribExp(Symbol.Types.BOOL, null, false, false);
+                case "+":
+                    if (ae.type != Symbol.Types.INT) {
+                        throw new TypesDontMatchException("+ requires integer");
+                    }
+                    return ae; // + doesn't change value
+                case "-":
+                    if (ae.type != Symbol.Types.INT) {
+                        throw new TypesDontMatchException("- requires integer");
+                    }
+                    if (ae.isConst) {
+                        int val = Integer.parseInt(ae.image);
+                        return new AtribExp(Symbol.Types.INT, String.valueOf(-val), false, true);
+                    }
+                    return new AtribExp(Symbol.Types.INT, null, false, false);
+            }
         }
-
-
-        if(op.image == "!" && ae.type != Symbol.Types.BOOL) {
-            System.out.println("Error");
-        } else if(t.image == "!") {
-
-        } else if(t.image)
         return ae;
     }
 }
 
-void termino() :
-{}
+AtribExp termino() :
 {
-    factor()
-    ( operador_multiplicativo() factor() )*
+    AtribExp left, right;
+    Token op;
+}
+{
+    left = factor()
+    (
+        op = operador_multiplicativo()
+        right = factor()
+        {
+            if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
+                throw new TypesDontMatchException("Multiplicative ops require integers");
+            }
+            boolean isConst = left.isConst && right.isConst;
+            String val = null;
+            if (isConst) {
+                int l = Integer.parseInt(left.image);
+                int r = Integer.parseInt(right.image);
+                switch (op.image) {
+                    case "*": val = String.valueOf(l * r); break;
+                    case "/": val = r != 0 ? String.valueOf(l / r) : "0"; break;
+                    case "%": val = String.valueOf(l % r); break;
+                }
+            }
+            left = new AtribExp(Symbol.Types.INT, val, false, isConst);
+        }
+    )*
+    { return left; }
 }
 
 AtribExp expresion_simple() :
-{ System.out.println("Expresión simple"); }
 {
-    termino()
-    ( ( < tPLUS > | < tMINUS > ) termino() )*
-    { return new AtribExp(Symbol.Types.INT, "2", false, true); }
+    AtribExp left, right;
+    Token op;
+    boolean isConst;
+}
+{
+    left = termino()
+    { isConst = left.isConst; }
+    (
+        ( op = <tPLUS> | op = <tMINUS> )
+        right = termino()
+        {
+            if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
+                throw new TypesDontMatchException("Additive ops require integers");
+            }
+            isConst = isConst && right.isConst;
+            if (isConst) {
+                int l = Integer.parseInt(left.image);
+                int r = Integer.parseInt(right.image);
+                left.image = op.image.equals("+") ? String.valueOf(l + r) : String.valueOf(l - r);
+            } else {
+                left.image = null;
+            }
+            left.isConst = isConst;
+        }
+    )*
+    { return left; }
 }
 
-void relacion() :
-{}
+AtribExp relacion() :
 {
-    expresion_simple()
-    ( operador_relacional() expresion_simple() )?
+    AtribExp left, right = null;
+    Token op = null;
+}
+{
+    left = expresion_simple()
+    (
+        op = operador_relacional()
+        right = expresion_simple()
+        {
+            if (op.image.matches("==|!=")) {
+                if (left.type != right.type) {
+                    throw new TypesDontMatchException("Operands must be same type");
+                }
+            } else {
+                if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
+                    throw new TypesDontMatchException("Relational ops require integers");
+                }
+            }
+            
+            boolean isConst = left.isConst && right.isConst;
+            String val = null;
+            if (isConst) {
+                boolean result = false;
+                switch (left.type) {
+                    case INT:
+                        int l = Integer.parseInt(left.image);
+                        int r = Integer.parseInt(right.image);
+                        switch (op.image) {
+                            case "==": result = (l == r); break;
+                            case "!=": result = (l != r); break;
+                            case "<": result = (l < r); break;
+                            case "<=": result = (l <= r); break;
+                            case ">": result = (l > r); break;
+                            case ">=": result = (l >= r); break;
+                        }
+                        break;
+                    case BOOL:
+                        boolean bl = Boolean.parseBoolean(left.image);
+                        boolean br = Boolean.parseBoolean(right.image);
+                        result = (op.image.equals("==")) ? (bl == br) : (bl != br);
+                        break;
+                }
+                val = String.valueOf(result);
+            }
+            left = new AtribExp(Symbol.Types.BOOL, val, false, isConst);
+        }
+    )?
+    { return right == null ? left : left; }
 }
 
 AtribExp expresion() :
 {
-    AtribExp ae;
-    Token op 
+    AtribExp left, right;
+    Token op;
+    boolean isConst;
 }
 {
-    ae = relacion()
-    ( ( op = < tAND > | op = < tOR > ) ae = relacion() )*
-    {
-        return ae;
-    }
+    left = relacion()
+    { isConst = left.isConst; }
+    (
+        ( op = <tAND> | op = <tOR> )
+        right = relacion()
+        {
+            if (left.type != Symbol.Types.BOOL || right.type != Symbol.Types.BOOL) {
+                throw new TypesDontMatchException("Logical ops require booleans");
+            }
+            isConst = isConst && right.isConst;
+            if (isConst) {
+                boolean l = Boolean.parseBoolean(left.image);
+                boolean r = Boolean.parseBoolean(right.image);
+                left.image = op.image.equals("&") 
+                    ? String.valueOf(l && r) 
+                    : String.valueOf(l || r);
+            } else {
+                left.image = null;
+            }
+            left.isConst = isConst;
+        }
+    )*
+    { return left; }
 }
 
 void lista_una_o_mas_exps() :
@@ -431,16 +562,27 @@ void lista_una_o_mas_exps() :
     ( expresion() )+
 }
 
-void operador_multiplicativo() :
-{}
+Token operador_multiplicativo() :
 {
-    < tTIMES > | < tDIVIDE > | < tMOD >
+    Token t;
+}
+{
+    t = <tTIMES>    { return t; }
+  | t = <tDIVIDE>   { return t; }
+  | t = <tMOD>      { return t; }
 }
 
-void operador_relacional() :
-{}
+Token operador_relacional() :
 {
-    < tEQUAL > | < tNOTEQUAL > | < tLT > | < tLE > | < tGT > | < tGE > 
+    Token t;
+}
+{
+    t = <tEQUAL>    { return t; }
+  | t = <tNOTEQUAL> { return t; }
+  | t = <tLT>       { return t; }
+  | t = <tLE>       { return t; }
+  | t = <tGT>       { return t; }
+  | t = <tGE>       { return t; }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

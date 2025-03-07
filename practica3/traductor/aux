@@ -429,16 +429,17 @@ AtribExp expresion() :
             isConstant = left.isConstant && right.isConstant;
             if (isConstant) {
                 switch (op.image) {
-                    case "&&":
-                        left = new AtribExp(Symbol.Types.BOOL, "&&", left, right, false);
+                    case "&":
+                        left.image = String.valueOf(left.image) && String.valueOf(right.image);
                         break;
-                    case "||":
-                        left = new AtribExp(Symbol.Types.BOOL, "||", left, right, false);
+                    case "|":
+                        left.image = String.valueOf(left.image) || String.valueOf(right.image);
                         break;
                 }
             }
-            else {
-
+            else { // !isConstant
+                left.image = null;
+                left.isConst = false;
             }
         }
     )*
