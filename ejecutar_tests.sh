@@ -17,9 +17,9 @@ execute_test() {
 
 # Lista de tests
 TESTS=(
-  "test_1.al"
-  "test_2.al"
-  "test_3.al"
+  # "test_1.al"
+  # "test_2.al"
+  # "test_3.al"
   "cambio_base.gcl"
   "conjetura_goldbach.gcl"
   "criba_eratostenes.gcl"

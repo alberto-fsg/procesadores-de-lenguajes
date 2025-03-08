@@ -55,6 +55,39 @@ public class gcl {
 			System.err.println("An exception occurred: " + e.getMessage());
 	   }
 	}
+
+    // Helper method to insert symbols into the table
+    private static void insertSymbols(AtribTipo aT, boolean isRef, ArrayList<String> lVars) {
+    for (String id : lVars) {
+        try {
+            Symbol sV = null;
+            if (aT.isArray) { // Handle arrays
+                sV = new SymbolArray(id, 0, aT.size-1, aT.type);
+            } else { // Handle basic types
+                switch(aT.type) {
+                    case INT:
+                        sV = new SymbolInt(id); break;
+                    case BOOL:
+                        sV = new SymbolBool(id); break;
+                    case CHAR:
+                        sV = new SymbolChar(id); break;
+                    default:
+                        System.out.println("Error: tipo no definido para variable \"" + id + "\".");
+                }
+            }
+            if (sV != null) {
+                // Optional: Handle 'ref' modifier here (if supported by Symbol classes)
+                if (isRef) {
+                    System.out.println("[REF] Parámetro por referencia: " + id);
+                }
+                st.insertSymbol(sV); // Insert into symbol table
+                System.out.println("[TABLA] Insertado: " + sV.toString());
+            }
+        } catch (AlreadyDefinedSymbolException e) {
+            System.out.println("Error: Identificador ya existe: \"" + id + "\"");
+        }
+    }
+}
 }
 PARSER_END(gcl)
 
@@ -135,22 +168,29 @@ TOKEN : {
 // deprecado al parecer, https://parsers.org/javacc21/token-hooks-revisited/
 TOKEN_MGR_DECLS : {
     public static void CommonTokenAction(Token t) {
+        // Print ALL tokens with their type and image
         System.out.printf("(%d,%d): %s \"%s\"%n", 
-            t.beginLine, t.beginColumn, getTokenType(t.kind), t.image);
+            t.beginLine, t.beginColumn, getTokenName(t.kind), t.image);
     }
 
-    private static String getTokenType(int kind) {
-        switch(kind) {
-            case gclConstants.tIDENTIFICADOR: return "identificador";
-            case gclConstants.tASSIGN: return "operador asignación";
-            case gclConstants.tCONSTANT: return "constante entera";
-            case gclConstants.tSTRING: return "cadena";
-            case gclConstants.tCHAR: return "caracter";
-            default: return "token"; // todos los tokens sin lexema relevante
+    // Get token name dynamically using reflection
+    private static String getTokenName(int kind) {
+        try {
+            // Use reflection to find the token name in gclConstants
+            java.lang.reflect.Field[] fields = gclConstants.class.getDeclaredFields();
+            for (java.lang.reflect.Field field : fields) {
+                if (field.getType() == int.class 
+                        && field.getInt(null) == kind 
+                        && field.getName().startsWith("t")) {
+                    return field.getName(); // e.g., "tIDENTIFICADOR", "tASSIGN"
+                }
+            }
+            return "UNKNOWN_TOKEN";
+        } catch (IllegalAccessException e) {
+            return "ERROR: " + e.getMessage();
         }
     }
 }
-
 
 
 
@@ -303,6 +343,9 @@ AtribExp primario() :
     Symbol s;
 }
 {
+    {
+        System.out.println("Entering primario");
+    }
     (
         // Caso: llamada a función
         LOOKAHEAD(2)
@@ -315,12 +358,15 @@ AtribExp primario() :
                 s = st.getSymbol(t.image);
             } catch(SymbolNotFoundException e) {
                 System.out.println("Error: El identificador '" + t.image + "' no está definido.");
+                System.out.println("Exiting primario due to undefined symbol");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             if (s.type != Symbol.Types.FUNCTION) {
                 System.out.println("Error: Se esperaba que '" + t.image + "' fuera una función, pero se encontró: " + s.type + ".");
+                System.out.println("Exiting primario due to symbol not being a function");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
+            System.out.println("Exiting primario via function call case");
             return new AtribExp(s.type, null, false, false);
         }
     |
@@ -335,17 +381,21 @@ AtribExp primario() :
                 s = st.getSymbol(t.image);
             } catch(SymbolNotFoundException e) {
                 System.out.println("Error: El identificador '" + t.image + "' no está definido.");
+                System.out.println("Exiting primario due to undefined symbol");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             if (s.type != Symbol.Types.ARRAY) {
                 System.out.println("Error: Se esperaba que '" + t.image + "' fuera un arreglo, pero se encontró: " + s.type + ".");
+                System.out.println("Exiting primario due to symbol not being an array");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             if (ae.type != Symbol.Types.INT) {
                 System.out.println("Error: Se esperaba que el índice del arreglo fuera un entero, pero se evaluó: tipo " 
                     + ae.type + " con valor '" + ae.image + "'.");
             }
-            Symbol.Types elemType = s.type;  
+            SymbolArray arraySymbol = (SymbolArray) s;
+            Symbol.Types elemType = arraySymbol.baseType;  
+            System.out.println("Exiting primario via array access case");
             return new AtribExp(elemType, null, false, ae.isConst && s.constant);
         }
     |
@@ -355,26 +405,47 @@ AtribExp primario() :
             try {
                 s = st.getSymbol(t.image);
                 String image = t.image;
+                System.out.println("Exiting primario via identifier case");
                 return new AtribExp(s.type, image, true, s.constant);
             } catch (SymbolNotFoundException e) {
                 System.out.println("Error: El identificador '" + t.image + "' no está definido.");
+                System.out.println("Exiting primario due to undefined identifier");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
         }
     |
         t = <tCONSTANT>
-        { return new AtribExp(Symbol.Types.INT, t.image, false, true); }
+        { 
+            System.out.println("Exiting primario via integer constant case");
+            return new AtribExp(Symbol.Types.INT, t.image, false, true); 
+        }
     |
         t = <tCHAR>
-        { return new AtribExp(Symbol.Types.CHAR, t.image, false, true); }
+        { 
+            System.out.println("Exiting primario via char constant case");
+            return new AtribExp(Symbol.Types.CHAR, t.image, false, true); 
+        }
     |
         t = <tSTRING>
-        { return new AtribExp(Symbol.Types.STRING, t.image, false, true); }
+        { 
+            System.out.println("Exiting primario via string constant case");
+            return new AtribExp(Symbol.Types.STRING, t.image, false, true); 
+        }
     |
-        t = <tTRUE> | t = <tFALSE>
-        { return new AtribExp(Symbol.Types.BOOL, t.image, false, true); }
+    t = <tTRUE>
+                { 
+            System.out.println("Exiting primario via boolean true constant case");
+            return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
+        }
+    | 
+    t = <tFALSE>
+        { 
+            System.out.println("Exiting primario via boolean false constant case");
+            return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
+        }
     )
     {
+        System.out.println("Exiting primario via default (unreachable?)");
         return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
     }
 }
@@ -382,6 +453,7 @@ AtribExp primario() :
 
 AtribExp factor() :
 {
+    System.out.println("Entering factor");
     Token op = null;
     AtribExp ae;
 }
@@ -401,13 +473,16 @@ AtribExp factor() :
                     }
                     if (ae.isConst) {
                         boolean val = Boolean.parseBoolean(ae.image);
+                        System.out.println("Exiting factor after ! operator with const result");
                         return new AtribExp(Symbol.Types.BOOL, String.valueOf(!val), false, true);
                     }
+                    System.out.println("Exiting factor after ! operator");
                     return new AtribExp(Symbol.Types.BOOL, null, false, false);
                 case "+":
                     if (ae.type != Symbol.Types.INT) {
                         throw new TypesDontMatchException("Error: El operador '+' requiere un valor entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
                     }
+                    System.out.println("Exiting factor after + operator");
                     return ae;
                 case "-":
                     if (ae.type != Symbol.Types.INT) {
@@ -415,17 +490,21 @@ AtribExp factor() :
                     }
                     if (ae.isConst) {
                         int val = Integer.parseInt(ae.image);
+                        System.out.println("Exiting factor after - operator with const result");
                         return new AtribExp(Symbol.Types.INT, String.valueOf(-val), false, true);
                     }
+                    System.out.println("Exiting factor after - operator");
                     return new AtribExp(Symbol.Types.INT, null, false, false);
             }
         }
+        System.out.println("Exiting factor with primary expression");
         return ae;
     }
 }
 
 AtribExp termino() :
 {
+    System.out.println("Entering termino");
     AtribExp left, right;
     Token op;
 }
@@ -452,11 +531,15 @@ AtribExp termino() :
             left = new AtribExp(Symbol.Types.INT, val, false, isConst);
         }
     )*
-    { return left; }
+    { 
+        System.out.println("Exiting termino");
+        return left; 
+    }
 }
 
 AtribExp expresion_simple() :
 {
+    System.out.println("Entering expresion_simple");
     AtribExp left, right;
     Token op;
     boolean isConst;
@@ -482,11 +565,15 @@ AtribExp expresion_simple() :
             left.isConst = isConst;
         }
     )*
-    { return left; }
+    { 
+        System.out.println("Exiting expresion_simple");
+        return left; 
+    }
 }
 
 AtribExp relacion() :
 {
+    System.out.println("Entering relacion");
     AtribExp left, right = null;
     Token op = null;
 }
@@ -534,11 +621,15 @@ AtribExp relacion() :
             left = new AtribExp(Symbol.Types.BOOL, val, false, isConst);
         }
     )?
-    { return right == null ? left : left; }
+    { 
+        System.out.println("Exiting relacion");
+        return right == null ? left : left; 
+    }
 }
 
 AtribExp expresion() :
 {
+    System.out.println("Entering expresion");
     AtribExp left, right;
     Token op;
     boolean isConst;
@@ -566,7 +657,10 @@ AtribExp expresion() :
             left.isConst = isConst;
         }
     )*
-    { return left; }
+    { 
+        System.out.println("Exiting expresion");
+        return left; 
+    }
 }
 
 void lista_una_o_mas_exps() :
@@ -709,15 +803,30 @@ void bucle() :
 }
 
 void parametros_declaraciones() :
-{ System.out.println("Parámetros declaraciones"); }
+{   
+    System.out.println("Parámetros declaraciones"); 
+    AtribTipo aT;
+    ArrayList<String> lVars;
+    boolean isRef = false;
+}
 {
-    tipo()
-    ( < tREF > )?
-    lista_ids()
+    // First parameter group
+    aT = tipo()
+    ( <tREF> { isRef = true; } )? // Capture 'ref' keyword
+    lVars = lista_ids()
+    {
+        insertSymbols(aT, isRef, lVars); // Insert first group
+        isRef = false; // Reset for next groups
+    }
+    // Additional parameter groups (separated by ';')
     (
-        < tSEMICOLON >
-        tipo()
-        ( < tREF > )?
-        lista_ids()
+        <tSEMICOLON>
+        aT = tipo()
+        ( <tREF> { isRef = true; } )? 
+        lVars = lista_ids()
+        {
+            insertSymbols(aT, isRef, lVars); // Insert subsequent groups
+            isRef = false;
+        }
     )*
 }
