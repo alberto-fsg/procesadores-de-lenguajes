@@ -12,7 +12,7 @@ fi
 # concatenar a mano todos los ficheros porque la versión de Java es prehistórica :D
 cat "$INPUT_DIR/main.jj" "$INPUT_DIR/tokens.jj" "$INPUT_DIR/programa.jj" \
     "$INPUT_DIR/tipos.jj" "$INPUT_DIR/variables.jj" "$INPUT_DIR/expresiones.jj" \
-    "$INPUT_DIR/funciones.jj" "$INPUT_DIR/instrucciones.jj" > "$INPUT_DIR"
+    "$INPUT_DIR/funciones.jj" "$INPUT_DIR/instrucciones.jj" > "$OUTPUT_FILE"
 
 # compilar con Apache Ant
 ant -f practica3
