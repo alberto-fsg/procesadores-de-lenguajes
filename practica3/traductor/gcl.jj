@@ -51,19 +51,19 @@ public class gcl {
 		   System.err.println("LEX_ERROR: " + e.getMessage());
 	   }
 	   catch (Exception e) {
-			// Handle the exception
-			System.err.println("An exception occurred: " + e.getMessage());
+			System.err.println("Ha ocurrido una excepción: " + e.getMessage());
 	   }
 	}
 
-    // Helper method to insert symbols into the table
+    // inserta todos los símbolos de "lVars" de tipo "aT" y los marca como ref si "isRef",
+    // auxiliar para "parametros_declaraciones" (los parámetros de la declaración de una función/procedimiento)
     private static void insertSymbols(AtribTipo aT, boolean isRef, ArrayList<String> lVars) {
     for (String id : lVars) {
         try {
             Symbol sV = null;
-            if (aT.isArray) { // Handle arrays
+            if (aT.isArray) {
                 sV = new SymbolArray(id, 0, aT.size-1, aT.type);
-            } else { // Handle basic types
+            } else {
                 switch(aT.type) {
                     case INT:
                         sV = new SymbolInt(id); break;
@@ -76,12 +76,9 @@ public class gcl {
                 }
             }
             if (sV != null) {
-                // Optional: Handle 'ref' modifier here (if supported by Symbol classes)
-                if (isRef) {
-                    System.out.println("[REF] Parámetro por referencia: " + id);
-                }
-                st.insertSymbol(sV); // Insert into symbol table
-                System.out.println("[TABLA] Insertado: " + sV.toString());
+                sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
+                st.insertSymbol(sV);
+                System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
             }
         } catch (AlreadyDefinedSymbolException e) {
             System.out.println("Error: Identificador ya existe: \"" + id + "\"");
@@ -168,21 +165,19 @@ TOKEN : {
 // deprecado al parecer, https://parsers.org/javacc21/token-hooks-revisited/
 TOKEN_MGR_DECLS : {
     public static void CommonTokenAction(Token t) {
-        // Print ALL tokens with their type and image
         System.out.printf("(%d,%d): %s \"%s\"%n", 
             t.beginLine, t.beginColumn, getTokenName(t.kind), t.image);
     }
 
-    // Get token name dynamically using reflection
+    // función épica que devuelve el token (no su lexema)
     private static String getTokenName(int kind) {
         try {
-            // Use reflection to find the token name in gclConstants
             java.lang.reflect.Field[] fields = gclConstants.class.getDeclaredFields();
             for (java.lang.reflect.Field field : fields) {
                 if (field.getType() == int.class 
                         && field.getInt(null) == kind 
                         && field.getName().startsWith("t")) {
-                    return field.getName(); // e.g., "tIDENTIFICADOR", "tASSIGN"
+                    return field.getName();
                 }
             }
             return "UNKNOWN_TOKEN";
@@ -191,15 +186,6 @@ TOKEN_MGR_DECLS : {
         }
     }
 }
-
-
-
-
-
-
-
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // 2. ANALIZADOR SINTÁCTICO
@@ -344,11 +330,11 @@ AtribExp primario() :
 }
 {
     {
-        System.out.println("Entering primario");
+        System.out.println("Entrando en primario");
     }
     (
-        // Caso: llamada a función
-        LOOKAHEAD(2)
+        // Caso: llamada a función (o procedimiento)
+        LOOKAHEAD(2) // para distinguirlo de un array o variable
         t = <tIDENTIFICADOR>
         <tOPENING_PARENTHESIS>
         parametros_llamada_funcion()
@@ -356,22 +342,22 @@ AtribExp primario() :
         {
             try {
                 s = st.getSymbol(t.image);
-            } catch(SymbolNotFoundException e) {
+            } catch (SymbolNotFoundException e) {
                 System.out.println("Error: El identificador '" + t.image + "' no está definido.");
-                System.out.println("Exiting primario due to undefined symbol");
+                System.out.println("Saliendo de primario por llamada a función (o parámetro) no definido");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             if (s.type != Symbol.Types.FUNCTION) {
-                System.out.println("Error: Se esperaba que '" + t.image + "' fuera una función, pero se encontró: " + s.type + ".");
-                System.out.println("Exiting primario due to symbol not being a function");
+                System.out.println("Error: Se esperaba que '" + t.image + "' fuera una función (o procedimiento), pero se encontró: " + s.type + ".");
+                System.out.println("Saliendo de primario por llamada a identificador que no es una función");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
-            System.out.println("Exiting primario via function call case");
-            return new AtribExp(s.type, null, false, false);
+            System.out.println("Saliendo de primario por llamada correcta a función (o procedimiento)");
+            return new AtribExp(s.type, null, false, false); // valor null por no ser evaluable en tiempo de compilación (no constante)
         }
     |
         // Caso: acceso a array
-        LOOKAHEAD(2)
+        LOOKAHEAD(2) // para distinguirlo de un array
         t = <tIDENTIFICADOR>
         <tOPENING_SQUARE_BRACKET>
         ae = expresion()
@@ -379,86 +365,89 @@ AtribExp primario() :
         {
             try {
                 s = st.getSymbol(t.image);
-            } catch(SymbolNotFoundException e) {
+            } catch (SymbolNotFoundException e) {
                 System.out.println("Error: El identificador '" + t.image + "' no está definido.");
-                System.out.println("Exiting primario due to undefined symbol");
+                System.out.println("Saliendo de primario por acceso a identificador no definido");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             if (s.type != Symbol.Types.ARRAY) {
-                System.out.println("Error: Se esperaba que '" + t.image + "' fuera un arreglo, pero se encontró: " + s.type + ".");
-                System.out.println("Exiting primario due to symbol not being an array");
+                System.out.println("Error: Se esperaba que '" + t.image + "' fuera un array, pero se encontró: " + s.type + ".");
+                System.out.println("Saliendo de primario por identificador que no es un array");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             if (ae.type != Symbol.Types.INT) {
-                System.out.println("Error: Se esperaba que el índice del arreglo fuera un entero, pero se evaluó: tipo " 
-                    + ae.type + " con valor '" + ae.image + "'.");
+                System.out.println("Error: Se esperaba que el índice del array fuera un entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
             }
             SymbolArray arraySymbol = (SymbolArray) s;
             Symbol.Types elemType = arraySymbol.baseType;  
-            System.out.println("Exiting primario via array access case");
-            return new AtribExp(elemType, null, false, ae.isConst && s.constant);
+            System.out.println("Saliendo de primario por acceso a array");
+            return new AtribExp(elemType, null, false, ae.isConst && s.constant); // valor null por no ser evaluable en tiempo de compilación (no constante)
         }
     |
-        // Caso: identificador
+        // Caso: variable
         t = <tIDENTIFICADOR>
         {
             try {
                 s = st.getSymbol(t.image);
                 String image = t.image;
-                System.out.println("Exiting primario via identifier case");
-                return new AtribExp(s.type, image, true, s.constant);
+                System.out.println("Saliendo de primario por variable");
+                return new AtribExp(s.type, null, true, false); // valor null por no ser evaluable en tiempo de compilación (no existen variables constante en gcl)
             } catch (SymbolNotFoundException e) {
                 System.out.println("Error: El identificador '" + t.image + "' no está definido.");
-                System.out.println("Exiting primario due to undefined identifier");
+                System.out.println("Saliendo de primario por identificador no definido");
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
         }
     |
+        // Caso: constante int
         t = <tCONSTANT>
         { 
-            System.out.println("Exiting primario via integer constant case");
+            System.out.println("Saliendo de primario por constante entera");
             return new AtribExp(Symbol.Types.INT, t.image, false, true); 
         }
     |
+        // Caso: constante char
         t = <tCHAR>
         { 
-            System.out.println("Exiting primario via char constant case");
+            System.out.println("Saliendo de primario por constante de tipo char");
             return new AtribExp(Symbol.Types.CHAR, t.image, false, true); 
         }
     |
+        // Caso: constante string
         t = <tSTRING>
         { 
-            System.out.println("Exiting primario via string constant case");
+            System.out.println("Saliendo de primario por constante de tipo string");
             return new AtribExp(Symbol.Types.STRING, t.image, false, true); 
         }
     |
-    t = <tTRUE>
-                { 
-            System.out.println("Exiting primario via boolean true constant case");
+        // Caso: constante true
+        t = <tTRUE>
+        { 
+            System.out.println("Saliendo de primario por constante booleana true");
             return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
         }
-    | 
-    t = <tFALSE>
+    |
+        // Caso: constante false
+        t = <tFALSE>
         { 
-            System.out.println("Exiting primario via boolean false constant case");
+            System.out.println("Saliendo de primario por constante booleana false");
             return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
         }
     )
     {
-        System.out.println("Exiting primario via default (unreachable?)");
+        System.out.println("Saliendo de primario por caso no identificado (¿inaccesible?)");
         return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
     }
 }
 
-
 AtribExp factor() :
 {
-    System.out.println("Entering factor");
+    System.out.println("Entrando en factor");
     Token op = null;
     AtribExp ae;
 }
 {
-    ( op = <tNOT> | op = <tPLUS> | op = <tMINUS> )?
+    (op = <tNOT> | op = <tPLUS> | op = <tMINUS>)?
     (
         <tOPENING_PARENTHESIS> ae = expresion() <tCLOSING_PARENTHESIS>
     |
@@ -466,45 +455,40 @@ AtribExp factor() :
     )
     {
         if (op != null) {
-            switch (op.image) {
-                case "!":
-                    if (ae.type != Symbol.Types.BOOL) {
-                        throw new TypesDontMatchException("Error: El operador '!' requiere un valor booleano, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
-                    }
-                    if (ae.isConst) {
-                        boolean val = Boolean.parseBoolean(ae.image);
-                        System.out.println("Exiting factor after ! operator with const result");
-                        return new AtribExp(Symbol.Types.BOOL, String.valueOf(!val), false, true);
-                    }
-                    System.out.println("Exiting factor after ! operator");
-                    return new AtribExp(Symbol.Types.BOOL, null, false, false);
-                case "+":
-                    if (ae.type != Symbol.Types.INT) {
-                        throw new TypesDontMatchException("Error: El operador '+' requiere un valor entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
-                    }
-                    System.out.println("Exiting factor after + operator");
-                    return ae;
-                case "-":
-                    if (ae.type != Symbol.Types.INT) {
-                        throw new TypesDontMatchException("Error: El operador '-' requiere un valor entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
-                    }
-                    if (ae.isConst) {
-                        int val = Integer.parseInt(ae.image);
-                        System.out.println("Exiting factor after - operator with const result");
-                        return new AtribExp(Symbol.Types.INT, String.valueOf(-val), false, true);
-                    }
-                    System.out.println("Exiting factor after - operator");
-                    return new AtribExp(Symbol.Types.INT, null, false, false);
+            if ((op.image.equals("!") && ae.type != Symbol.Types.BOOL) ||
+                ((op.image.equals("+") || op.image.equals("-")) && ae.type != Symbol.Types.INT)) {
+                throw new TypesDontMatchException(
+                    "Error: El operador '" + op.image + "' requiere un valor del tipo adecuado, pero se evaluó: "
+                    + "tipo " + ae.type + " con valor '" + ae.image + "'."
+                );
             }
+            
+            boolean isConst = ae.isConst;
+            String val = null;
+            
+            if (isConst) {
+                if (op.image.equals("!")) {
+                    val = String.valueOf(!Boolean.parseBoolean(ae.image));
+                } else {
+                    int num = Integer.parseInt(ae.image);
+                    val = op.image.equals("-") ? String.valueOf(-num) : String.valueOf(num);
+                }
+            }
+            
+            System.out.println("Saliendo de factor tras operador " + op.image + 
+                               (isConst ? " con resultado constante" : " con resultado no constante"));
+            return new AtribExp(op.image.equals("!") ? Symbol.Types.BOOL : Symbol.Types.INT, val, false, isConst);
         }
-        System.out.println("Exiting factor with primary expression");
+        
+        System.out.println("Saliendo de factor con expresión primaria");
         return ae;
     }
 }
 
+
 AtribExp termino() :
 {
-    System.out.println("Entering termino");
+    System.out.println("Entrando en termino");
     AtribExp left, right;
     Token op;
 }
@@ -515,65 +499,89 @@ AtribExp termino() :
         right = factor()
         {
             if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                throw new TypesDontMatchException("Error: Los operadores multiplicativos requieren valores enteros. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
+                throw new TypesDontMatchException(
+                    "Error: Los operadores multiplicativos requieren valores enteros. Se evaluó: "
+                    + "left.type = " + left.type + " con valor '" + left.image 
+                    + "', right.type = " + right.type + " con valor '" + right.image + "'."
+                );
             }
             boolean isConst = left.isConst && right.isConst;
             String val = null;
+            
             if (isConst) {
                 int l = Integer.parseInt(left.image);
                 int r = Integer.parseInt(right.image);
+                
                 switch (op.image) {
-                    case "*": val = String.valueOf(l * r); break;
-                    case "/": val = r != 0 ? String.valueOf(l / r) : "0"; break;
-                    case "%": val = String.valueOf(l % r); break;
+                    case "*":
+                        val = String.valueOf(l * r);
+                        break;
+                    case "/":
+                        val = (r != 0) ? String.valueOf(l / r) : "0"; 
+                        break;
+                    case "%":
+                        val = String.valueOf(l % r);
+                        break;
                 }
             }
+            
             left = new AtribExp(Symbol.Types.INT, val, false, isConst);
         }
     )*
     { 
-        System.out.println("Exiting termino");
+        System.out.println("Saliendo de termino");
         return left; 
     }
 }
 
 AtribExp expresion_simple() :
 {
-    System.out.println("Entering expresion_simple");
+    System.out.println("Entrando en expresion_simple");
     AtribExp left, right;
     Token op;
     boolean isConst;
 }
 {
     left = termino()
-    { isConst = left.isConst; }
+    { 
+        isConst = left.isConst; 
+    }
     (
-        ( op = <tPLUS> | op = <tMINUS> )
+        (op = <tPLUS> | op = <tMINUS>)
         right = termino()
         {
             if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                throw new TypesDontMatchException("Error: Los operadores aditivos requieren valores enteros. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
+                throw new TypesDontMatchException(
+                    "Error: Los operadores aditivos requieren valores enteros. Se evaluó: "
+                    + "left.type = " + left.type + " con valor '" + left.image 
+                    + "', right.type = " + right.type + " con valor '" + right.image + "'."
+                );
             }
+            
             isConst = isConst && right.isConst;
+            
             if (isConst) {
                 int l = Integer.parseInt(left.image);
                 int r = Integer.parseInt(right.image);
-                left.image = op.image.equals("+") ? String.valueOf(l + r) : String.valueOf(l - r);
+                
+                left.image = op.image.equals("+") ? String.valueOf(l + r): String.valueOf(l - r);
             } else {
                 left.image = null;
             }
+            
             left.isConst = isConst;
         }
     )*
     { 
-        System.out.println("Exiting expresion_simple");
+        System.out.println("Saliendo de expresion_simple");
         return left; 
     }
 }
 
+
 AtribExp relacion() :
 {
-    System.out.println("Entering relacion");
+    System.out.println("Entrando en relacion");
     AtribExp left, right = null;
     Token op = null;
 }
@@ -585,18 +593,29 @@ AtribExp relacion() :
         {
             if (op.image.matches("=|!=")) {
                 if (left.type != right.type) {
-                    throw new TypesDontMatchException("Error: Los operandos para el operador '" + op.image + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
+                    throw new TypesDontMatchException(
+                        "Error: Los operandos para el operador '" + op.image 
+                        + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
+                        + " con valor '" + left.image + "', right.type = " + right.type 
+                        + " con valor '" + right.image + "'."
+                    );
                 }
             } else {
                 if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                    throw new TypesDontMatchException("Error: Los operadores relacionales requieren valores enteros. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'.");
+                    throw new TypesDontMatchException(
+                        "Error: Los operadores relacionales requieren valores enteros. Se evaluó: "
+                        + "left.type = " + left.type + " con valor '" + left.image 
+                        + "', right.type = " + right.type + " con valor '" + right.image + "'."
+                    );
                 }
             }
             
             boolean isConst = left.isConst && right.isConst;
             String val = null;
+            
             if (isConst) {
                 boolean result = false;
+                
                 switch (left.type) {
                     case INT:
                         int l = Integer.parseInt(left.image);
@@ -610,58 +629,73 @@ AtribExp relacion() :
                             case ">=": result = (l >= r); break;
                         }
                         break;
+                        
                     case BOOL:
                         boolean bl = Boolean.parseBoolean(left.image);
                         boolean br = Boolean.parseBoolean(right.image);
-                        result = (op.image.equals("=")) ? (bl == br) : (bl != br);
+                        result = op.image.equals("=") ? (bl == br) : (bl != br);
                         break;
                 }
+                
                 val = String.valueOf(result);
             }
+            
             left = new AtribExp(Symbol.Types.BOOL, val, false, isConst);
         }
     )?
     { 
-        System.out.println("Exiting relacion");
-        return right == null ? left : left; 
+        System.out.println("Saliendo de relacion");
+        return left;
     }
 }
 
 AtribExp expresion() :
 {
-    System.out.println("Entering expresion");
+    System.out.println("Entrando en expresion");
     AtribExp left, right;
     Token op;
     boolean isConst;
 }
 {
     left = relacion()
-    { isConst = left.isConst; }
+    { 
+        isConst = left.isConst; 
+    }
     (
-        ( op = <tAND> | op = <tOR> )
+        (op = <tAND> | op = <tOR>)
         right = relacion()
         {
             if (left.type != Symbol.Types.BOOL || right.type != Symbol.Types.BOOL) {
-                throw new TypesDontMatchException("Error: Los operadores lógicos requieren valores booleanos. Se evaluó: left.type = " + left.type + " con valor '" + left.image + "', right.type = " + right.type + " con valor '" + right.image + "'. Al menos uno de ellos no es booleano.");
+                throw new TypesDontMatchException(
+                    "Error: Los operadores lógicos requieren valores booleanos. Se evaluó: "
+                    + "left.type = " + left.type + " con valor '" + left.image 
+                    + "', right.type = " + right.type + " con valor '" + right.image 
+                    + "'. Al menos uno de ellos no es booleano."
+                );
             }
+            
             isConst = isConst && right.isConst;
+            
             if (isConst) {
                 boolean l = Boolean.parseBoolean(left.image);
                 boolean r = Boolean.parseBoolean(right.image);
+                
                 left.image = op.image.equals("&") 
                     ? String.valueOf(l && r) 
                     : String.valueOf(l || r);
             } else {
                 left.image = null;
             }
+            
             left.isConst = isConst;
         }
     )*
     { 
-        System.out.println("Exiting expresion");
+        System.out.println("Saliendo de expresion");
         return left; 
     }
 }
+
 
 void lista_una_o_mas_exps() :
 {}
@@ -731,10 +765,39 @@ void declaracion_proc() :
 }
 
 void declaracion_func() :
-{ System.out.println("Declaración de función"); }
+{ System.out.println("Declaración de función"); 
+  Symbol sFunc;
+  Token t;
+  AtribTipo aT;
+}
 {
-    tipoEscalar()
-    <tIDENTIFICADOR>
+    aT = tipoEscalar()
+    t = <tIDENTIFICADOR>
+    // crear la variable del return
+    {
+    try {
+        sFunc = null;
+        switch (aT.type) {
+            case INT:
+                sFunc = new SymbolInt(t.image);
+                break;
+            case BOOL:
+                sFunc = new SymbolBool(t.image);
+                break;
+            case CHAR:
+                sFunc = new SymbolChar(t.image);
+                break;
+            default:
+                System.out.println("Error: tipo no definido para función \"" + t.image + "\".");
+        }
+        if (sFunc != null) {
+            st.insertSymbol(sFunc);
+            System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sFunc.toString());
+        }
+    } catch (AlreadyDefinedSymbolException e) {
+        System.out.println("Error: ya existe una variable o función con identificador \"" + t.image + "\" (No debería ocurrir nunca (estamos abriendo un nuevo bloque)");
+    }
+    }
     < tOPENING_PARENTHESIS >
     ( parametros_declaraciones() )*
     < tCLOSING_PARENTHESIS >
@@ -762,6 +825,33 @@ void parametros_llamada_funcion() :
     (<tCOMA> expresion() )*
     //( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
     //(<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() ))*
+}
+
+void parametros_declaraciones() :
+{   
+    System.out.println("Parámetros declaraciones"); 
+    AtribTipo aT;
+    ArrayList<String> lVars;
+    boolean isRef = false;
+}
+{
+    aT = tipo()
+    ( <tREF> { isRef = true; } )?
+    lVars = lista_ids()
+    {
+        insertSymbols(aT, isRef, lVars);
+        isRef = false; // "resetear" isRef
+    }
+    (
+        <tSEMICOLON>
+        aT = tipo()
+        ( <tREF> { isRef = true; } )? 
+        lVars = lista_ids()
+        {
+            insertSymbols(aT, isRef, lVars);
+            isRef = false; // "resetear" isRef
+        }
+    )*
 }
 
 // --- Instrucciones ----------------------------------------------------------
@@ -800,33 +890,4 @@ void bucle() :
     expresion()
     instrucciones()
     < tEND_ITERATION >
-}
-
-void parametros_declaraciones() :
-{   
-    System.out.println("Parámetros declaraciones"); 
-    AtribTipo aT;
-    ArrayList<String> lVars;
-    boolean isRef = false;
-}
-{
-    // First parameter group
-    aT = tipo()
-    ( <tREF> { isRef = true; } )? // Capture 'ref' keyword
-    lVars = lista_ids()
-    {
-        insertSymbols(aT, isRef, lVars); // Insert first group
-        isRef = false; // Reset for next groups
-    }
-    // Additional parameter groups (separated by ';')
-    (
-        <tSEMICOLON>
-        aT = tipo()
-        ( <tREF> { isRef = true; } )? 
-        lVars = lista_ids()
-        {
-            insertSymbols(aT, isRef, lVars); // Insert subsequent groups
-            isRef = false;
-        }
-    )*
 }
