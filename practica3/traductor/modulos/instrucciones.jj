@@ -7,12 +7,11 @@ void instrucciones() :
 void instruccion() :
 { System.out.println("Instrucción"); }
 {
-    LOOKAHEAD(2)
     llamar_funcion()
-|   asignacion()
+|   LOOKAHEAD(2) asignacion()
 |   seleccion()
 |   bucle()
-|   declaracion_procs_funcs()
+|   LOOKAHEAD(2) declaracion_procs_funcs()
 |   < tABANDONAR > < tSEMICOLON>
 |   < tNADA > < tSEMICOLON>
 }
