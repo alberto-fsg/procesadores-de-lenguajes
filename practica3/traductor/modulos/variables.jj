@@ -60,10 +60,6 @@ void declaracion() :
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-/** Asignación variables */
-
 void asignacion() :
 { System.out.println("Asignacion"); }
 {
