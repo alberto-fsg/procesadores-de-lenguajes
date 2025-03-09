@@ -1,0 +1,37 @@
+// --- Instrucciones ----------------------------------------------------------
+void instrucciones() :
+{ System.out.println("Instrucciones"); }
+{
+    ( instruccion() )*
+}
+
+void instruccion() :
+{ System.out.println("Instrucción"); }
+{
+    LOOKAHEAD(2)
+    llamar_funcion()
+|   asignacion()
+|   seleccion()
+|   bucle()
+|   declaracion_procs_funcs()
+|   < tABANDONAR > < tSEMICOLON>
+|   < tNADA > < tSEMICOLON>
+}
+
+void seleccion() :
+{ System.out.println("Selección"); }
+{
+    < tSELECTION > 
+    ( < tCASE > expresion() < tCOLON > instrucciones() )+
+    [ < tOTHERWISE > < tCOLON > instrucciones() ]
+    < tEND_SELECTION >
+}
+
+void bucle() :
+{ System.out.println("Bucle"); }
+{
+    < tITERATION >
+    expresion()
+    instrucciones()
+    < tEND_ITERATION >
+}

@@ -1,0 +1,43 @@
+///////////////////////////////////////////////////////////////////////////////
+
+/** Tipos */
+
+AtribTipo tipo() :
+{
+    AtribTipo aT;
+}
+{
+    (
+        LOOKAHEAD(2) 
+        aT = tipoArray() 
+        | aT = tipoEscalar()
+    )
+    { return aT; }
+}
+
+AtribTipo tipoEscalar() :
+{}
+{
+    <tINTEGER>      { return new AtribTipo(Symbol.Types.INT ); }
+    | <tCHARACTER>  { return new AtribTipo(Symbol.Types.CHAR); }
+    | <tBOOLEAN>    { return new AtribTipo(Symbol.Types.BOOL); }
+}
+
+AtribTipo tipoArray() :
+{
+    Symbol.Types t;
+    AtribExp aE;
+}
+{
+    (
+        <tCHARACTER> { t = Symbol.Types.CHAR; }
+        | <tBOOLEAN> { t = Symbol.Types.BOOL; }
+        | <tINTEGER> { t = Symbol.Types.INT; }
+    )
+    <tOPENING_SQUARE_BRACKET>
+    aE = expresion_simple()
+    <tCLOSING_SQUARE_BRACKET>
+    {
+        return new AtribTipo(t, Integer.parseInt(aE.image));
+    }
+}

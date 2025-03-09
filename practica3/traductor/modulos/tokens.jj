@@ -1,0 +1,98 @@
+// sacado de https://cs.lmu.edu/~ray/notes/javacc/
+// "preprocesado"
+SKIP: {
+  " "
+| "\t"
+| "\n"
+| "\r"
+| <"--" (~["\n","\r"])* ("\n"|"\r")> // comentarios monolínea
+}
+
+// auxiliares
+TOKEN : {
+	< #LETTER: (["a"-"z","A"-"Z"]) >
+|	< #DIGIT: ["0"-"9"] >
+}
+
+// todos los tokens de gcl
+// tOTHER no es léxicamente válido, el resto de tokens si
+TOKEN : {
+     // palabras reservadas
+     < tPROGRAMA: "Programa" >
+|    < tREF: "ref" > 
+|    < tINTEGER: "entero" >
+|    < tCHARACTER: "caracter" >
+|    < tBOOLEAN: "booleano" >
+|    < tSELECTION: "Sel" >
+|    < tEND_SELECTION: "Fsel" >
+|    < tCASE: "caso" >
+|    < tITERATION: "Mq" >
+|    < tEND_ITERATION: "FMq" >
+|    < tBEGGINING: "Principio" >
+|    < tEND: "Fin" >
+|    < tTRUE: "verdadero" >
+|    < tFALSE: "falso" >
+|    < tOTHERWISE: "dlc" >
+|    < tABANDONAR: "abandonar" > 
+|    < tNADA: "nada" >
+    
+     // literales
+|    < tSTRING: "\"" ( ("\"\"") | ~["\""] )* "\"" >
+|    < tCHAR: "'''" | "'" ~[] "'" > 
+|    < tCONSTANT: ( <DIGIT> )+ >
+    
+     // operadores y símbolos
+|    < tCOMA: "," >
+|    < tSEMICOLON: ";" >
+|    < tUNDERSCORE: "_" >
+|    < tASSIGN: ":=" >
+|    < tOPENING_SQUARE_BRACKET: "[" >
+|    < tCLOSING_SQUARE_BRACKET: "]" >
+|    < tCOLON: ":" >
+|    < tOPENING_PARENTHESIS: "(" >
+|    < tCLOSING_PARENTHESIS: ")" >
+|    < tPLUS: "+" >
+|    < tMINUS: "-" >
+|    < tTIMES: "*" >
+|    < tDIVIDE: "/" >
+|    < tMOD: "mod" >
+|    < tAND: "&" >
+|    < tOR: "|" >
+|    < tNOT: "!" >
+|    < tGT: ">" >
+|    < tGE: ">=" >
+|    < tLT: "<" >
+|    < tLE: "<=" >
+|    < tEQUAL: "=" >
+|    < tNOTEQUAL: "<>" >
+|    < tDOT: "." >
+
+|    < tIDENTIFICADOR: ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )* >
+
+|    < tOTHER: ~[] >  // tOTHER no es léxicamente válido, el resto de tokens si
+}
+
+// deprecado al parecer, https://parsers.org/javacc21/token-hooks-revisited/
+TOKEN_MGR_DECLS : {
+    public static void CommonTokenAction(Token t) {
+        System.out.printf("(%d,%d): %s \"%s\"%n", 
+            t.beginLine, t.beginColumn, getTokenName(t.kind), t.image);
+    }
+
+    // función épica que devuelve el token (no su lexema)
+    private static String getTokenName(int kind) {
+        try {
+            java.lang.reflect.Field[] fields = gclConstants.class.getDeclaredFields();
+            for (java.lang.reflect.Field field : fields) {
+                if (field.getType() == int.class 
+                        && field.getInt(null) == kind 
+                        && field.getName().startsWith("t")) {
+                    return field.getName();
+                }
+            }
+            return "UNKNOWN_TOKEN";
+        } catch (IllegalAccessException e) {
+            return "ERROR: " + e.getMessage();
+        }
+    }
+}

@@ -1,0 +1,17 @@
+///////////////////////////////////////////////////////////////////////////////
+// 2. ANALIZADOR SINTÁCTICO
+///////////////////////////////////////////////////////////////////////////////
+
+/** Programa */
+
+void Programa() :
+{}
+{
+    < tPROGRAMA >
+    < tIDENTIFICADOR >
+    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( declaracion_procs_funcs() )*
+    < tBEGGINING >
+    instrucciones()
+    < tEND >
+}

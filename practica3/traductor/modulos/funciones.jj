@@ -1,0 +1,113 @@
+///////////////////////////////////////////////////////////////////////////////
+
+/** Funciones y procedimientos */
+
+void declaracion_procs_funcs() :
+{ System.out.println("Declaración de procedimientos/funciones"); }
+{
+    ( declaracion_proc() | declaracion_func() )+
+}
+
+void declaracion_proc() :
+{ System.out.println("Declaración de procedimiento"); }
+{
+    <tIDENTIFICADOR>
+    < tOPENING_PARENTHESIS >
+    ( parametros_declaraciones() )*
+    < tCLOSING_PARENTHESIS >
+    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( declaracion_procs_funcs() )*
+    < tBEGGINING >
+    instrucciones()
+    < tEND >
+}
+
+void declaracion_func() :
+{ System.out.println("Declaración de función"); 
+  Symbol sFunc;
+  Token t;
+  AtribTipo aT;
+}
+{
+    aT = tipoEscalar()
+    t = <tIDENTIFICADOR>
+    // crear la variable del return
+    {
+    try {
+        sFunc = null;
+        switch (aT.type) {
+            case INT:
+                sFunc = new SymbolInt(t.image);
+                break;
+            case BOOL:
+                sFunc = new SymbolBool(t.image);
+                break;
+            case CHAR:
+                sFunc = new SymbolChar(t.image);
+                break;
+            default:
+                System.out.println("Error: tipo no definido para función \"" + t.image + "\".");
+        }
+        if (sFunc != null) {
+            st.insertSymbol(sFunc);
+            System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sFunc.toString());
+        }
+    } catch (AlreadyDefinedSymbolException e) {
+        System.out.println("Error: ya existe una variable o función con identificador \"" + t.image + "\" (No debería ocurrir nunca (estamos abriendo un nuevo bloque)");
+    }
+    }
+    < tOPENING_PARENTHESIS >
+    ( parametros_declaraciones() )*
+    < tCLOSING_PARENTHESIS >
+    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( declaracion_procs_funcs() )*
+    < tBEGGINING >
+    instrucciones()
+    < tEND >
+}
+
+void llamar_funcion() :
+{ System.out.println("Llamar función"); }
+{
+    < tIDENTIFICADOR >
+    < tOPENING_PARENTHESIS >
+    parametros_llamada_funcion()
+    < tCLOSING_PARENTHESIS >
+    < tSEMICOLON >
+}
+
+void parametros_llamada_funcion() :
+{ System.out.println("Parámetros llamada función"); }
+{
+    ( expresion() )?
+    (<tCOMA> expresion() )*
+    //( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
+    //(<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() ))*
+}
+
+void parametros_declaraciones() :
+{   
+    System.out.println("Parámetros declaraciones"); 
+    AtribTipo aT;
+    ArrayList<String> lVars;
+    boolean isRef = false;
+}
+{
+    aT = tipo()
+    ( <tREF> { isRef = true; } )?
+    lVars = lista_ids()
+    {
+        insertSymbols(aT, isRef, lVars);
+        isRef = false; // "resetear" isRef
+    }
+    (
+        <tSEMICOLON>
+        aT = tipo()
+        ( <tREF> { isRef = true; } )? 
+        lVars = lista_ids()
+        {
+            insertSymbols(aT, isRef, lVars);
+            isRef = false; // "resetear" isRef
+        }
+    )*
+}

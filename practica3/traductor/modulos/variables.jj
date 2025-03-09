@@ -1,0 +1,79 @@
+///////////////////////////////////////////////////////////////////////////////
+
+/** Declaración variables */
+
+void declaracion_variables() :
+{}
+{
+    ( LOOKAHEAD(3) declaracion() )+
+}
+
+ArrayList<String> lista_ids() :
+{
+    ArrayList<String> lVars = new ArrayList<String>();
+    Token t;
+}
+{
+    t = <tIDENTIFICADOR>
+    { lVars.add(t.image); }
+    (
+        <tCOMA>
+        t = <tIDENTIFICADOR>
+        { lVars.add(t.image); }
+    )*
+    { return lVars; }
+}
+
+void declaracion() :
+{
+    AtribTipo aT;
+    ArrayList<String> lVars;
+}
+{
+    aT = tipo()
+    lVars = lista_ids()
+    <tSEMICOLON>
+    {
+        for(String id : lVars) {
+            try {
+                Symbol sV = null;
+                if(aT.isArray) {
+                    sV = new SymbolArray(id, 0, aT.size-1, aT.type);
+                } else {
+                    switch(aT.type) {
+                        case INT:
+                            sV = new SymbolInt(id); break;
+                        case BOOL:
+                            sV = new SymbolBool(id); break;
+                        case CHAR:
+                            sV = new SymbolChar(id); break;
+                        default:
+                            System.out.println("Error: tipo no definido para variable \"" +
+                                id + "\".");
+                    }
+                }
+                if(sV != null) {
+                    st.insertSymbol(sV);
+                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                }
+            } catch(AlreadyDefinedSymbolException e) {
+                System.out.println("Error: ya existe variable con identificador \"" +
+                    id + "\".");
+            }
+        }
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/** Asignación variables */
+
+void asignacion() :
+{ System.out.println("Asignacion"); }
+{
+    < tIDENTIFICADOR >
+    ( < tOPENING_SQUARE_BRACKET > expresion_simple() < tCLOSING_SQUARE_BRACKET > )?
+    < tASSIGN >
+    expresion()
+    < tSEMICOLON >
+}
