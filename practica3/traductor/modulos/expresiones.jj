@@ -226,7 +226,7 @@ AtribExp expresion_simple() :
         isConst = left.isConst; 
     }
     (
-        (op = <tPLUS> | op = <tMINUS>)
+        LOOKAHEAD(2) (op = <tPLUS> | op = <tMINUS>)
         right = termino()
         {
             if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
