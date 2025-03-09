@@ -850,7 +850,7 @@ void instrucciones() :
 void instruccion() :
 { System.out.println("Instrucción"); }
 {
-    llamar_funcion()
+    LOOKAHEAD(2) llamar_funcion()
 |   LOOKAHEAD(2) asignacion()
 |   seleccion()
 |   bucle()
