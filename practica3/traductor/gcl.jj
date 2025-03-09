@@ -1,6 +1,7 @@
 // AUTOGENERADO - NO EDITAR MANUALMENTE
 // Este archivo se genera automáticamente por build.sh
 
+// --- INICIO DE main.jj ---
 //*****************************************************************
 // File:   gcl.jj
 // Author: Procesadores de Lenguajes-University of Zaragoza
@@ -91,6 +92,8 @@ public class gcl {
 }
 PARSER_END(gcl)
 
+
+// --- INICIO DE tokens.jj ---
 // sacado de https://cs.lmu.edu/~ray/notes/javacc/
 // "preprocesado"
 SKIP: {
@@ -188,11 +191,13 @@ TOKEN_MGR_DECLS : {
             return "ERROR: " + e.getMessage();
         }
     }
-}///////////////////////////////////////////////////////////////////////////////
+}
+
+
+// --- INICIO DE programa.jj ---
+///////////////////////////////////////////////////////////////////////////////
 // 2. ANALIZADOR SINTÁCTICO
 ///////////////////////////////////////////////////////////////////////////////
-
-/** Programa */
 
 void Programa() :
 {}
@@ -205,10 +210,9 @@ void Programa() :
     instrucciones()
     < tEND >
 }
-///////////////////////////////////////////////////////////////////////////////
 
-/** Tipos */
 
+// --- INICIO DE tipos.jj ---
 AtribTipo tipo() :
 {
     AtribTipo aT;
@@ -247,10 +251,10 @@ AtribTipo tipoArray() :
     {
         return new AtribTipo(t, Integer.parseInt(aE.image));
     }
-}///////////////////////////////////////////////////////////////////////////////
+}
 
-/** Declaración variables */
 
+// --- INICIO DE variables.jj ---
 void declaracion_variables() :
 {}
 {
@@ -325,10 +329,10 @@ void asignacion() :
     < tASSIGN >
     expresion()
     < tSEMICOLON >
-}///////////////////////////////////////////////////////////////////////////////
+}
 
-/** Expresiones */
 
+// --- INICIO DE expresiones.jj ---
 // orden de prioridad de expansión (cuanto más izquierda, más prioridad)
 // primario - factor - termino - expresion_simple - relacion - expresion
 
@@ -734,10 +738,10 @@ Token operador_relacional() :
   | t = <tLE>       { return t; }
   | t = <tGT>       { return t; }
   | t = <tGE>       { return t; }
-}///////////////////////////////////////////////////////////////////////////////
+}
 
-/** Funciones y procedimientos */
 
+// --- INICIO DE funciones.jj ---
 void declaracion_procs_funcs() :
 { System.out.println("Declaración de procedimientos/funciones"); }
 {
@@ -817,8 +821,6 @@ void parametros_llamada_funcion() :
 {
     ( expresion() )?
     (<tCOMA> expresion() )*
-    //( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
-    //(<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() ))*
 }
 
 void parametros_declaraciones() :
@@ -846,7 +848,10 @@ void parametros_declaraciones() :
             isRef = false; // "resetear" isRef
         }
     )*
-}// --- Instrucciones ----------------------------------------------------------
+}
+
+
+// --- INICIO DE instrucciones.jj ---
 void instrucciones() :
 { System.out.println("Instrucciones"); }
 {
@@ -883,3 +888,5 @@ void bucle() :
     instrucciones()
     < tEND_ITERATION >
 }
+
+

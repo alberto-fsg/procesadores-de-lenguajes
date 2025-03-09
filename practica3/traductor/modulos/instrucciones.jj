@@ -1,4 +1,3 @@
-// --- Instrucciones ----------------------------------------------------------
 void instrucciones() :
 { System.out.println("Instrucciones"); }
 {

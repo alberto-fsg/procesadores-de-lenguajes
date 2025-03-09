@@ -1,7 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////
-
-/** Funciones y procedimientos */
-
 void declaracion_procs_funcs() :
 { System.out.println("Declaración de procedimientos/funciones"); }
 {
@@ -81,8 +77,6 @@ void parametros_llamada_funcion() :
 {
     ( expresion() )?
     (<tCOMA> expresion() )*
-    //( LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() )?
-    //(<tCOMA>  (LOOKAHEAD(2) <tIDENTIFICADOR> <tOPENING_SQUARE_BRACKET> expresion_simple() <tCLOSING_SQUARE_BRACKET> | <tIDENTIFICADOR> | expresion() ))*
 }
 
 void parametros_declaraciones() :

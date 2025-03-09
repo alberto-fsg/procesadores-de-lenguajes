@@ -14,10 +14,37 @@ echo "// AUTOGENERADO - NO EDITAR MANUALMENTE" > "$OUTPUT_FILE"
 echo "// Este archivo se genera automáticamente por build.sh" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
+# ficheros que componen gcl.jj
+FILES=(
+    "main.jj"
+    "tokens.jj"
+    "programa.jj"
+    "tipos.jj"
+    "variables.jj"
+    "expresiones.jj"
+    "funciones.jj"
+    "instrucciones.jj"
+)
+
 # concatenar a mano todos los ficheros porque la versión de Java es prehistórica :D
-cat "$INPUT_DIR/main.jj" "$INPUT_DIR/tokens.jj" "$INPUT_DIR/programa.jj" \
-    "$INPUT_DIR/tipos.jj" "$INPUT_DIR/variables.jj" "$INPUT_DIR/expresiones.jj" \
-    "$INPUT_DIR/funciones.jj" "$INPUT_DIR/instrucciones.jj" >> "$OUTPUT_FILE"
+for file in "${FILES[@]}"; do
+    FILE_PATH="$INPUT_DIR/$file"
+
+    # imprimir 1 WARNING por cada fichero inexistente
+    if [ ! -f "$FILE_PATH" ]; then
+        echo "⚠️ WARNING: El archivo $file no existe en $INPUT_DIR y será omitido." >&2
+        continue
+    fi
+
+    # imprimir 1 WARNING por cada fichero que no acabe en \n (viva la consistencia)
+    if [ -n "$(tail -c1 "$FILE_PATH" | tr -d '\n')" ]; then
+        echo "⚠️ WARNING: El archivo $file no termina en una nueva línea (\n)." >&2
+    fi
+
+    echo "// --- INICIO DE $file ---" >> "$OUTPUT_FILE" # concatenar cabecera
+    cat "$FILE_PATH" >> "$OUTPUT_FILE" # concatenar cuerpo
+    echo -e "\n" >> "$OUTPUT_FILE" # concatenar \n
+done
 
 # compilar con Apache Ant
 ant -f practica3

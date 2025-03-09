@@ -1,7 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////
-
-/** Expresiones */
-
 // orden de prioridad de expansión (cuanto más izquierda, más prioridad)
 // primario - factor - termino - expresion_simple - relacion - expresion
 
