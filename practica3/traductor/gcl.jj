@@ -96,7 +96,6 @@ PARSER_END(gcl)
 // 2. ANALIZADOR SINTÁCTICO
 ///////////////////////////////////////////////////////////////////////////////
 
-
 // --- INICIO DE tokens.jj ---
 // sacado de https://cs.lmu.edu/~ray/notes/javacc/
 // "preprocesado"
@@ -197,7 +196,6 @@ TOKEN_MGR_DECLS : {
     }
 }
 
-
 // --- INICIO DE programa.jj ---
 void Programa() :
 {}
@@ -210,7 +208,6 @@ void Programa() :
     instrucciones()
     < tEND >
 }
-
 
 // --- INICIO DE tipos.jj ---
 AtribTipo tipo() :
@@ -252,7 +249,6 @@ AtribTipo tipoArray() :
         return new AtribTipo(t, Integer.parseInt(aE.image));
     }
 }
-
 
 // --- INICIO DE variables.jj ---
 void declaracion_variables() :
@@ -326,7 +322,6 @@ void asignacion() :
     expresion()
     < tSEMICOLON >
 }
-
 
 // --- INICIO DE expresiones.jj ---
 // orden de prioridad de expansión (cuanto más izquierda, más prioridad)
@@ -736,7 +731,6 @@ Token operador_relacional() :
   | t = <tGE>       { return t; }
 }
 
-
 // --- INICIO DE funciones.jj ---
 void declaracion_procs_funcs() :
 { System.out.println("Declaración de procedimientos/funciones"); }
@@ -846,7 +840,6 @@ void parametros_declaraciones() :
     )*
 }
 
-
 // --- INICIO DE instrucciones.jj ---
 void instrucciones() :
 { System.out.println("Instrucciones"); }
@@ -884,5 +877,4 @@ void bucle() :
     instrucciones()
     < tEND_ITERATION >
 }
-
 

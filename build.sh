@@ -43,7 +43,7 @@ for file in "${FILES[@]}"; do
 
     echo "// --- INICIO DE $file ---" >> "$OUTPUT_FILE" # concatenar cabecera
     cat "$FILE_PATH" >> "$OUTPUT_FILE" # concatenar cuerpo
-    echo -e "\n" >> "$OUTPUT_FILE" # concatenar \n
+    echo -e "" >> "$OUTPUT_FILE" # concatenar \n
 done
 
 # compilar con Apache Ant
