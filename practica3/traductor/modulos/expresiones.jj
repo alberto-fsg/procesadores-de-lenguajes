@@ -13,6 +13,14 @@ AtribExp primario() :
         System.out.println("Entrando en primario");
     }
     (
+        // Caso: llamada a entAcar
+        entAcar()
+        { return new AtribExp(Symbol.Types.CHAR, null, false, false); }
+    |    
+        // Caso: llamada a carAent
+        carAent()
+        { return new AtribExp(Symbol.Types.INT, null, false, false); }
+    |
         // Caso: llamada a función (o procedimiento)
         LOOKAHEAD(2) // para distinguirlo de un array o variable
         t = <tIDENTIFICADOR>

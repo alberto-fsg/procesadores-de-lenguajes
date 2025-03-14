@@ -1,0 +1,67 @@
+void escribir_linea() :
+{}
+{
+    <tESCRIBIR_LIN>
+    <tOPENING_PARENTHESIS>
+    (escribir_params())?
+    <tCLOSING_PARENTHESIS>
+}
+
+void escribir() :
+{}
+{
+    <tESCRIBIR>
+    <tOPENING_PARENTHESIS>
+    (escribir_params())
+    <tCLOSING_PARENTHESIS>
+}
+
+void escribir_params() :
+{}
+{
+    (expresion_simple())
+    (<tCOMA> (expresion_simple()))*
+}
+
+void leer_linea() :
+{}
+{
+    <tLEER_LIN>
+    <tOPENING_PARENTHESIS>
+    (identificadores())?
+    <tCLOSING_PARENTHESIS>
+}
+
+void leer() :
+{}
+{
+    <tLEER> 
+    <tOPENING_PARENTHESIS>
+    (identificadores())
+    <tCLOSING_PARENTHESIS> 
+}
+
+void identificadores() :
+{}
+{
+    <tIDENTIFICADOR>
+    (<tCOMA> <tIDENTIFICADOR>)*
+}
+
+void entAcar() :
+{}
+{
+    < tENTACAR >
+    <tOPENING_PARENTHESIS>
+    expresion_simple()
+    <tCLOSING_PARENTHESIS>
+}
+
+void carAent() :
+{}
+{
+    < tCARAENT >
+    < tOPENING_PARENTHESIS>
+    primario()
+    <tCLOSING_PARENTHESIS>
+}

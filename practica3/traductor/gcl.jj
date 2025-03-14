@@ -118,6 +118,12 @@ TOKEN : {
 TOKEN : {
      // palabras reservadas
      < tPROGRAMA: "Programa" >
+|    < tESCRIBIR_LIN: "escribir_lin" >
+|    < tESCRIBIR: "escribir" >
+|    < tLEER_LIN: "leer_lin" >
+|    < tLEER: "leer" >
+|    < tENTACAR: "entAcar" >
+|    < tCARAENT: "carAent" >
 |    < tREF: "ref" > 
 |    < tINTEGER: "entero" >
 |    < tCHARACTER: "caracter" >
@@ -339,6 +345,14 @@ AtribExp primario() :
         System.out.println("Entrando en primario");
     }
     (
+        // Caso: llamada a entAcar
+        entAcar()
+        { return new AtribExp(Symbol.Types.CHAR, null, false, false); }
+    |    
+        // Caso: llamada a carAent
+        carAent()
+        { return new AtribExp(Symbol.Types.INT, null, false, false); }
+    |
         // Caso: llamada a función (o procedimiento)
         LOOKAHEAD(2) // para distinguirlo de un array o variable
         t = <tIDENTIFICADOR>
@@ -957,7 +971,13 @@ void instrucciones() :
 void instruccion() :
 { System.out.println("Instrucción"); }
 {
-    LOOKAHEAD(2) llamar_funcion()
+    escribir_linea() <tSEMICOLON>
+|   escribir() <tSEMICOLON>
+|   leer_linea() <tSEMICOLON>
+|   leer() <tSEMICOLON>
+|   entAcar() <tSEMICOLON>
+|   carAent() <tSEMICOLON>
+|   LOOKAHEAD(2) llamar_funcion()
 |   LOOKAHEAD(2) asignacion()
 |   seleccion()
 |   bucle()
@@ -982,5 +1002,74 @@ void bucle() :
     expresion()
     instrucciones()
     < tEND_ITERATION >
+}
+
+// --- INICIO DE especiales.jj ---
+void escribir_linea() :
+{}
+{
+    <tESCRIBIR_LIN>
+    <tOPENING_PARENTHESIS>
+    (escribir_params())?
+    <tCLOSING_PARENTHESIS>
+}
+
+void escribir() :
+{}
+{
+    <tESCRIBIR>
+    <tOPENING_PARENTHESIS>
+    (escribir_params())
+    <tCLOSING_PARENTHESIS>
+}
+
+void escribir_params() :
+{}
+{
+    (expresion_simple())
+    (<tCOMA> (expresion_simple()))*
+}
+
+void leer_linea() :
+{}
+{
+    <tLEER_LIN>
+    <tOPENING_PARENTHESIS>
+    (identificadores())?
+    <tCLOSING_PARENTHESIS>
+}
+
+void leer() :
+{}
+{
+    <tLEER> 
+    <tOPENING_PARENTHESIS>
+    (identificadores())
+    <tCLOSING_PARENTHESIS> 
+}
+
+void identificadores() :
+{}
+{
+    <tIDENTIFICADOR>
+    (<tCOMA> <tIDENTIFICADOR>)*
+}
+
+void entAcar() :
+{}
+{
+    < tENTACAR >
+    <tOPENING_PARENTHESIS>
+    expresion_simple()
+    <tCLOSING_PARENTHESIS>
+}
+
+void carAent() :
+{}
+{
+    < tCARAENT >
+    < tOPENING_PARENTHESIS>
+    primario()
+    <tCLOSING_PARENTHESIS>
 }
 

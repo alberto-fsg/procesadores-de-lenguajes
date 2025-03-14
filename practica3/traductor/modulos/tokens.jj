@@ -19,6 +19,12 @@ TOKEN : {
 TOKEN : {
      // palabras reservadas
      < tPROGRAMA: "Programa" >
+|    < tESCRIBIR_LIN: "escribir_lin" >
+|    < tESCRIBIR: "escribir" >
+|    < tLEER_LIN: "leer_lin" >
+|    < tLEER: "leer" >
+|    < tENTACAR: "entAcar" >
+|    < tCARAENT: "carAent" >
 |    < tREF: "ref" > 
 |    < tINTEGER: "entero" >
 |    < tCHARACTER: "caracter" >

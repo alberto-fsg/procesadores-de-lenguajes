@@ -7,7 +7,13 @@ void instrucciones() :
 void instruccion() :
 { System.out.println("Instrucción"); }
 {
-    LOOKAHEAD(2) llamar_funcion()
+    escribir_linea() <tSEMICOLON>
+|   escribir() <tSEMICOLON>
+|   leer_linea() <tSEMICOLON>
+|   leer() <tSEMICOLON>
+|   entAcar() <tSEMICOLON>
+|   carAent() <tSEMICOLON>
+|   LOOKAHEAD(2) llamar_funcion()
 |   LOOKAHEAD(2) asignacion()
 |   seleccion()
 |   bucle()
