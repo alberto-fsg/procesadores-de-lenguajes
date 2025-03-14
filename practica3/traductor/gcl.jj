@@ -35,7 +35,7 @@ public class gcl {
 	   gcl parser = null;
 	   
 	   try {
-           st = new SymbolTable(); 
+           st = new SymbolTable();
 
 		   if(args.length == 0) {
 			   parser = new gcl(System.in);
@@ -332,6 +332,7 @@ AtribExp primario() :
     Token t;
     AtribExp ae;
     Symbol s;
+    SymbolFunction s_func;
 }
 {
     {
@@ -358,7 +359,8 @@ AtribExp primario() :
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
             System.out.println("Saliendo de primario por llamada correcta a función (o procedimiento)");
-            return new AtribExp(s.type, null, false, false); // valor null por no ser evaluable en tiempo de compilación (no constante)
+            s_func = (SymbolFunction) s;
+            return new AtribExp(s_func.returnType, null, false, false); // valor null por no ser evaluable en tiempo de compilación (no constante)
         }
     |
         // Caso: acceso a array
@@ -660,6 +662,7 @@ AtribExp expresion() :
     AtribExp left, right;
     Token op;
     boolean isConst;
+    boolean left_type, right_type;
 }
 {
     left = relacion()
@@ -756,6 +759,7 @@ void declaracion_proc() :
             st.insertBlock();
             for(Symbol param : parametros) {
                 st.insertSymbol(param);
+                System.out.println("Variable insertada en el procedimiento: \"" + t.image + "\".");
             }
         }
         catch (AlreadyDefinedSymbolException e) {
@@ -776,13 +780,13 @@ void declaracion_func() :
     Symbol sFunc;
     Token t;
     AtribTipo aT;
+    ArrayList<Symbol> parametros = new ArrayList<Symbol>();
 }
 {
     aT = tipoEscalar()
     t = <tIDENTIFICADOR>
     // crear la variable del return
     {
-    try {
         sFunc = null;
         switch (aT.type) {
             case INT:
@@ -797,26 +801,47 @@ void declaracion_func() :
             default:
                 System.out.println("Error: tipo no definido para función \"" + t.image + "\".");
         }
-        if (sFunc != null) {
-            st.insertSymbol(sFunc);
-            System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sFunc.toString());
-        }
-    } catch (AlreadyDefinedSymbolException e) {
-        System.out.println("Error: ya existe una variable o función con identificador \"" + t.image + "\" (No debería ocurrir nunca (estamos abriendo un nuevo bloque)");
-    }
     }
     < tOPENING_PARENTHESIS >
-    ( parametros_declaraciones() )*
+    ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
+    {
+        try {
+            sFunc = new SymbolFunction(t.image, parametros, aT.type);
+            st.insertSymbol(sFunc);
+            st.insertBlock();
+
+            try {
+                if (sFunc != null) {
+                    st.insertSymbol(sFunc);
+                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sFunc.toString());
+                }
+            } catch ( AlreadyDefinedSymbolException e) {
+
+            }
+
+            for(Symbol param : parametros) {
+                st.insertSymbol(param);
+                System.out.println("Variable insertada en el procedimiento: \"" + t.image + "\".");
+
+            }
+        }
+        catch (AlreadyDefinedSymbolException e) {
+            System.out.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
+        }
+    }
     ( LOOKAHEAD(3) declaracion_variables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
     instrucciones()
     < tEND >
+    { st.removeBlock(); }
 }
 
 void llamar_funcion() :
-{ System.out.println("Llamar función"); }
+{ 
+    System.out.println("Llamar función");
+}
 {
     < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >

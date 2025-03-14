@@ -31,7 +31,7 @@ public class gcl {
 	   gcl parser = null;
 	   
 	   try {
-           st = new SymbolTable(); 
+           st = new SymbolTable();
 
 		   if(args.length == 0) {
 			   parser = new gcl(System.in);

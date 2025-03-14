@@ -43,7 +43,7 @@ TESTS=(
 # Bucle para ejecutar cada test uno a uno
 for TEST in "${TESTS[@]}"; do
   execute_test "$TEST"
-  echo -e "\033[0;33mPresiona Enter para continuar...\033[0m"
+  echo -e "\033[0;33mAcabas de ejecutar "$TEST" - Presiona Enter para continuar...\033[0m"
   read -r
 done
 
