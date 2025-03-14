@@ -739,24 +739,43 @@ void declaracion_procs_funcs() :
 }
 
 void declaracion_proc() :
-{ System.out.println("Declaración de procedimiento"); }
+{ 
+    System.out.println("Declaración de procedimiento"); 
+    Symbol sFunc;
+    Token t;
+    ArrayList<Symbol> parametros = new ArrayList<Symbol>();
+}
 {
-    <tIDENTIFICADOR>
+    t = <tIDENTIFICADOR>
     < tOPENING_PARENTHESIS >
-    ( parametros_declaraciones() )*
+    ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
+    {
+        try {
+            sFunc = new SymbolProcedure(t.image, parametros);
+            st.insertBlock();
+            for(Symbol param : parametros) {
+                st.insertSymbol(param);
+            }
+        }
+        catch (AlreadyDefinedSymbolException e) {
+            System.out.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
+        }
+    }
     ( LOOKAHEAD(3) declaracion_variables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
     instrucciones()
     < tEND >
+    { st.removeBlock(); }
 }
 
 void declaracion_func() :
-{ System.out.println("Declaración de función"); 
-  Symbol sFunc;
-  Token t;
-  AtribTipo aT;
+{ 
+    System.out.println("Declaración de función"); 
+    Symbol sFunc;
+    Token t;
+    AtribTipo aT;
 }
 {
     aT = tipoEscalar()
@@ -813,20 +832,52 @@ void parametros_llamada_funcion() :
     (<tCOMA> expresion() )*
 }
 
-void parametros_declaraciones() :
+ArrayList<Symbol> parametros_declaraciones() :
 {   
     System.out.println("Parámetros declaraciones"); 
     AtribTipo aT;
     ArrayList<String> lVars;
     boolean isRef = false;
+    ArrayList<Symbol> allSymbols = new ArrayList<Symbol>();
 }
 {
     aT = tipo()
     ( <tREF> { isRef = true; } )?
     lVars = lista_ids()
     {
-        insertSymbols(aT, isRef, lVars);
-        isRef = false; // "resetear" isRef
+        for (String id : lVars) {
+            Symbol sV = null;
+            if(aT.isArray) {
+                sV = new SymbolArray(
+                    id, 0, aT.size-1, aT.type, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
+            } else {
+                switch(aT.type) {
+                    case INT:
+                        sV = new SymbolInt(
+                            id,
+                            isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
+                        );
+                        break;
+                    case BOOL:
+                        sV = new SymbolBool(
+                            id,
+                            isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
+                        );
+                        break;
+                    case CHAR:
+                        sV = new SymbolChar(
+                            id,
+                            isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
+                        );
+                        break;
+                    default:
+                        System.out.println("Error: tipo no definido para variable \"" +
+                            id + "\".");
+                }
+            }
+            allSymbols.add(sV);
+        }
+        isRef = false;
     }
     (
         <tSEMICOLON>
@@ -834,10 +885,41 @@ void parametros_declaraciones() :
         ( <tREF> { isRef = true; } )? 
         lVars = lista_ids()
         {
-            insertSymbols(aT, isRef, lVars);
-            isRef = false; // "resetear" isRef
+        for (String id : lVars) {
+                Symbol sV = null;
+                if(aT.isArray) {
+                    sV = new SymbolArray(
+                        id, 0, aT.size-1, aT.type, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
+                } else {
+                    switch(aT.type) {
+                        case INT:
+                            sV = new SymbolInt(
+                                id,
+                                isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
+                            );
+                            break;
+                        case BOOL:
+                            sV = new SymbolBool(
+                                id,
+                                isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
+                            );
+                            break;
+                        case CHAR:
+                            sV = new SymbolChar(
+                                id,
+                                isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
+                            );
+                            break;
+                        default:
+                            System.out.println("Error: tipo no definido para variable \"" +
+                                id + "\".");
+                    }
+                }
+                allSymbols.add(sV);
+            }
         }
     )*
+    { return allSymbols; }
 }
 
 // --- INICIO DE instrucciones.jj ---
