@@ -24,6 +24,7 @@ FILES=(
     "expresiones.jj"
     "funciones.jj"
     "instrucciones.jj"
+    "especiales.jj"
 )
 
 # concatenar a mano todos los ficheros porque la versión de Java es prehistórica :D
