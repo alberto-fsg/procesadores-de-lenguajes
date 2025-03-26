@@ -80,17 +80,16 @@ void declaracion_func() :
                     System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sFunc.toString());
                 }
             } catch ( AlreadyDefinedSymbolException e) {
-
+                System.out.println("Error: la función ya está definida.");
             }
 
             for(Symbol param : parametros) {
                 st.insertSymbol(param);
-                System.out.println("Variable insertada en el procedimiento: \"" + t.image + "\".");
-
+                System.out.println("Variable insertada en la función: \"" + t.image + "\".");
             }
         }
         catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
+            System.out.println("Error: ya existe función con identificador \"" + t.image + "\".");
         }
     }
     ( LOOKAHEAD(3) declaracion_variables() )*

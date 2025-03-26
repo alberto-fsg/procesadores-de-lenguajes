@@ -50,24 +50,28 @@ public class SymbolTable {
     //Si un símbolo con el mismo nombre está, excepción. 
     //Si no, se inserta
     public void insertSymbol(Symbol s) throws AlreadyDefinedSymbolException {
+        // Convert symbol name to lowercase for case-insensitive operations
+        String symbolName = s.name.toLowerCase();
         HashMap<String, Symbol> currentBlock = st.get(st.size()-1);
-        if (currentBlock.containsKey(s.name)) { // ya está
+        if (currentBlock.containsKey(symbolName)) { // ya está
             throw new AlreadyDefinedSymbolException();
         } else {
             s.nivel = level;
-            currentBlock.put(s.name, s);
+            currentBlock.put(symbolName, s);
         }
     }
 
     //Si no está, excepción. Si está, devuelve su referencia
-    public Symbol getSymbol (String name) throws SymbolNotFoundException {
-    	Symbol result = findSymbol(name); 
+    public Symbol getSymbol(String name) throws SymbolNotFoundException {
+        // Convert name to lowercase to make it case-insensitive
+        String symbolName = name.toLowerCase();
+        Symbol result = findSymbol(symbolName);
         if (result == null) {
-        	throw new SymbolNotFoundException();
+            throw new SymbolNotFoundException();
         }
-        return result; 
+        return result;
     }
-    
+
     // comprueba si está el símbolo 
     public boolean containsSymbol (String name) {
     	return findSymbol(name) != null; 
