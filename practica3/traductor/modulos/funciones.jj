@@ -27,7 +27,7 @@ void declaracion_proc() :
             }
         }
         catch (AlreadyDefinedSymbolException e) {
-            System.err.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
+            System.out.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
         }
     }
     ( LOOKAHEAD(3) declaracion_variables() )*
@@ -82,7 +82,7 @@ void declaracion_func() :
             }
         }
         catch (AlreadyDefinedSymbolException e) {
-            System.err.println("Error: ya existe función con identificador \"" + t.image + "\".");
+            System.out.println("Error: ya existe función con identificador \"" + t.image + "\".");
         }
     }
     ( LOOKAHEAD(3) declaracion_variables() )*
@@ -114,12 +114,12 @@ void llamar_funcion() :
                     if(lPar.get(i).type != aux.parList.get(i).type) { // tipos no coinciden
                         String errorMsg = String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s",
                             aux.parList.get(i).type, lPar.get(i).type);
-                        System.err.println("Error en llamada a función: " + errorMsg);
+                        System.out.println("Error en llamada a función: " + errorMsg);
                     }
                     if(aux.parList.get(i).parClass == Symbol.ParameterClass.REF && !lPar.get(i).isVar) { // valores por referencia
                         String errorMsg = String.format("Parámetro por referencia. Espera variable.",
                             aux.parList.get(i).type, lPar.get(i).type);
-                        System.err.println("Error en llamada a función: " + errorMsg);
+                        System.out.println("Error en llamada a función: " + errorMsg);
                     }
                 }
             } else if(fun.type == Symbol.Types.PROCEDURE) {
@@ -128,18 +128,18 @@ void llamar_funcion() :
                     if(lPar.get(i).type != aux.parList.get(i).type) { // tipos no coinciden
                         String errorMsg = String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s",
                             aux.parList.get(i).type, lPar.get(i).type);
-                        System.err.println("Error en llamada a función: " + errorMsg);
+                        System.out.println("Error en llamada a función: " + errorMsg);
                     }
                     if(aux.parList.get(i).parClass == Symbol.ParameterClass.REF && !lPar.get(i).isVar) { // valores por referencia
                         String errorMsg = String.format("Parámetro por referencia. Espera variable.",
                             aux.parList.get(i).type, lPar.get(i).type);
-                        System.err.println("Error en llamada a función: " + errorMsg);
+                        System.out.println("Error en llamada a función: " + errorMsg);
                     }
                 }
             }
 
         } catch(SymbolNotFoundException e) {
-            System.err.println("Error en llamada a función: no existe símbolo con nombre \"" + t.image + "\".");
+            System.out.println("Error en llamada a función: no existe símbolo con nombre \"" + t.image + "\".");
         }
     }
     < tCLOSING_PARENTHESIS >
@@ -208,7 +208,7 @@ ArrayList<Symbol> parametros_declaraciones() :
                         );
                         break;
                     default:
-                        System.err.println("Error: tipo no definido para variable \"" +
+                        System.out.println("Error: tipo no definido para variable \"" +
                             id + "\".");
                 }
             }
@@ -248,7 +248,7 @@ ArrayList<Symbol> parametros_declaraciones() :
                             );
                             break;
                         default:
-                            System.err.println("Error: tipo no definido para variable \"" +
+                            System.out.println("Error: tipo no definido para variable \"" +
                                 id + "\".");
                     }
                 }

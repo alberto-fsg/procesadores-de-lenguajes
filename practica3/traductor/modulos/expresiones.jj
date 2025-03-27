@@ -43,14 +43,14 @@ AtribExp primario() :
                 /**
                  * Lanzar una excepción si la sintaxis utilizada es la de la llamada a una función pero el identificador semánticamente no existe.
                  */
-                System.err.println("Error: El identificador '" + t.image + "' no está definido.");
+                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
                 return null;
             }
             /**
              * Lanzar una excepción si la sintaxis utilizada es la de la llamada a una función pero el identificador semánticamente no es una función.
              */
             if (s.type != Symbol.Types.FUNCTION) {
-                System.err.println("Error: Se esperaba que '" + t.image + "' fuera una función (o procedimiento), pero se encontró: " + s.type + ".");
+                System.out.println("Error: Se esperaba que '" + t.image + "' fuera una función (o procedimiento), pero se encontró: " + s.type + ".");
             }
             /**
              * Devolver una expresión del tipo de retorno de la función y valor indefinido (no evaluable estáticamente).
@@ -74,20 +74,20 @@ AtribExp primario() :
                 /**
                  * Lanzar una excepción si la sintaxis utilizada es la de un array pero el identificador semánticamente no existe.
                  */
-                System.err.println("Error: El identificador '" + t.image + "' no está definido.");
+                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
                 return null;
             }
             /**
              * Lanzar una excepción si la sintaxis utilizada es la de un array pero el identificador semánticamente no es un array.
              */
             if (s.type != Symbol.Types.ARRAY) {
-                System.err.println("Error: Se esperaba que '" + t.image + "' fuera un array, pero se encontró: " + s.type + ".");
+                System.out.println("Error: Se esperaba que '" + t.image + "' fuera un array, pero se encontró: " + s.type + ".");
             }
             /**
              * Lanzar una excepción si el tipo del valor de acceso al array no es un entero.
              */
             if (ae.type != Symbol.Types.INT) {
-                System.err.println("Error: Se esperaba que el índice del array fuera un entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
+                System.out.println("Error: Se esperaba que el índice del array fuera un entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
             }
             s_array = (SymbolArray) s; // Para acceder al campo maxInd
             /**
@@ -95,7 +95,7 @@ AtribExp primario() :
              * Lanzar una excepción si no es válido.
              */
             if (ae.isConst && Integer.valueOf(ae.image) > s_array.maxInd) {
-                System.err.println("Error: El índice " + ae.image + " es demasiado grande para el vector " + t.image + " de tamaño " + (s_array.maxInd + 1) + "'.");
+                System.out.println("Error: El índice " + ae.image + " es demasiado grande para el vector " + t.image + " de tamaño " + (s_array.maxInd + 1) + "'.");
             }
             /**
              * Lanzar una excepción si el valor de acceso al vector es un entero no constante.
@@ -117,7 +117,7 @@ AtribExp primario() :
                 /**
                  * Lanzar una excepción si la sintaxis utilizada es la de acceso a una variable pero semánticamente el identificador no existe.
                  */
-                System.err.println("Error: El identificador '" + t.image + "' no está definido.");
+                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
                 throw new SymbolNotFoundException("Error: El identificador '" + t.image + "' no está definido.");
             }
         }
@@ -166,7 +166,7 @@ AtribExp primario() :
      * Devolver una expresión de tipo no definido si no entra en ninguno de los casos válidos.
      */
     {
-        System.err.println("Error: Saliendo de primario por caso no identificado (¿inaccesible?)");
+        System.out.println("Error: Saliendo de primario por caso no identificado (¿inaccesible?)");
         return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
     }
 }
@@ -245,7 +245,7 @@ AtribExp termino() :
              * Lanzar una excepción si los 2 factores no son del mismo tipo.
              */
             if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                System.err.println(
+                System.out.println(
                     "Error: Los operadores multiplicativos requieren valores enteros. Se evaluó: "
                     + "left.type = " + left.type + " con valor '" + left.image 
                     + "', right.type = " + right.type + " con valor '" + right.image + "'."
@@ -303,7 +303,7 @@ AtribExp expresion_simple() :
              * Lanzar una excepción si los 2 operandos no son del mismo tipo.
              */
             if (left.type != right.type) {
-                System.err.println(
+                System.out.println(
                     "Error: Los operandos para el operador '" + op.image 
                     + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
                     + " con valor '" + left.image + "', right.type = " + right.type 
@@ -315,7 +315,7 @@ AtribExp expresion_simple() :
              * Lanzar una excepción si los 2 operandos no son de tipo integer.
              */
             if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                System.err.println(
+                System.out.println(
                     "Error: Los operadores de expresiones requieren valores enteros. Se evaluó: "
                     + "left.type = " + left.type + " con valor '" + left.image 
                     + "', right.type = " + right.type + " con valor '" + right.image + "'. Al menos uno de ellos no es booleano."
@@ -362,7 +362,7 @@ AtribExp relacion() :
              * Lanzar una excepción si los 2 operandos no son del mismo tipo.
              */
             if (left.type != right.type) {
-                System.err.println(
+                System.out.println(
                     "Error: Los operandos para el operador '" + op.image 
                     + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
                     + " con valor '" + left.image + "', right.type = " + right.type 
@@ -374,7 +374,7 @@ AtribExp relacion() :
              * Lanzar una excepción si los 2 operandos no son de tipo booleando y el operador los requiere.
              */
             if (op.image.matches("=|!=") && (left.type != Symbol.Types.BOOL || right.type != Symbol.Types.BOOL)) {
-                System.err.println(
+                System.out.println(
                     "Error: Los operandos para el operador '" + op.image 
                     + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
                     + " con valor '" + left.image + "', right.type = " + right.type 
@@ -386,7 +386,7 @@ AtribExp relacion() :
              * Lanzar una excepción si los 2 operandos no son de tipo entero y el operador los requiere.
              */
             if (op.image.matches("<|<=|>|>=") && (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT))
-                System.err.println(
+                System.out.println(
                     "Error: Los operadores relacionales requieren valores enteros. Se evaluó: "
                     + "left.type = " + left.type + " con valor '" + left.image 
                     + "', right.type = " + right.type + " con valor '" + right.image + "'."
@@ -455,7 +455,7 @@ AtribExp expresion() :
              * Lanzar una excepción si los 2 operandos no son del mismo tipo.
              */
             if (left.type != right.type) {
-                System.err.println(
+                System.out.println(
                     "Error: Los operandos para el operador '" + op.image 
                     + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
                     + " con valor '" + left.image + "', right.type = " + right.type 
@@ -467,7 +467,7 @@ AtribExp expresion() :
              * Lanzar una excepción si los 2 operandos no son de tipo booleando.
              */
             if (left.type != Symbol.Types.BOOL || right.type != Symbol.Types.BOOL) {
-                System.err.println(
+                System.out.println(
                     "Error: Los operadores de expresiones requieren valores booleanos. Se evaluó: "
                     + "left.type = " + left.type + " con valor '" + left.image 
                     + "', right.type = " + right.type + " con valor '" + right.image + "'. Al menos uno de ellos no es booleano."

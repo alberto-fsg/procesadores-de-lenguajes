@@ -45,13 +45,13 @@ public class gcl {
 		   System.out.println("***** Análisis terminado con éxito *****");
 	   }
 	   catch (java.io.FileNotFoundException e) {
-		   System.err.println ("Fichero " + args[0] + " no encontrado.");
+		   System.out.println ("Fichero " + args[0] + " no encontrado.");
 	   }
 	   catch (TokenMgrError e) {
-		   System.err.println("LEX_ERROR: " + e.getMessage());
+		   System.out.println("LEX_ERROR: " + e.getMessage());
 	   }
 	   catch (Exception e) {
-			System.err.println("Ha ocurrido una excepción: " + e.getMessage());
+			System.out.println("Ha ocurrido una excepción: " + e.getMessage());
 	   }
 	}
 
@@ -72,7 +72,7 @@ public class gcl {
                     case CHAR:
                         sV = new SymbolChar(id); break;
                     default:
-                        System.err.println("Error: tipo no definido para variable \"" + id + "\".");
+                        System.out.println("Error: tipo no definido para variable \"" + id + "\".");
                 }
             }
             if (sV != null) {
@@ -81,7 +81,7 @@ public class gcl {
                 System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
             }
         } catch (AlreadyDefinedSymbolException e) {
-            System.err.println("Error: Identificador ya existe: \"" + id + "\"");
+            System.out.println("Error: Identificador ya existe: \"" + id + "\"");
         }
     }
 }

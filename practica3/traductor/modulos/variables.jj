@@ -44,7 +44,7 @@ void declaracion() :
                         case CHAR:
                             sV = new SymbolChar(id); break;
                         default:
-                            System.err.println("Error: tipo no definido para variable \"" +
+                            System.out.println("Error: tipo no definido para variable \"" +
                                 id + "\".");
                     }
                 }
@@ -53,7 +53,7 @@ void declaracion() :
                     System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
                 }
             } catch(AlreadyDefinedSymbolException e) {
-                System.err.println("Error: ya existe variable con identificador \"" +
+                System.out.println("Error: ya existe variable con identificador \"" +
                     id + "\".");
             }
         }
