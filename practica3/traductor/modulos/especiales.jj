@@ -26,7 +26,6 @@ void escribir_params() :
         if (a.type == Symbol.Types.ARRAY || a.type == Symbol.Types.PROCEDURE || a.type == Symbol.Types.UNDEFINED) {
             String errorMsg = String.format("Error en expresión: tipo de dato inválido encontrado. Tipo recibido: %s.", a.type);
             System.err.println("Error en escribir_params: " + errorMsg);
-            throw new TypesDontMatchException(errorMsg);
         }
     }
     (
@@ -35,7 +34,6 @@ void escribir_params() :
             if (a.type == Symbol.Types.ARRAY || a.type == Symbol.Types.PROCEDURE || a.type == Symbol.Types.UNDEFINED) {
                 String errorMsg = String.format("Error en expresión: tipo de dato inválido encontrado. Tipo recibido: %s.", a.type);
                 System.err.println("Error en escribir_params: " + errorMsg);
-                throw new TypesDontMatchException(errorMsg);
             }
         }
     )*
@@ -57,7 +55,6 @@ void leer_linea() :
                 if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.PROCEDURE || s.type == Symbol.Types.UNDEFINED) {
                     String errorMsg = String.format("Error en leer_linea: el tipo de variable '%s' no es válido. Tipo encontrado: %s.", i, s.type);
                     System.err.println(errorMsg);
-                    throw new TypesDontMatchException(errorMsg);
                 }
             }
         }
@@ -80,7 +77,6 @@ void leer() :
             if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.PROCEDURE || s.type == Symbol.Types.UNDEFINED) {
                 String errorMsg = String.format("Error en leer: el tipo de variable '%s' no es válido. Tipo encontrado: %s.", i, s.type);
                 System.err.println(errorMsg);
-                throw new TypesDontMatchException(errorMsg);
             }
         }
     }
@@ -99,7 +95,6 @@ void entAcar() :
         if (i.type != Symbol.Types.INT) {
             String errorMsg = String.format("Error en entAcar: tipo de expresión incorrecto. Se esperaba tipo INT, pero se encontró: %s.", i.type);
             System.err.println(errorMsg);
-            throw new TypesDontMatchException(errorMsg);
         }
     }
     <tCLOSING_PARENTHESIS>
@@ -117,7 +112,6 @@ void carAent() :
         if (c.type != Symbol.Types.CHAR) {
             String errorMsg = String.format("Error en carAent: tipo de expresión incorrecto. Se esperaba tipo CHAR, pero se encontró: %s.", c.type);
             System.err.println(errorMsg);
-            throw new TypesDontMatchException(errorMsg);
         }
     }
     <tCLOSING_PARENTHESIS>

@@ -72,7 +72,7 @@ public class gcl {
                     case CHAR:
                         sV = new SymbolChar(id); break;
                     default:
-                        System.out.println("Error: tipo no definido para variable \"" + id + "\".");
+                        System.err.println("Error: tipo no definido para variable \"" + id + "\".");
                 }
             }
             if (sV != null) {
@@ -81,7 +81,7 @@ public class gcl {
                 System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
             }
         } catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: Identificador ya existe: \"" + id + "\"");
+            System.err.println("Error: Identificador ya existe: \"" + id + "\"");
         }
     }
 }

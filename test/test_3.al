@@ -29,7 +29,7 @@ PRinCIPIO
     
     LeEr_liN();
     
-    x[1] := (5 + 3 * (2 - (4 MOD (1 + 1)))) / entAcar(_var_mixta);
+    x[1] := (5 + 3 * (2 - (4 MOD (1 + 1)))) / carAent(_var_mixta);
     
     sel
         Caso B | (x[0] <> x[1]):

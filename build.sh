@@ -1,11 +1,11 @@
 #!/bin/bash
 
 INPUT_DIR="./practica3/traductor/modulos"
-OUTPUT_FILE="./practica3/traductor/gcl.jj"
+OUTPUT_FILE="./practica3/traductor/gcl_4.jj"
 
 # si los directorios no existen abortar en lugar de estamparse
 if [ ! -d "$INPUT_DIR" ]; then
-    echo "Error: El directorio $INPUT_DIR no existe."
+    echo "outor: El directorio $INPUT_DIR no existe."
     exit 1
 fi
 
@@ -14,7 +14,7 @@ echo "// AUTOGENERADO - NO EDITAR MANUALMENTE" > "$OUTPUT_FILE"
 echo "// Este archivo se genera automáticamente por build.sh" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
-# ficheros que componen gcl.jj
+# ficheros que componen OUTPUT_FILE
 FILES=(
     "main.jj"
     "tokens.jj"

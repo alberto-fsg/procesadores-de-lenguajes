@@ -19,6 +19,7 @@ void declaracion_proc() :
     {
         try {
             sFunc = new SymbolProcedure(t.image, parametros);
+            st.insertSymbol(sFunc);
             st.insertBlock();
             for(Symbol param : parametros) {
                 st.insertSymbol(param);
@@ -26,7 +27,7 @@ void declaracion_proc() :
             }
         }
         catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
+            System.err.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
         }
     }
     ( LOOKAHEAD(3) declaracion_variables() )*
@@ -73,15 +74,7 @@ void declaracion_func() :
             sFunc = new SymbolFunction(t.image, parametros, aT.type);
             st.insertSymbol(sFunc);
             st.insertBlock();
-
-            try {
-                if (sFunc != null) {
-                    st.insertSymbol(sFunc);
-                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sFunc.toString());
-                }
-            } catch ( AlreadyDefinedSymbolException e) {
-                System.out.println("Error: la función ya está definida.");
-            }
+            System.out.println(st.toString());
 
             for(Symbol param : parametros) {
                 st.insertSymbol(param);
@@ -89,7 +82,7 @@ void declaracion_func() :
             }
         }
         catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: ya existe función con identificador \"" + t.image + "\".");
+            System.err.println("Error: ya existe función con identificador \"" + t.image + "\".");
         }
     }
     ( LOOKAHEAD(3) declaracion_variables() )*
@@ -102,21 +95,78 @@ void declaracion_func() :
 
 void llamar_funcion() :
 { 
+    ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
+    Symbol fun;
+    Token t;
     System.out.println("Llamar función");
 }
 {
-    < tIDENTIFICADOR >
+    t = < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >
-    parametros_llamada_funcion()
+    lPar = parametros_llamada_funcion()
+    {
+        try {
+            fun = st.getSymbol(t.image);
+
+            if(fun.type == Symbol.Types.FUNCTION) {
+                SymbolFunction aux =(SymbolFunction)fun;
+                for(int i = 0; i < lPar.size(); ++i) {
+                    if(lPar.get(i).type != aux.parList.get(i).type) { // tipos no coinciden
+                        String errorMsg = String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s",
+                            aux.parList.get(i).type, lPar.get(i).type);
+                        System.err.println("Error en llamada a función: " + errorMsg);
+                    }
+                    if(aux.parList.get(i).parClass == Symbol.ParameterClass.REF && !lPar.get(i).isVar) { // valores por referencia
+                        String errorMsg = String.format("Parámetro por referencia. Espera variable.",
+                            aux.parList.get(i).type, lPar.get(i).type);
+                        System.err.println("Error en llamada a función: " + errorMsg);
+                    }
+                }
+            } else if(fun.type == Symbol.Types.PROCEDURE) {
+                SymbolProcedure aux =(SymbolProcedure)fun;
+                for(int i = 0; i < lPar.size(); ++i) {
+                    if(lPar.get(i).type != aux.parList.get(i).type) { // tipos no coinciden
+                        String errorMsg = String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s",
+                            aux.parList.get(i).type, lPar.get(i).type);
+                        System.err.println("Error en llamada a función: " + errorMsg);
+                    }
+                    if(aux.parList.get(i).parClass == Symbol.ParameterClass.REF && !lPar.get(i).isVar) { // valores por referencia
+                        String errorMsg = String.format("Parámetro por referencia. Espera variable.",
+                            aux.parList.get(i).type, lPar.get(i).type);
+                        System.err.println("Error en llamada a función: " + errorMsg);
+                    }
+                }
+            }
+
+        } catch(SymbolNotFoundException e) {
+            System.err.println("Error en llamada a función: no existe símbolo con nombre \"" + t.image + "\".");
+        }
+    }
     < tCLOSING_PARENTHESIS >
     < tSEMICOLON >
 }
 
-void parametros_llamada_funcion() :
-{ System.out.println("Parámetros llamada función"); }
+ArrayList<AtribExp> parametros_llamada_funcion() :
+{ 
+    ArrayList<AtribExp> lpar = new ArrayList<AtribExp>();
+    AtribExp ae = null;
+    System.out.println("Parámetros llamada función");
+    
+}
 {
-    ( expresion() )?
-    (<tCOMA> expresion() )*
+    (  ae = expresion() )?
+    {
+        if(ae != null)
+            lpar.add(ae);
+    }
+    (
+        <tCOMA> ae = expresion()
+        {
+            if(ae != null)
+                lpar.add(ae);
+        }
+    )*
+    { return lpar; }
 }
 
 ArrayList<Symbol> parametros_declaraciones() :
@@ -158,7 +208,7 @@ ArrayList<Symbol> parametros_declaraciones() :
                         );
                         break;
                     default:
-                        System.out.println("Error: tipo no definido para variable \"" +
+                        System.err.println("Error: tipo no definido para variable \"" +
                             id + "\".");
                 }
             }
@@ -198,7 +248,7 @@ ArrayList<Symbol> parametros_declaraciones() :
                             );
                             break;
                         default:
-                            System.out.println("Error: tipo no definido para variable \"" +
+                            System.err.println("Error: tipo no definido para variable \"" +
                                 id + "\".");
                     }
                 }

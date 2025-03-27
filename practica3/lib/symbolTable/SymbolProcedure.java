@@ -13,7 +13,7 @@ public class SymbolProcedure extends Symbol implements Cloneable {
 
     //cada parámetro es un par <id,símbolo> donde "símbolo" es una copia del valor
     //introducido en la tabla de símbolos. Esta duplicación de la información es necesaria
-    //ya que cuando se cierra un bloque, tanto los parámetros como las variables locales
+    //ya que cuando se ciouta un bloque, tanto los parámetros como las variables locales
     //se eliminan de la tabla, pero la propia función/proc sigue en la tabla, haciendo
     //necesario mantener la información de los parámetros.
     public ArrayList<Symbol> parList;

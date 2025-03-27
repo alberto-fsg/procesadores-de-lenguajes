@@ -73,7 +73,7 @@ Principio
     Mq i <= n 
         Sel 
             caso !hay_un_par(i):
-                escribir_lin("L conjetura no se cumple para ", i, "! (Seguro que por error del compilador!)");
+                escribir_lin("L conjetura no se cumple para ", i, "! (Seguro que por outor del compilador!)");
         FSel
         i := i + 2;
     FMq
