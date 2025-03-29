@@ -1,11 +1,11 @@
 void instrucciones() :
-{ System.out.println("Instrucciones"); }
+{}
 {
     ( instruccion() )*
 }
 
 void instruccion() :
-{ System.out.println("Instrucción"); }
+{}
 {
     escribir_linea() <tSEMICOLON>
 |   escribir() <tSEMICOLON>
@@ -23,7 +23,7 @@ void instruccion() :
 }
 
 void seleccion() :
-{ System.out.println("Selección"); }
+{}
 {
     < tSELECTION > 
     ( < tCASE > expresion() < tCOLON > instrucciones() )+
@@ -32,7 +32,7 @@ void seleccion() :
 }
 
 void bucle() :
-{ System.out.println("Bucle"); }
+{}
 {
     < tITERATION >
     expresion()

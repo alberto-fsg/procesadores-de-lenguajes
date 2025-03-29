@@ -81,8 +81,9 @@ TOKEN : {
 // deprecado al parecer, https://parsers.org/javacc21/token-hooks-revisited/
 TOKEN_MGR_DECLS : {
     public static void CommonTokenAction(Token t) {
-        System.out.printf("(%d,%d): %s \"%s\"%n", 
-            t.beginLine, t.beginColumn, getTokenName(t.kind), t.image);
+        if(false)
+            System.out.printf("(%d,%d): %s \"%s\"%n", 
+                t.beginLine, t.beginColumn, getTokenName(t.kind), t.image);
     }
 
     // función épica que devuelve el token (no su lexema)

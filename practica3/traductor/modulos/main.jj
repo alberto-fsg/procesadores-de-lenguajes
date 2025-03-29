@@ -25,8 +25,8 @@ import java.util.*;
 
 public class gcl {
     // tabla de símbolos global
-	static SymbolTable st;
-   
+    static SymbolTable st;
+    
    public static void main(String[] args) {
 	   gcl parser = null;
 	   
@@ -58,34 +58,175 @@ public class gcl {
     // inserta todos los símbolos de "lVars" de tipo "aT" y los marca como ref si "isRef",
     // auxiliar para "parametros_declaraciones" (los parámetros de la declaración de una función/procedimiento)
     private static void insertSymbols(AtribTipo aT, boolean isRef, ArrayList<String> lVars) {
-    for (String id : lVars) {
-        try {
-            Symbol sV = null;
-            if (aT.isArray) {
-                sV = new SymbolArray(id, 0, aT.size-1, aT.type);
-            } else {
-                switch(aT.type) {
-                    case INT:
-                        sV = new SymbolInt(id); break;
-                    case BOOL:
-                        sV = new SymbolBool(id); break;
-                    case CHAR:
-                        sV = new SymbolChar(id); break;
-                    default:
-                        System.out.println("Error: tipo no definido para variable \"" + id + "\".");
+        for (String id : lVars) {
+            try {
+                Symbol sV = null;
+                if (aT.isArray) {
+                    sV = new SymbolArray(id, 0, aT.size-1, aT.type);
+                } else {
+                    switch(aT.type) {
+                        case INT:
+                            sV = new SymbolInt(id); break;
+                        case BOOL:
+                            sV = new SymbolBool(id); break;
+                        case CHAR:
+                            sV = new SymbolChar(id); break;
+                        default:
+                            System.out.println("Error: tipo no definido para variable \"" + id + "\".");
+                    }
                 }
+                if (sV != null) {
+                    sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
+                    st.insertSymbol(sV);
+                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                }
+            } catch (AlreadyDefinedSymbolException e) {
+                System.out.println("Error: Identificador ya existe: \"" + id + "\"");
             }
-            if (sV != null) {
-                sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
-                st.insertSymbol(sV);
-                System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
-            }
-        } catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: Identificador ya existe: \"" + id + "\"");
         }
     }
+
+    private static boolean typeNotEqual(Symbol.Types esperado, Symbol.Types real, String error) {
+        if(esperado == real) {
+            if(error != null) printError(error);
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean typeEqual(Symbol.Types esperado, Symbol.Types real, String error) {
+        if(esperado != real) {
+            if(error != null) printError(error);
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean typeNotEqual(List<Symbol.Types> esperado, Symbol.Types real, String error) {
+        if(!esperado.isEmpty()) {
+            for(Symbol.Types t : esperado) {
+                if(t == real) {
+                    if(error != null) printError(error);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean typeEqual(Symbol.Types esperado, List<Symbol.Types> real, String error) {
+        if(!real.isEmpty()) {
+            for(Symbol.Types t : real) {
+                if(esperado != t) {
+                    if(error != null) printError(error);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean typeNotEqual(List<Symbol.Types> esperado, ArrayList<String> real) {
+        boolean ok = true;
+        Symbol s;
+        for(String i : real) {
+            try {
+                s = st.getSymbol(i);
+                ok = ok && typeNotEqual(esperado, s.type, String.format("leer_lin o leer incompatible con tipo de dato \"%s\"", s.type));
+            } catch(SymbolNotFoundException e) {
+                printError(String.format("Variable \"%s\" no encontrada en tabla de símbolos.", i));
+            }
+        }
+        return ok;
+    }
+
+    private static void insertProcedure(Token identificador, ArrayList<Symbol> parametros) {
+        SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
+        try {
+            st.insertSymbol(sProc);
+            insertParameters(parametros);
+        } catch(AlreadyDefinedSymbolException e) {
+            printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+        }
+    }
+
+    private static void insertFunction(Token identificador, AtribTipo returnType, ArrayList<Symbol> parametros) {
+        if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
+            printError(String.format("Una función solo puede devolver valores de tipo INT, BOOL o CHAR. Tipo dado: %s.", returnType.type));
+        } else {
+            SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
+            try {
+                st.insertSymbol(sFunc);
+                insertParameters(parametros);
+            } catch(AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+            }
+        }
+    }
+
+    private static void insertParameters(ArrayList<Symbol> parametros) {
+        st.insertBlock();
+        for(Symbol param : parametros) {
+            try {
+                st.insertSymbol(param);
+                printMessage("Tabla de símbolos",
+                    String.format("\"%s\" insertado en nivel %d.", param.name, st.level));
+            } catch(AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya definida variable de identificador \"%s\".", param.name));
+            }
+        }
+    }
+
+    private static void checkParameters(Token identificador, ArrayList<AtribExp> parametros) {
+        try {
+            Symbol funOproc = st.getSymbol(identificador.image);
+            ArrayList<Symbol> params;
+            if(funOproc.type == Symbol.Types.FUNCTION || funOproc.type == Symbol.Types.PROCEDURE) {
+                if(funOproc.type == Symbol.Types.FUNCTION)
+                    params = ((SymbolFunction)funOproc).parList;
+                else
+                    params = ((SymbolProcedure)funOproc).parList;
+            } else {
+                printError(String.format("\"%s\" no es una función o procedimiento.", identificador.image));
+                return;
+            }
+            // Comprobar que el número de parámetros es el adecuado
+            if(params.size() != parametros.size()) {
+                printError(String.format("\"%s\" esperaba %d parámetros. Recibidos %d parámetros.",
+                    identificador.image, params.size(), parametros.size()));
+                return;
+            }
+            // Comprobar validez parámetro a parámetro
+            for(int i = 0; i < params.size(); ++i) {
+                // Comprobar que parámetro pasado es del tipo correcto
+                if(params.get(i).type != parametros.get(i).type) {
+                    printError(String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s.",
+                        params.get(i).type, parametros.get(i).type));
+                }
+                // Comprobar que parámetro pasado es una variable si se requiere paso por referencia
+                if(params.get(i).parClass == Symbol.ParameterClass.REF && !parametros.get(i).isVar) {
+                    printError("Parámetro por referencia. Espera variable, recibido constante.");
+                }
+            }
+        } catch(SymbolNotFoundException e) {
+            printError(String.format("\"%s\" no es una función o procedimiento.", identificador.image));
+        }
+    }
+
+    private static void printError(String error) {
+        String crojo = "\u001B[31m";
+        String reset = "\u001B[0m";
+        System.err.printf("%sError: (%d, %d):%s %s\n", crojo, 
+            token.beginLine, token.beginColumn, reset, error);
+    }
+
+    private static void printMessage(String label, String message) {
+        String verde = "\u001B[32m";
+        String reset = "\u001B[0m";
+        System.out.printf("%s%s:%s %s\n", verde, label, reset, message);
+    }
 }
-}
+
 PARSER_END(gcl)
 
 ///////////////////////////////////////////////////////////////////////////////

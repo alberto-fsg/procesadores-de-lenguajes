@@ -29,8 +29,8 @@ import java.util.*;
 
 public class gcl {
     // tabla de símbolos global
-	static SymbolTable st;
-   
+    static SymbolTable st;
+    
    public static void main(String[] args) {
 	   gcl parser = null;
 	   
@@ -62,34 +62,175 @@ public class gcl {
     // inserta todos los símbolos de "lVars" de tipo "aT" y los marca como ref si "isRef",
     // auxiliar para "parametros_declaraciones" (los parámetros de la declaración de una función/procedimiento)
     private static void insertSymbols(AtribTipo aT, boolean isRef, ArrayList<String> lVars) {
-    for (String id : lVars) {
-        try {
-            Symbol sV = null;
-            if (aT.isArray) {
-                sV = new SymbolArray(id, 0, aT.size-1, aT.type);
-            } else {
-                switch(aT.type) {
-                    case INT:
-                        sV = new SymbolInt(id); break;
-                    case BOOL:
-                        sV = new SymbolBool(id); break;
-                    case CHAR:
-                        sV = new SymbolChar(id); break;
-                    default:
-                        System.out.println("Error: tipo no definido para variable \"" + id + "\".");
+        for (String id : lVars) {
+            try {
+                Symbol sV = null;
+                if (aT.isArray) {
+                    sV = new SymbolArray(id, 0, aT.size-1, aT.type);
+                } else {
+                    switch(aT.type) {
+                        case INT:
+                            sV = new SymbolInt(id); break;
+                        case BOOL:
+                            sV = new SymbolBool(id); break;
+                        case CHAR:
+                            sV = new SymbolChar(id); break;
+                        default:
+                            System.out.println("Error: tipo no definido para variable \"" + id + "\".");
+                    }
                 }
+                if (sV != null) {
+                    sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
+                    st.insertSymbol(sV);
+                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                }
+            } catch (AlreadyDefinedSymbolException e) {
+                System.out.println("Error: Identificador ya existe: \"" + id + "\"");
             }
-            if (sV != null) {
-                sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
-                st.insertSymbol(sV);
-                System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
-            }
-        } catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: Identificador ya existe: \"" + id + "\"");
         }
     }
+
+    private static boolean typeNotEqual(Symbol.Types esperado, Symbol.Types real, String error) {
+        if(esperado == real) {
+            if(error != null) printError(error);
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean typeEqual(Symbol.Types esperado, Symbol.Types real, String error) {
+        if(esperado != real) {
+            if(error != null) printError(error);
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean typeNotEqual(List<Symbol.Types> esperado, Symbol.Types real, String error) {
+        if(!esperado.isEmpty()) {
+            for(Symbol.Types t : esperado) {
+                if(t == real) {
+                    if(error != null) printError(error);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean typeEqual(Symbol.Types esperado, List<Symbol.Types> real, String error) {
+        if(!real.isEmpty()) {
+            for(Symbol.Types t : real) {
+                if(esperado != t) {
+                    if(error != null) printError(error);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean typeNotEqual(List<Symbol.Types> esperado, ArrayList<String> real) {
+        boolean ok = true;
+        Symbol s;
+        for(String i : real) {
+            try {
+                s = st.getSymbol(i);
+                ok = ok && typeNotEqual(esperado, s.type, String.format("leer_lin o leer incompatible con tipo de dato \"%s\"", s.type));
+            } catch(SymbolNotFoundException e) {
+                printError(String.format("Variable \"%s\" no encontrada en tabla de símbolos.", i));
+            }
+        }
+        return ok;
+    }
+
+    private static void insertProcedure(Token identificador, ArrayList<Symbol> parametros) {
+        SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
+        try {
+            st.insertSymbol(sProc);
+            insertParameters(parametros);
+        } catch(AlreadyDefinedSymbolException e) {
+            printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+        }
+    }
+
+    private static void insertFunction(Token identificador, AtribTipo returnType, ArrayList<Symbol> parametros) {
+        if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
+            printError(String.format("Una función solo puede devolver valores de tipo INT, BOOL o CHAR. Tipo dado: %s.", returnType.type));
+        } else {
+            SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
+            try {
+                st.insertSymbol(sFunc);
+                insertParameters(parametros);
+            } catch(AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+            }
+        }
+    }
+
+    private static void insertParameters(ArrayList<Symbol> parametros) {
+        st.insertBlock();
+        for(Symbol param : parametros) {
+            try {
+                st.insertSymbol(param);
+                printMessage("Tabla de símbolos",
+                    String.format("\"%s\" insertado en nivel %d.", param.name, st.level));
+            } catch(AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya definida variable de identificador \"%s\".", param.name));
+            }
+        }
+    }
+
+    private static void checkParameters(Token identificador, ArrayList<AtribExp> parametros) {
+        try {
+            Symbol funOproc = st.getSymbol(identificador.image);
+            ArrayList<Symbol> params;
+            if(funOproc.type == Symbol.Types.FUNCTION || funOproc.type == Symbol.Types.PROCEDURE) {
+                if(funOproc.type == Symbol.Types.FUNCTION)
+                    params = ((SymbolFunction)funOproc).parList;
+                else
+                    params = ((SymbolProcedure)funOproc).parList;
+            } else {
+                printError(String.format("\"%s\" no es una función o procedimiento.", identificador.image));
+                return;
+            }
+            // Comprobar que el número de parámetros es el adecuado
+            if(params.size() != parametros.size()) {
+                printError(String.format("\"%s\" esperaba %d parámetros. Recibidos %d parámetros.",
+                    identificador.image, params.size(), parametros.size()));
+                return;
+            }
+            // Comprobar validez parámetro a parámetro
+            for(int i = 0; i < params.size(); ++i) {
+                // Comprobar que parámetro pasado es del tipo correcto
+                if(params.get(i).type != parametros.get(i).type) {
+                    printError(String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s.",
+                        params.get(i).type, parametros.get(i).type));
+                }
+                // Comprobar que parámetro pasado es una variable si se requiere paso por referencia
+                if(params.get(i).parClass == Symbol.ParameterClass.REF && !parametros.get(i).isVar) {
+                    printError("Parámetro por referencia. Espera variable, recibido constante.");
+                }
+            }
+        } catch(SymbolNotFoundException e) {
+            printError(String.format("\"%s\" no es una función o procedimiento.", identificador.image));
+        }
+    }
+
+    private static void printError(String error) {
+        String crojo = "\u001B[31m";
+        String reset = "\u001B[0m";
+        System.err.printf("%sError: (%d, %d):%s %s\n", crojo, 
+            token.beginLine, token.beginColumn, reset, error);
+    }
+
+    private static void printMessage(String label, String message) {
+        String verde = "\u001B[32m";
+        String reset = "\u001B[0m";
+        System.out.printf("%s%s:%s %s\n", verde, label, reset, message);
+    }
 }
-}
+
 PARSER_END(gcl)
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -180,8 +321,9 @@ TOKEN : {
 // deprecado al parecer, https://parsers.org/javacc21/token-hooks-revisited/
 TOKEN_MGR_DECLS : {
     public static void CommonTokenAction(Token t) {
-        System.out.printf("(%d,%d): %s \"%s\"%n", 
-            t.beginLine, t.beginColumn, getTokenName(t.kind), t.image);
+        if(false)
+            System.out.printf("(%d,%d): %s \"%s\"%n", 
+                t.beginLine, t.beginColumn, getTokenName(t.kind), t.image);
     }
 
     // función épica que devuelve el token (no su lexema)
@@ -303,24 +445,23 @@ void declaracion() :
                         case CHAR:
                             sV = new SymbolChar(id); break;
                         default:
-                            System.out.println("Error: tipo no definido para variable \"" +
-                                id + "\".");
+                            printError(String.format("Tipo no válido para variable \"%s\".", id));
                     }
                 }
                 if(sV != null) {
                     st.insertSymbol(sV);
-                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                    printMessage("Tabla de símbolos",
+                        String.format("\"%s\" insertado en nivel %d.", sV.name, st.level));
                 }
             } catch(AlreadyDefinedSymbolException e) {
-                System.out.println("Error: ya existe variable con identificador \"" +
-                    id + "\".");
+                printError(String.format("Ya definida variable de identificador \"%s\".", id));
             }
         }
     }
 }
 
 void asignacion() :
-{ System.out.println("Asignacion"); }
+{}
 {
     < tIDENTIFICADOR >
     ( < tOPENING_SQUARE_BRACKET > expresion_simple() < tCLOSING_SQUARE_BRACKET > )?
@@ -342,27 +483,19 @@ AtribExp primario() :
     Symbol s = null;
     SymbolFunction s_func;
     SymbolArray s_array;
+    boolean ok = true;
 }
 {
-    {
-        System.out.println("Entrando en primario");
-    }
     (
-        /**
-         * Caso: llamada a entAcar.
-         */
+        /** Caso: llamada a entAcar */
         entAcar()
         { return new AtribExp(Symbol.Types.CHAR, null, false, false); }
     |    
-        /**
-         * Caso: llamada a carAent.
-         */
+        /** Caso: llamada a carAent */
         carAent()
         { return new AtribExp(Symbol.Types.INT, null, false, false); }
     |
-        /**
-         * Caso: llamada a función excluyendo procedimientos.
-         */
+        /** Caso: llamada a función excluyendo procedimientos. */
         LOOKAHEAD(2) // Para distinguirlo de un array o variable.
         t = <tIDENTIFICADOR>
         <tOPENING_PARENTHESIS>
@@ -371,29 +504,16 @@ AtribExp primario() :
         {
             try {
                 s = st.getSymbol(t.image);
-            } catch (SymbolNotFoundException e) {
-                /**
-                 * Lanzar una excepción si la sintaxis utilizada es la de la llamada a una función pero el identificador semánticamente no existe.
-                 */
-                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
-                return null;
+            } catch(SymbolNotFoundException e) {
+                printError(String.format("Función \"%s\" no encontrada en tabla de símbolos.", t.image));
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
-            /**
-             * Lanzar una excepción si la sintaxis utilizada es la de la llamada a una función pero el identificador semánticamente no es una función.
-             */
-            if (s.type != Symbol.Types.FUNCTION) {
-                System.out.println("Error: Se esperaba que '" + t.image + "' fuera una función (o procedimiento), pero se encontró: " + s.type + ".");
-            }
-            /**
-             * Devolver una expresión del tipo de retorno de la función y valor indefinido (no evaluable estáticamente).
-             */
-            s_func = (SymbolFunction) s;
-            return new AtribExp(s_func.returnType, null, false, false); // Marcar el atributo variable a falso porque las funciones devuelven constantes.
+            if(typeEqual(Symbol.Types.FUNCTION, s.type, String.format("Tipo incorrecto. Se esperaba FUNCTION pero se encontró %s.", s.type)))
+                return new AtribExp(((SymbolFunction)s).returnType, null, false, false);
+            else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
     |
-        /**
-         * Caso: acceso a array.
-         */
+        /** Caso: acceso a array */
         LOOKAHEAD(2) // Para distinguirlo del acceso a una variable.
         t = <tIDENTIFICADOR>
         <tOPENING_SQUARE_BRACKET>
@@ -403,110 +523,70 @@ AtribExp primario() :
             try {
                 s = st.getSymbol(t.image);
             } catch (SymbolNotFoundException e) {
-                /**
-                 * Lanzar una excepción si la sintaxis utilizada es la de un array pero el identificador semánticamente no existe.
-                 */
-                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
-                return null;
+                printError(String.format("Array \"%s\" no encontrada en tabla de símbolos.", t.image));
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
-            /**
-             * Lanzar una excepción si la sintaxis utilizada es la de un array pero el identificador semánticamente no es un array.
-             */
-            if (s.type != Symbol.Types.ARRAY) {
-                System.out.println("Error: Se esperaba que '" + t.image + "' fuera un array, pero se encontró: " + s.type + ".");
+            /** El identificador hace referencia a un array */
+            ok = typeEqual(Symbol.Types.ARRAY, s.type, String.format("Tipo incorrecto. Se esperaba ARRAY pero se encontró %s.", s.type));
+            /** El indice de acceso al array es un entero */
+            ok &= typeEqual(Symbol.Types.INT, ae.type, String.format("Tipo incorrecto. Se esperaba que el índice del array fuera un INT pero se encontró %s.", ae.type));
+            /** Si el valor de acceso al vector es un entero y es constante, comprobar que es válido */
+            s_array = (SymbolArray) s;
+            if(ae.isConst && Integer.valueOf(ae.image) > s_array.maxInd) {
+                printError(String.format("El índice %s es demasiado grande para el vector %s de tamaño %s.", ae.image, t.image, Integer.toString(s_array.maxInd + 1)));
+                ok = false;
             }
-            /**
-             * Lanzar una excepción si el tipo del valor de acceso al array no es un entero.
-             */
-            if (ae.type != Symbol.Types.INT) {
-                System.out.println("Error: Se esperaba que el índice del array fuera un entero, pero se evaluó: tipo " + ae.type + " con valor '" + ae.image + "'.");
-            }
-            s_array = (SymbolArray) s; // Para acceder al campo maxInd
-            /**
-             * Optimización: si el valor de acceso al vector es un entero y es constante, comprobar estáticamente que es válido.
-             * Lanzar una excepción si no es válido.
-             */
-            if (ae.isConst && Integer.valueOf(ae.image) > s_array.maxInd) {
-                System.out.println("Error: El índice " + ae.image + " es demasiado grande para el vector " + t.image + " de tamaño " + (s_array.maxInd + 1) + "'.");
-            }
-            /**
-             * Lanzar una excepción si el valor de acceso al vector es un entero no constante.
-             */
-            Symbol.Types elemType = s_array.baseType;
-            return new AtribExp(elemType, null, true, ae.isConst && s.constant);
+            return ok ? new AtribExp(s_array.baseType, null, true, false) : new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
     |
-        /**
-         * Caso: acceso a una variable.
-         */
+        /** Caso: acceso a una variable */
         t = <tIDENTIFICADOR>
         {
             try {
                 s = st.getSymbol(t.image);
-                String image = t.image;
-                return new AtribExp(s.type, null, true, false); // Valor null por no ser evaluable en tiempo de compilación (no existen variables constantes en gcl).
+                return new AtribExp(s.type, t.image, true, false);
             } catch (SymbolNotFoundException e) {
-                /**
-                 * Lanzar una excepción si la sintaxis utilizada es la de acceso a una variable pero semánticamente el identificador no existe.
-                 */
-                System.out.println("Error: El identificador '" + t.image + "' no está definido.");
-                throw new SymbolNotFoundException("Error: El identificador '" + t.image + "' no está definido.");
+                printError(String.format("Identificador \"%s\" no encontrado en tabla de símbolos.", t.image));
+                return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
         }
     |
-        /**
-         * Caso: constante int.
-         */
+        /** Caso: constante int */
         t = <tCONSTANT>
         { 
             return new AtribExp(Symbol.Types.INT, t.image, false, true); 
         }
     |
-        /**
-         * Caso: constante char.
-         */
+        /** Caso: constante char */
         t = <tCHAR>
         {
             return new AtribExp(Symbol.Types.CHAR, t.image, false, true); 
         }
     |
-        /**
-         * Caso: constante string.
-         */
+        /** Caso: constante string. */
         t = <tSTRING>
         {
             return new AtribExp(Symbol.Types.STRING, t.image, false, true); 
         }
     |
-        /**
-         * Caso: constante bool con valor true.
-         */
+        /** Caso: constante bool con valor true */
         t = <tTRUE>
         {
             return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
         }
     |
-        /**
-         * Caso: constante bool con valor false.
-         */
+        /** Caso: constante bool con valor false */
         t = <tFALSE>
         {
             return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
         }
     )
-    /**
-     * Devolver una expresión de tipo no definido si no entra en ninguno de los casos válidos.
-     */
-    {
-        System.out.println("Error: Saliendo de primario por caso no identificado (¿inaccesible?)");
-        return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
-    }
 }
 
 AtribExp factor() :
 {
-    System.out.println("Entrando en factor");
     Token op = null;
+    boolean ok = true;
     AtribExp ae;
 }
 {
@@ -518,44 +598,29 @@ AtribExp factor() :
     )
     {
         if (op != null) {
-            /**
-             * Lanzar una excepción si el operador no es válido.
-             */
-            if ((op.image.equals("!") && ae.type != Symbol.Types.BOOL) ||
-                ((op.image.equals("+") || op.image.equals("-")) && ae.type != Symbol.Types.INT)) {
-                System.out.println (
-                    "Error: El operador '" + op.image + "' requiere un valor del tipo adecuado, pero se evaluó: "
-                    + "tipo " + ae.type + " con valor '" + ae.image + "'."
-                );
-            }
-            
-            boolean isConst = ae.isConst;
+            /** Mirar si el operando es válido respecto al operador */
+            ok = op.image.equals("!") && typeEqual(Symbol.Types.BOOL, ae.type,
+                String.format("El operador \"%s\" requiere un valor de tipo BOOL, pero se ha proporcionado %s.", op.image, ae.type));
+
+            ok |= (op.image.equals("+") || op.image.equals("-")) && typeEqual(Symbol.Types.INT, ae.type,
+                String.format("El operador \"%s\" requiere un valor de tipo INT, pero se ha proporcionado %s.", op.image, ae.type));
+
+            /** Evaluar la expresión recibida si es constante y tiene delante algún operador */
             String val = null;
-            
-            /**
-             * Evaluar la expresión recibida si es constante y tiene delante algún operador.
-             */
-            if (isConst) {
-                if (op.image.equals("!")) {
+            if(ok && ae.isConst) {
+                if(op.image.equals("!"))
                     val = String.valueOf(!Boolean.parseBoolean(ae.image));
-                } else {
+                else {
                     int num = Integer.parseInt(ae.image);
                     val = op.image.equals("-") ? String.valueOf(-num) : String.valueOf(num);
                 }
             }
-            
-            /**
-             * Devolver una expresión del tipo correspondiente, con el valor evaluado si es constante.
-             */
-            System.out.println("Saliendo de factor tras operador " + op.image + 
-                               (isConst ? " con resultado constante" : " con resultado no constante"));
-            return new AtribExp(op.image.equals("!") ? Symbol.Types.BOOL : Symbol.Types.INT, val, false, isConst);
+
+            /** Devolver expresión del tipo correspondiente */
+            if(ok) return new AtribExp(op.image.equals("!") ? Symbol.Types.BOOL : Symbol.Types.INT, val, false, ae.isConst);
+            else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
-        
-        /**
-         * Devolver exactamente la expresión recibida si no tiene ningún operador delante, op == null.
-         */
-        System.out.println("Saliendo de factor con expresión primaria");
+        /** Devolver exactamente la expresión recibida si no tiene ningún operador delante */
         return ae;
     }
 }
@@ -563,8 +628,8 @@ AtribExp factor() :
 
 AtribExp termino() :
 {
-    System.out.println("Entrando en termino");
     AtribExp left, right;
+    boolean ok = true;
     Token op;
 }
 {
@@ -573,116 +638,70 @@ AtribExp termino() :
         op = operador_multiplicativo()
         right = factor()
         {
-            /**
-             * Lanzar una excepción si los 2 factores no son del mismo tipo.
-             */
-            if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                System.out.println(
-                    "Error: Los operadores multiplicativos requieren valores enteros. Se evaluó: "
-                    + "left.type = " + left.type + " con valor '" + left.image 
-                    + "', right.type = " + right.type + " con valor '" + right.image + "'."
-                );
-            }
-            boolean isConst = left.isConst && right.isConst;
+            ok &= typeEqual(Symbol.Types.INT, List.of(left.type, right.type),
+                String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
+
+            /** Evaluar término si ambos factores constantes */
             String val = null;
-            
-            /**
-             * Evaluar el termino si los 2 factores son constantes.
-             */
-            if (isConst) {
-                int l = Integer.parseInt(left.image);
-                int r = Integer.parseInt(right.image);
-                
-                switch (op.image) {
+            boolean isConst = left.isConst && right.isConst;
+            if(isConst && ok) {
+                int l = Integer.parseInt(left.image), r = Integer.parseInt(right.image);
+                switch(op.image.toLowerCase()) {
                     case "*":
                         val = String.valueOf(l * r);
                         break;
                     case "/":
-                        val = (r != 0) ? String.valueOf(l / r) : "0"; 
+                        val = (r != 0) ? String.valueOf(l / r) : "0";
                         break;
-                    case "MOD":
+                    case "mod":
                         val = String.valueOf(l % r);
                         break;
                 }
             }
-            
-            left = new AtribExp(Symbol.Types.INT, val, false, isConst);
+            if(ok) left = new AtribExp(Symbol.Types.INT, val, false, isConst);
+            else left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
     )*
-    { 
-        System.out.println("Saliendo de termino");
-        return left; 
-    }
+    { return left; }
 }
 
 AtribExp expresion_simple() :
 {
-    System.out.println("Entrando en expresion_simple");
     AtribExp left, right;
+    boolean ok = true;
     Token op;
-    boolean isConst;
 }
 {
     left = termino()
-    { 
-        isConst = left.isConst; 
-    }
     (
         LOOKAHEAD(2) (op = <tPLUS> | op = <tMINUS>)
         right = termino()
         {
-            /**
-             * Lanzar una excepción si los 2 operandos no son del mismo tipo.
-             */
-            if (left.type != right.type) {
-                System.out.println(
-                    "Error: Los operandos para el operador '" + op.image 
-                    + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
-                    + " con valor '" + left.image + "', right.type = " + right.type 
-                    + " con valor '" + right.image + "'."
-                );
-            }
-
-            /**
-             * Lanzar una excepción si los 2 operandos no son de tipo integer.
-             */
-            if (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT) {
-                System.out.println(
-                    "Error: Los operadores de expresiones requieren valores enteros. Se evaluó: "
-                    + "left.type = " + left.type + " con valor '" + left.image 
-                    + "', right.type = " + right.type + " con valor '" + right.image + "'. Al menos uno de ellos no es booleano."
-                );
-            }
+            ok &= typeEqual(Symbol.Types.INT, List.of(right.type, left.type),
+                String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
             
-            isConst = isConst && right.isConst;
-            
-            /**
-             * Evaluar la expresión simple si los 2 terminos son constantes.
-             */
-            if (isConst) {
+            /** Evaluar expresión simple si ambos factores constantes */
+            String val = null;
+            boolean isConst = left.isConst && right.isConst;
+            if (isConst && ok) {
                 int l = Integer.parseInt(left.image);
                 int r = Integer.parseInt(right.image);
-                
-                left.image = op.image.equals("+") ? String.valueOf(l + r): String.valueOf(l - r);
-            } else {
-                left.image = null;
+                val = op.image.equals("+") ? String.valueOf(l + r): String.valueOf(l - r);
             }
             
-            left.isConst = isConst;
+            if(ok) left = new AtribExp(Symbol.Types.INT, val, false, isConst);
+            else left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
     )*
-    { 
-        System.out.println("Saliendo de expresion_simple");
-        return left; 
-    }
+    { return left; }
 }
 
 
 AtribExp relacion() :
 {
-    System.out.println("Entrando en relacion");
-    AtribExp left, right = null;
-    Token op = null;
+    AtribExp left, right;
+    boolean ok = true;
+    Token op;
 }
 {
     left = expresion_simple()
@@ -690,144 +709,85 @@ AtribExp relacion() :
         op = operador_relacional()
         right = expresion_simple()
         {
-            /**
-             * Lanzar una excepción si los 2 operandos no son del mismo tipo.
-             */
-            if (left.type != right.type) {
-                System.out.println(
-                    "Error: Los operandos para el operador '" + op.image 
-                    + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
-                    + " con valor '" + left.image + "', right.type = " + right.type 
-                    + " con valor '" + right.image + "'."
-                );
-            }
 
-            /**
-             * Lanzar una excepción si los 2 operandos no son de tipo booleando y el operador los requiere.
-             */
-            if (op.image.matches("=|!=") && (left.type != Symbol.Types.BOOL || right.type != Symbol.Types.BOOL)) {
-                System.out.println(
-                    "Error: Los operandos para el operador '" + op.image 
-                    + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
-                    + " con valor '" + left.image + "', right.type = " + right.type 
-                    + " con valor '" + right.image + "'."
-                );
-            }
+            /** Si el operador lo requiere, ambos operandos deben ser del mismo tipo = <> */
+            if(op.image.matches("=|<>"))
+                ok &= typeEqual(left.type, right.type,
+                    String.format("Los operandos del operador \"%s\" deben ser del mismo tipo. Se proporciono %s y %s.", op.image, left.type, right.type));
 
-            /**
-             * Lanzar una excepción si los 2 operandos no son de tipo entero y el operador los requiere.
-             */
-            if (op.image.matches("<|<=|>|>=") && (left.type != Symbol.Types.INT || right.type != Symbol.Types.INT))
-                System.out.println(
-                    "Error: Los operadores relacionales requieren valores enteros. Se evaluó: "
-                    + "left.type = " + left.type + " con valor '" + left.image 
-                    + "', right.type = " + right.type + " con valor '" + right.image + "'."
-                );
+            /** Si el operador lo requiere, ambos operandos deben ser del tipo INT  */
+            if(op.image.matches("<|<=|>|>="))
+                typeEqual(Symbol.Types.INT, List.of(left.type, right.type),
+                    String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Se proporciono %s y %s.", op.image, left.type, right.type));
             
+            /** Evaluar la relación si las dos expresiones simples son constantes */
+            boolean result = true;
             boolean isConst = left.isConst && right.isConst;
-            String val = null;
-            
-            /**
-             * Evaluar la relacion si las 2 expresiones simples son constantes.
-             */
-            if (isConst) {
-                boolean result = false;
-                
+            if (isConst) {                
                 switch (left.type) {
                     case INT:
                         int l = Integer.parseInt(left.image);
                         int r = Integer.parseInt(right.image);
                         switch (op.image) {
-                            case "=": result = (l == r); break;
-                            case "!=": result = (l != r); break;
-                            case "<": result = (l < r); break;
-                            case "<=": result = (l <= r); break;
-                            case ">": result = (l > r); break;
-                            case ">=": result = (l >= r); break;
+                            case "=":   result = (l == r);  break;
+                            case "<>":  result = (l != r);  break;
+                            case "<":   result = (l < r);   break;
+                            case "<=":  result = (l <= r);  break;
+                            case ">":   result = (l > r);   break;
+                            case ">=":  result = (l >= r);  break;
                         }
-                        break;
-                        
+                        break; 
                     case BOOL:
                         boolean bl = Boolean.parseBoolean(left.image);
                         boolean br = Boolean.parseBoolean(right.image);
                         result = op.image.equals("=") ? (bl == br) : (bl != br);
                         break;
                 }
-                
-                val = String.valueOf(result);
             }
-            
-            left = new AtribExp(Symbol.Types.BOOL, val, false, isConst);
+            left = new AtribExp(Symbol.Types.BOOL, String.valueOf(result), false, isConst);
         }
     )?
     { 
-        System.out.println("Saliendo de relacion");
-        return left;
+        if(ok) return left;
+        else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
     }
 }
 
 AtribExp expresion() :
 {
-    System.out.println("Entrando en expresion");
     AtribExp left, right;
+    boolean ok = true;
     Token op;
-    boolean isConst;
-    boolean left_type, right_type;
 }
 {
     left = relacion()
-    { 
-        isConst = left.isConst; 
-    }
     (
         (op = <tAND> | op = <tOR>)
         right = relacion()
         {
-            /**
-             * Lanzar una excepción si los 2 operandos no son del mismo tipo.
-             */
-            if (left.type != right.type) {
-                System.out.println(
-                    "Error: Los operandos para el operador '" + op.image 
-                    + "' deben ser del mismo tipo. Se evaluó: left.type = " + left.type 
-                    + " con valor '" + left.image + "', right.type = " + right.type 
-                    + " con valor '" + right.image + "'."
-                );
-            }
+            /** ambos operandos deber ser del mismo tipo */
+            ok = typeEqual(left.type, right.type,
+                String.format("Los operandos para el operador \"%s\" deben de ser del mismo tipo. %s != %s.", op.image, left.type, right.type));
 
-            /**
-             * Lanzar una excepción si los 2 operandos no son de tipo booleando.
-             */
-            if (left.type != Symbol.Types.BOOL || right.type != Symbol.Types.BOOL) {
-                System.out.println(
-                    "Error: Los operadores de expresiones requieren valores booleanos. Se evaluó: "
-                    + "left.type = " + left.type + " con valor '" + left.image 
-                    + "', right.type = " + right.type + " con valor '" + right.image + "'. Al menos uno de ellos no es booleano."
-                );
-            }
-            
-            isConst = isConst && right.isConst;
-            
-            /**
-             * Evaluar la expresion si las 2 relaciones son constantes.
-             */
-            if (isConst) {
+            /** los operadores & y | requieren operandos del tipo BOOL */
+            ok &= typeEqual(Symbol.Types.BOOL, List.of(left.type, right.type),
+                String.format("Los operandos para el operador \"%s\" deben ser de tipo BOOL. Recibido %s %s.", op.image, left.type, right.type));
+                        
+            /** Evaluar la expresion si las 2 relaciones son constantes.*/
+            String val = null;
+            boolean isConst = left.isConst && right.isConst;
+            if (isConst && ok) {
                 boolean l = Boolean.parseBoolean(left.image);
                 boolean r = Boolean.parseBoolean(right.image);
                 
-                left.image = op.image.equals("&") 
-                    ? String.valueOf(l && r)
-                    : String.valueOf(l || r);
-            } else {
-                left.image = null;
+                val = op.image.equals("&") ? String.valueOf(l && r) : String.valueOf(l || r);
             }
-            
-            left.isConst = isConst;
+            left = new AtribExp(Symbol.Types.BOOL, val, false, isConst);
         }
     )*
     { 
-        System.out.println("Saliendo de expresion");
-        return left; 
+        if(ok) return left;
+        else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
     }
 }
 
@@ -863,15 +823,13 @@ Token operador_relacional() :
 
 // --- INICIO DE funciones.jj ---
 void declaracion_procs_funcs() :
-{ System.out.println("Declaración de procedimientos/funciones"); }
+{}
 {
     ( declaracion_proc() | declaracion_func() )+
 }
 
 void declaracion_proc() :
 { 
-    System.out.println("Declaración de procedimiento"); 
-    Symbol sFunc;
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
 }
@@ -881,18 +839,7 @@ void declaracion_proc() :
     ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
     {
-        try {
-            sFunc = new SymbolProcedure(t.image, parametros);
-            st.insertSymbol(sFunc);
-            st.insertBlock();
-            for(Symbol param : parametros) {
-                st.insertSymbol(param);
-                System.out.println("Variable insertada en el procedimiento: \"" + t.image + "\".");
-            }
-        }
-        catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: ya existe procedimiento con identificador \"" + t.image + "\".");
-        }
+        insertProcedure(t, parametros);
     }
     ( LOOKAHEAD(3) declaracion_variables() )*
     ( declaracion_procs_funcs() )*
@@ -904,8 +851,6 @@ void declaracion_proc() :
 
 void declaracion_func() :
 { 
-    System.out.println("Declaración de función"); 
-    Symbol sFunc;
     Token t;
     AtribTipo aT;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
@@ -913,41 +858,11 @@ void declaracion_func() :
 {
     aT = tipoEscalar()
     t = <tIDENTIFICADOR>
-    // crear la variable del return
-    {
-        sFunc = null;
-        switch (aT.type) {
-            case INT:
-                sFunc = new SymbolInt(t.image);
-                break;
-            case BOOL:
-                sFunc = new SymbolBool(t.image);
-                break;
-            case CHAR:
-                sFunc = new SymbolChar(t.image);
-                break;
-            default:
-                System.out.println("Error: tipo no definido para función \"" + t.image + "\".");
-        }
-    }
     < tOPENING_PARENTHESIS >
     ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
     {
-        try {
-            sFunc = new SymbolFunction(t.image, parametros, aT.type);
-            st.insertSymbol(sFunc);
-            st.insertBlock();
-            System.out.println(st.toString());
-
-            for(Symbol param : parametros) {
-                st.insertSymbol(param);
-                System.out.println("Variable insertada en la función: \"" + t.image + "\".");
-            }
-        }
-        catch (AlreadyDefinedSymbolException e) {
-            System.out.println("Error: ya existe función con identificador \"" + t.image + "\".");
-        }
+        insertFunction(t, aT, parametros);
     }
     ( LOOKAHEAD(3) declaracion_variables() )*
     ( declaracion_procs_funcs() )*
@@ -962,49 +877,13 @@ void llamar_funcion() :
     ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
     Symbol fun;
     Token t;
-    System.out.println("Llamar función");
 }
 {
     t = < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >
     lPar = parametros_llamada_funcion()
     {
-        try {
-            fun = st.getSymbol(t.image);
-
-            if(fun.type == Symbol.Types.FUNCTION) {
-                SymbolFunction aux =(SymbolFunction)fun;
-                for(int i = 0; i < lPar.size(); ++i) {
-                    if(lPar.get(i).type != aux.parList.get(i).type) { // tipos no coinciden
-                        String errorMsg = String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s",
-                            aux.parList.get(i).type, lPar.get(i).type);
-                        System.out.println("Error en llamada a función: " + errorMsg);
-                    }
-                    if(aux.parList.get(i).parClass == Symbol.ParameterClass.REF && !lPar.get(i).isVar) { // valores por referencia
-                        String errorMsg = String.format("Parámetro por referencia. Espera variable.",
-                            aux.parList.get(i).type, lPar.get(i).type);
-                        System.out.println("Error en llamada a función: " + errorMsg);
-                    }
-                }
-            } else if(fun.type == Symbol.Types.PROCEDURE) {
-                SymbolProcedure aux =(SymbolProcedure)fun;
-                for(int i = 0; i < lPar.size(); ++i) {
-                    if(lPar.get(i).type != aux.parList.get(i).type) { // tipos no coinciden
-                        String errorMsg = String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s",
-                            aux.parList.get(i).type, lPar.get(i).type);
-                        System.out.println("Error en llamada a función: " + errorMsg);
-                    }
-                    if(aux.parList.get(i).parClass == Symbol.ParameterClass.REF && !lPar.get(i).isVar) { // valores por referencia
-                        String errorMsg = String.format("Parámetro por referencia. Espera variable.",
-                            aux.parList.get(i).type, lPar.get(i).type);
-                        System.out.println("Error en llamada a función: " + errorMsg);
-                    }
-                }
-            }
-
-        } catch(SymbolNotFoundException e) {
-            System.out.println("Error en llamada a función: no existe símbolo con nombre \"" + t.image + "\".");
-        }
+        checkParameters(t, lPar);
     }
     < tCLOSING_PARENTHESIS >
     < tSEMICOLON >
@@ -1013,9 +892,7 @@ void llamar_funcion() :
 ArrayList<AtribExp> parametros_llamada_funcion() :
 { 
     ArrayList<AtribExp> lpar = new ArrayList<AtribExp>();
-    AtribExp ae = null;
-    System.out.println("Parámetros llamada función");
-    
+    AtribExp ae = null;    
 }
 {
     (  ae = expresion() )?
@@ -1035,7 +912,6 @@ ArrayList<AtribExp> parametros_llamada_funcion() :
 
 ArrayList<Symbol> parametros_declaraciones() :
 {   
-    System.out.println("Parámetros declaraciones"); 
     AtribTipo aT;
     ArrayList<String> lVars;
     boolean isRef = false;
@@ -1055,25 +931,19 @@ ArrayList<Symbol> parametros_declaraciones() :
                 switch(aT.type) {
                     case INT:
                         sV = new SymbolInt(
-                            id,
-                            isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
-                        );
+                            id, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
                         break;
                     case BOOL:
                         sV = new SymbolBool(
-                            id,
-                            isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
-                        );
+                            id, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
                         break;
                     case CHAR:
                         sV = new SymbolChar(
-                            id,
-                            isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
-                        );
+                            id, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
                         break;
                     default:
-                        System.out.println("Error: tipo no definido para variable \"" +
-                            id + "\".");
+                        printError("Tipo no válido.");
+                        break;
                 }
             }
             allSymbols.add(sV);
@@ -1095,25 +965,19 @@ ArrayList<Symbol> parametros_declaraciones() :
                     switch(aT.type) {
                         case INT:
                             sV = new SymbolInt(
-                                id,
-                                isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
-                            );
+                                id, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
                             break;
                         case BOOL:
                             sV = new SymbolBool(
-                                id,
-                                isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
-                            );
+                                id, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
                             break;
                         case CHAR:
                             sV = new SymbolChar(
-                                id,
-                                isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL
-                            );
+                                id, isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL);
                             break;
                         default:
-                            System.out.println("Error: tipo no definido para variable \"" +
-                                id + "\".");
+                            System.out.println("Tipo no válido.");
+                            break;
                     }
                 }
                 allSymbols.add(sV);
@@ -1125,13 +989,13 @@ ArrayList<Symbol> parametros_declaraciones() :
 
 // --- INICIO DE instrucciones.jj ---
 void instrucciones() :
-{ System.out.println("Instrucciones"); }
+{}
 {
     ( instruccion() )*
 }
 
 void instruccion() :
-{ System.out.println("Instrucción"); }
+{}
 {
     escribir_linea() <tSEMICOLON>
 |   escribir() <tSEMICOLON>
@@ -1149,7 +1013,7 @@ void instruccion() :
 }
 
 void seleccion() :
-{ System.out.println("Selección"); }
+{}
 {
     < tSELECTION > 
     ( < tCASE > expresion() < tCOLON > instrucciones() )+
@@ -1158,7 +1022,7 @@ void seleccion() :
 }
 
 void bucle() :
-{ System.out.println("Bucle"); }
+{}
 {
     < tITERATION >
     expresion()
@@ -1190,20 +1054,16 @@ void escribir_params() :
     AtribExp a;
 }
 {
-    (a = expresion_simple())
+    (a = expresion())
     {
-        if (a.type == Symbol.Types.ARRAY || a.type == Symbol.Types.PROCEDURE || a.type == Symbol.Types.UNDEFINED) {
-            String errorMsg = String.format("Error en expresión: tipo de dato inválido encontrado. Tipo recibido: %s.", a.type);
-            System.out.println("Error en escribir_params: " + errorMsg);
-        }
+        typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
+            a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
     }
     (
-        <tCOMA> (a = expresion_simple())
+        <tCOMA> (a = expresion())
         {
-            if (a.type == Symbol.Types.ARRAY || a.type == Symbol.Types.PROCEDURE || a.type == Symbol.Types.UNDEFINED) {
-                String errorMsg = String.format("Error en expresión: tipo de dato inválido encontrado. Tipo recibido: %s.", a.type);
-                System.out.println("Error en escribir_params: " + errorMsg);
-            }
+            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
+            a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
         }
     )*
 }
@@ -1211,7 +1071,6 @@ void escribir_params() :
 void leer_linea() :
 {
      ArrayList<String> lVars = new ArrayList<String>();
-     Symbol s;
 }
 {
     <tLEER_LIN>
@@ -1219,13 +1078,7 @@ void leer_linea() :
     (
         (lVars = lista_ids())
         {
-            for (String i : lVars) {
-                s = st.getSymbol(i);
-                if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.PROCEDURE || s.type == Symbol.Types.UNDEFINED) {
-                    String errorMsg = String.format("Error en leer_linea: el tipo de variable '%s' no es válido. Tipo encontrado: %s.", i, s.type);
-                    System.out.println(errorMsg);
-                }
-            }
+            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         }
     )?
     <tCLOSING_PARENTHESIS>
@@ -1234,20 +1087,13 @@ void leer_linea() :
 void leer() :
 {
      ArrayList<String> lVars = new ArrayList<String>();
-     Symbol s;
 }
 {
     <tLEER> 
     <tOPENING_PARENTHESIS>
     (lVars = lista_ids())
     {
-        for (String i : lVars) {
-            s = st.getSymbol(i);
-            if (s.type == Symbol.Types.ARRAY || s.type == Symbol.Types.PROCEDURE || s.type == Symbol.Types.UNDEFINED) {
-                String errorMsg = String.format("Error en leer: el tipo de variable '%s' no es válido. Tipo encontrado: %s.", i, s.type);
-                System.out.println(errorMsg);
-            }
-        }
+            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
     }
     <tCLOSING_PARENTHESIS> 
 }
@@ -1261,10 +1107,7 @@ void entAcar() :
     <tOPENING_PARENTHESIS>
     i = expresion_simple()
     {
-        if (i.type != Symbol.Types.INT) {
-            String errorMsg = String.format("Error en entAcar: tipo de expresión incorrecto. Se esperaba tipo INT, pero se encontró: %s.", i.type);
-            System.out.println(errorMsg);
-        }
+        typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type));
     }
     <tCLOSING_PARENTHESIS>
 }
@@ -1278,10 +1121,7 @@ void carAent() :
     < tOPENING_PARENTHESIS>
     c = primario()
     {
-        if (c.type != Symbol.Types.CHAR) {
-            String errorMsg = String.format("Error en carAent: tipo de expresión incorrecto. Se esperaba tipo CHAR, pero se encontró: %s.", c.type);
-            System.out.println(errorMsg);
-        }
+        typeEqual(Symbol.Types.CHAR, c.type, String.format("Tipo incorrecto. Se esperaba CHAR pero se encontró %s.", c.type));
     }
     <tCLOSING_PARENTHESIS>
 }

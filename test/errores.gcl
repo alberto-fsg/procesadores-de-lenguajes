@@ -1,68 +1,134 @@
+programa errores
+    entero valor;
+    entero[10] valores;
+    booleano bool;
+---------------------------------------------------------------
+-- declaración variables globales
 
--- Prueba 1: Uso de una variable no inicializada.
-Programa prueba1
-    entero a;
-Principio
-    escribir_lin(a); -- outor semántico: la variable 'a' no ha sido inicializada
-Fin
+---------------------------------------------------------------
+-- declaración procedimientos y funciones
 
--- Prueba 2: Asignación incorrecta de tipo.
-Programa prueba2
-Principio
-    entero a;
-    a := "cadena"; -- outor semántico: asignación incorrecta, 'a' es entero y se le asigna un valor de tipo cadena.
-Fin
+-- error: se usa variable n no inicializada
+prueba_varNoInicializada()
+    entero n;
+principio
+    escribir_lin(n);
+fin
 
--- Prueba 3: Incompatibilidad de tipos en comparación.
-Programa prueba3
-Principio
-    entero a;
-    real b;
-    a := 5;
-    b := true;
-    if a = b then -- outor semántico: comparación de tipos incompatibles (entero con real)
-        escribir_lin("Iguales");
-    end
-Fin
+-- error: tipos incompatibles
+prueba_tiposIncompatibles(entero e; booleano b)
+principio
+    
+    -- ! incompatible con entero
+    e := !e;
+    e := !5;
 
--- Prueba 4: Uso de una variable no declarada.
-Programa prueba4
-Principio
-    entero a;
-    escribir_lin(b); -- outor semántico: 'b' no está declarada
-Fin
+    -- - incompatible con booleano
+    b := -b;
+    b := -verdadero;
 
--- Prueba 5: Llamada a función sin parámetros.
-Programa prueba5
-Principio
-    entero a;
-    escribir_lin("Hola Mundo"); -- outor semántico: 'escribir_lin' requiere un parámetro entero.
-Fin
+    -- + incompatible con booleano
+    b := +b;
+    b := +verdadero;
 
--- Prueba 6: Uso de un operador no definido para el tipo.
-Programa prueba6
-Principio
-    real a, b;
-    a := 5.5;
-    b := 2.0;
-    a := a / b; -- Correcto
-    a := a + "cadena"; -- outor semántico: 'cadena' no es compatible con el tipo real.
-Fin
+    -- tipos incompatibles
+    e := e + b;
+    e := e - b;
+    e := e / b;
+    e := e * b;
+    e := e mod b;
 
--- Prueba 7: Variable no usada.
-Programa prueba7
-Principio
-    entero a;
-    a := 10; -- outor semántico: la variable 'a' no se usa en ninguna operación posterior.
-Fin
+    -- aunque los tipos sean compatibles, se necesitan enteros
+    -- con operadores de enteros
+    e := b + b;
+    b := b + b;
 
--- Prueba 8: Expresión con lógica incorrecta.
-Programa prueba8
-Principio
-    booleano a, b;
-    a := verdadero;
-    b := falso;
-    if a = b then -- outor semántico: 'a' y 'b' son booleanos, la comparación debe ser con operadores lógicos.
-        escribir_lin("Son iguales");
-    end
-Fin
+    -- tipos incompatibles en asignación
+    e := b;
+    b := e;
+
+    -- tipos incompatibles en relaciones y expresiones
+    mq e<b
+        nada;
+    fmq
+
+    mq e>verdadero
+        nada;
+    fmq
+
+    mq b & e
+        nada;
+    fmq
+
+    mq b | 1
+        nada;
+    fmq
+
+    mq b = e
+        nada;
+    fmq
+
+    mq e <> b
+        nada;
+    fmq
+fin
+
+-- error: array con un número de componentes que no es un entero positivo
+prueba_arrayMalDefinida()
+    entero[0] w1;
+    caracter[-1] w1;
+principio
+    nada;
+fin
+
+-- función auxiliar para calcular el mínimo de dos enteros
+entero min(entero a, b)
+principio
+    sel
+        caso a < b:
+            min := a;
+        dlc:
+            min := b;
+    fsel
+fin
+
+--procedimiento auxiliar que pone en una variable el máximo de dos enteros
+max(entero a, b; entero ref res)
+principio
+    sel
+        caso a > b:
+            res := a;
+        dlc:
+            res := b;
+    fsel
+fin
+
+---------------------------------------------------------------
+-- main
+
+principio
+    prueba_varNoInicializada();
+    prueba_tiposIncompatibles();
+    prueba_arrayMalDefinida();
+
+    -- error: número de parámetros insuficiente
+    valor := min();
+    valor := min(1);
+    max(1);
+
+    -- error: no se pasan parámetros del tipo correcto
+    valor := min(1, verdadero);
+    valor := min('a', 1);
+    valor := min(1, "hola, mundo");
+    max(1, valores, valor);
+    max(1, falso, valor);
+
+    -- error: función o procedimiento con un parámetro por referencia
+    -- no recibe una variable max(entero, entero, ref entero)
+    max(1, 2, 0);
+    max(1, 2, 'c');
+    max(1, 2, falso);
+    max(1, 2, bool);        -- es una variable pero de tipo incompatible
+    max(1, 2, valor);       -- está debería funcionar
+    max(1, 2, valores[1]);  -- está debería funcionar
+fin

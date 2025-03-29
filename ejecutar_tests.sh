@@ -17,7 +17,7 @@ execute_test() {
 
 # Lista de tests
 TESTS=(
-  "outores.gcl"
+  "errores.gcl"
   "test_1.al"
   "test_2.al"
   "test_3.al"

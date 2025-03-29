@@ -44,24 +44,23 @@ void declaracion() :
                         case CHAR:
                             sV = new SymbolChar(id); break;
                         default:
-                            System.out.println("Error: tipo no definido para variable \"" +
-                                id + "\".");
+                            printError(String.format("Tipo no válido para variable \"%s\".", id));
                     }
                 }
                 if(sV != null) {
                     st.insertSymbol(sV);
-                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                    printMessage("Tabla de símbolos",
+                        String.format("\"%s\" insertado en nivel %d.", sV.name, st.level));
                 }
             } catch(AlreadyDefinedSymbolException e) {
-                System.out.println("Error: ya existe variable con identificador \"" +
-                    id + "\".");
+                printError(String.format("Ya definida variable de identificador \"%s\".", id));
             }
         }
     }
 }
 
 void asignacion() :
-{ System.out.println("Asignacion"); }
+{}
 {
     < tIDENTIFICADOR >
     ( < tOPENING_SQUARE_BRACKET > expresion_simple() < tCLOSING_SQUARE_BRACKET > )?
