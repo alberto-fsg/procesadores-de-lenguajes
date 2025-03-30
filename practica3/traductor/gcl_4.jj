@@ -717,7 +717,7 @@ AtribExp relacion() :
 
             /** Si el operador lo requiere, ambos operandos deben ser del tipo INT  */
             if(op.image.matches("<|<=|>|>="))
-                typeEqual(Symbol.Types.INT, List.of(left.type, right.type),
+                ok &= typeEqual(Symbol.Types.INT, List.of(left.type, right.type),
                     String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Se proporciono %s y %s.", op.image, left.type, right.type));
             
             /** Evaluar la relación si las dos expresiones simples son constantes */

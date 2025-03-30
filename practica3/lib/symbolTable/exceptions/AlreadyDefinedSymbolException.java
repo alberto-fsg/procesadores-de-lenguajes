@@ -15,8 +15,4 @@ public class AlreadyDefinedSymbolException extends Exception {
 	public AlreadyDefinedSymbolException() {
 			
 	}
-
-	public AlreadyDefinedSymbolException(String mensaje) {
-	System.out.println(mensaje);
-	}
 }

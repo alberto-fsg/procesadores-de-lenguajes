@@ -8,7 +8,7 @@ programa errores
 ---------------------------------------------------------------
 -- declaración procedimientos y funciones
 
--- error: se usa variable n no inicializada
+-- no debería dar error: se usa variable n no inicializada manualmente
 prueba_varNoInicializada()
     entero n;
 principio
