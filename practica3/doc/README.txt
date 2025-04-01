@@ -6,10 +6,15 @@ Autores:
 
 Compilador gcl.jar (V1.0)
 ------------------------------
-Análisis léxico y sintáctico
+Análisis léxico, sintáctico y semántico
 
+Para ejecutar todos los tests:
 
-Invocar como:
+-------------------------------------------------------------
+./ejecutar.sh
+-------------------------------------------------------------
+
+Para compilar 1 solo fichero:
 
 -------------------------------------------------------------
 java -jar gcl.jar <fichero_fuente_gcl>
