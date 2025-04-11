@@ -23,13 +23,13 @@ void escribir_params() :
 {
     (a = expresion())
     {
-        typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
+        typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
     }
     (
         <tCOMA> (a = expresion())
         {
-            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
+            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
         }
     )*
@@ -45,7 +45,7 @@ void leer_linea() :
     (
         (lVars = lista_ids())
         {
-            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         }
     )?
     <tCLOSING_PARENTHESIS>
@@ -60,7 +60,7 @@ void leer() :
     <tOPENING_PARENTHESIS>
     (lVars = lista_ids())
     {
-            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
     }
     <tCLOSING_PARENTHESIS> 
 }

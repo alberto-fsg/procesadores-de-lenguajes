@@ -638,8 +638,8 @@ AtribExp termino() :
         op = operador_multiplicativo()
         right = factor()
         {
-            ok &= typeEqual(Symbol.Types.INT, List.of(left.type, right.type),
-                String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
+            ok &= typeEqual(Symbol.Types.INT, Arrays.asList(left.type, right.type),
+            String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
 
             /** Evaluar término si ambos factores constantes */
             String val = null;
@@ -677,7 +677,7 @@ AtribExp expresion_simple() :
         LOOKAHEAD(2) (op = <tPLUS> | op = <tMINUS>)
         right = termino()
         {
-            ok &= typeEqual(Symbol.Types.INT, List.of(right.type, left.type),
+            ok &= typeEqual(Symbol.Types.INT, Arrays.asList(right.type, left.type),
                 String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
             
             /** Evaluar expresión simple si ambos factores constantes */
@@ -717,7 +717,7 @@ AtribExp relacion() :
 
             /** Si el operador lo requiere, ambos operandos deben ser del tipo INT  */
             if(op.image.matches("<|<=|>|>="))
-                ok &= typeEqual(Symbol.Types.INT, List.of(left.type, right.type),
+                ok &= typeEqual(Symbol.Types.INT, Arrays.asList(left.type, right.type),
                     String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Se proporciono %s y %s.", op.image, left.type, right.type));
             
             /** Evaluar la relación si las dos expresiones simples son constantes */
@@ -770,7 +770,7 @@ AtribExp expresion() :
                 String.format("Los operandos para el operador \"%s\" deben de ser del mismo tipo. %s != %s.", op.image, left.type, right.type));
 
             /** los operadores & y | requieren operandos del tipo BOOL */
-            ok &= typeEqual(Symbol.Types.BOOL, List.of(left.type, right.type),
+            ok &= typeEqual(Symbol.Types.BOOL, Arrays.asList(left.type, right.type),
                 String.format("Los operandos para el operador \"%s\" deben ser de tipo BOOL. Recibido %s %s.", op.image, left.type, right.type));
                         
             /** Evaluar la expresion si las 2 relaciones son constantes.*/
@@ -1056,13 +1056,13 @@ void escribir_params() :
 {
     (a = expresion())
     {
-        typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
+        typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
     }
     (
         <tCOMA> (a = expresion())
         {
-            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
+            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
         }
     )*
@@ -1078,7 +1078,7 @@ void leer_linea() :
     (
         (lVars = lista_ids())
         {
-            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         }
     )?
     <tCLOSING_PARENTHESIS>
@@ -1093,7 +1093,7 @@ void leer() :
     <tOPENING_PARENTHESIS>
     (lVars = lista_ids())
     {
-            typeNotEqual(List.of(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
     }
     <tCLOSING_PARENTHESIS> 
 }

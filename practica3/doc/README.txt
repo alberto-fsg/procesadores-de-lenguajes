@@ -8,13 +8,13 @@ Compilador gcl.jar (V1.0)
 ------------------------------
 Análisis léxico, sintáctico y semántico
 
-Para ejecutar todos los tests:
+Para ejecutar todos los tests
 
 -------------------------------------------------------------
 ./ejecutar.sh
 -------------------------------------------------------------
 
-Para compilar 1 solo fichero:
+Para compilar 1 solo fichero
 
 -------------------------------------------------------------
 java -jar gcl.jar <fichero_fuente_gcl>
@@ -28,5 +28,69 @@ java -jar gcl.jar <fichero_fuente_gcl.gcl>
 
 
 Características generales:
-....
+
+    - Características de GCL en el nivel 4:
+
+        1. Variables locales permitidas
+        2. Procedimientos y funciones permitidas
+        3. Parámetros escalares: por valor y por referencia
+        4. Parámetros vectoriales: por valor y por referencia  
+
+    - Errores semánticos testeados:
+
+        1. Operador ! con tipo entero
+        2. Operador - con tipo booleano
+        3. Operador + con tipo booleano
+        4. Operaciones aritméticas con tipos incompatibles
+        5. Operaciones booleanas con enteros
+        6. Asignación entre tipos incompatibles
+        7. Comparaciones entre tipos incompatibles
+        8. Arrays con tamaño no positivo
+        9. Número insuficiente de parámetros
+        10. Parámetros por valor de tipo incompatible
+        11. Parámetro por referencia no es variable
+        12. Parámetro por referencia de tipo incompatible
+
+    - Clases introducidas:
+
+        AtribExp: clase que organiza pasar información sobre expresiones (
+                  sirve para responder a: ¿es la expresión constante? ¿es la
+                  expresión una variable? ¿cuál es su tipo? ¿cuál es su valor
+                  si es que está definido en tiempo de compilación?)
+    
+        AtribTipo: clase que organiza pasar información sobre los tipos de las
+                   variables/funciones para hacer comprobaciones semánticas
+
+    - Organización en directorios de las prácticas:
+        .
+        ├── build.sh // construye gcl_4.jj y compila el traductor
+        ├── clean.sh  // limpia la compilación del traductor de build.sh
+        ├── ejecutar_tests.sh // ./build.sh + ./tests.sh + ./clean.sh
+        ├── enunciados
+        ├── practica3
+        │   ├── build.xml
+        │   ├── doc
+        │   │   └── README.txt
+        │   ├── lib/
+        │   └── traductor
+        │       ├── gcl_4.jj // concatenación de los modulos (mirar build.sh)
+        │       └── modulos // descomposición modular de nuestro traductor
+        │           ├── especiales.jj
+        │           ├── expresiones.jj
+        │           ├── funciones.jj
+        │           ├── instrucciones.jj
+        │           ├── main.jj
+        │           ├── programa.jj
+        │           ├── tipos.jj
+        │           ├── tokens.jj
+        │           └── variables.jj
+        ├── README.md // para github
+        ├── test
+        │   ├── errores.gcl // banco de pruebas para errores semánticos
+        │   ├── test_1.al
+        │   ├── test_2.al
+        │   ├── test_3.al
+        │   └── las pruebas que nos dieron en el equeleto de la práctica 1 ...
+        ├── test_gcl.py // auxiliar de tests.sh, nos lo dieron
+        └── tests.sh // script que nos dieron para probar la práctica 2
 
