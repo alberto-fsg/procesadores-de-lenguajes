@@ -3,7 +3,7 @@
  * primario - factor - termino - expresion_simple - relacion - expresion
  */
 
-AtribExp primario() : 
+AtribExp primario() :
 {
     Token t;
     AtribExp ae;
@@ -11,6 +11,7 @@ AtribExp primario() :
     SymbolFunction s_func;
     SymbolArray s_array;
     boolean ok = true;
+    AtribExp primarioInfo = null;
 }
 {
     (
@@ -71,7 +72,10 @@ AtribExp primario() :
         {
             try {
                 s = st.getSymbol(t.image);
-                return new AtribExp(s.type, t.image, true, false);
+                
+                primarioInfo = new AtribExp(s.type, t.image, true, false);
+                return primarioInfo;
+
             } catch (SymbolNotFoundException e) {
                 printError(String.format("Identificador \"%s\" no encontrado en tabla de símbolos.", t.image));
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
@@ -81,31 +85,42 @@ AtribExp primario() :
         /** Caso: constante int */
         t = <tCONSTANT>
         { 
-            return new AtribExp(Symbol.Types.INT, t.image, false, true); 
+            primarioInfo = new AtribExp(Symbol.Types.INT, t.image, false, true); 
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, Integer.parseInt(t.image));
+            return primarioInfo;
         }
     |
         /** Caso: constante char */
         t = <tCHAR>
         {
-            return new AtribExp(Symbol.Types.CHAR, t.image, false, true); 
+            primarioInfo = new AtribExp(Symbol.Types.CHAR, t.image, false, true); 
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, (int)t.image.charAt(1));
+            return primarioInfo;
+            
         }
     |
         /** Caso: constante string. */
         t = <tSTRING>
         {
-            return new AtribExp(Symbol.Types.STRING, t.image, false, true); 
+            primarioInfo = new AtribExp(Symbol.Types.STRING, t.image, false, true); 
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, t.image.substring(1, t.image.length() - 1));
+            return primarioInfo;
         }
     |
         /** Caso: constante bool con valor true */
         t = <tTRUE>
         {
-            return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
+            primarioInfo = new AtribExp(Symbol.Types.BOOL, t.image, false, true);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, 1);
+            return primarioInfo;
         }
     |
         /** Caso: constante bool con valor false */
         t = <tFALSE>
         {
-            return new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
+            primarioInfo = new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, 0);
+            return primarioInfo;
         }
     )
 }
@@ -114,43 +129,68 @@ AtribExp factor() :
 {
     Token op = null;
     boolean ok = true;
-    AtribExp ae;
+    AtribExp factorInfo = new AtribExp(); // Factor final producido si hay que operar con la expresión o primario recibido
+    AtribExp expressionInfo = null;       // Expresión o primario recibido
+    String val = null;                    // Valor constante si se puede evaluar en tiempo de compilación
 }
 {
     (op = <tNOT> | op = <tPLUS> | op = <tMINUS>)?
     (
-        <tOPENING_PARENTHESIS> ae = expresion() <tCLOSING_PARENTHESIS>
+        <tOPENING_PARENTHESIS> expressionInfo = expresion() <tCLOSING_PARENTHESIS>
     |
-        ae = primario()
+        expressionInfo = primario()
     )
     {
-        if (op != null) {
-            /** Mirar si el operando es válido respecto al operador */
-            ok = op.image.equals("!") && typeEqual(Symbol.Types.BOOL, ae.type,
-                String.format("El operador \"%s\" requiere un valor de tipo BOOL, pero se ha proporcionado %s.", op.image, ae.type));
-
-            ok |= (op.image.equals("+") || op.image.equals("-")) && typeEqual(Symbol.Types.INT, ae.type,
-                String.format("El operador \"%s\" requiere un valor de tipo INT, pero se ha proporcionado %s.", op.image, ae.type));
-
-            /** Evaluar la expresión recibida si es constante y tiene delante algún operador */
-            String val = null;
-            if(ok && ae.isConst) {
-                if(op.image.equals("!"))
-                    val = String.valueOf(!Boolean.parseBoolean(ae.image));
-                else {
-                    int num = Integer.parseInt(ae.image);
-                    val = op.image.equals("-") ? String.valueOf(-num) : String.valueOf(num);
-                }
-            }
-
-            /** Devolver expresión del tipo correspondiente */
-            if(ok) return new AtribExp(op.image.equals("!") ? Symbol.Types.BOOL : Symbol.Types.INT, val, false, ae.isConst);
-            else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
-        }
         /** Devolver exactamente la expresión recibida si no tiene ningún operador delante */
-        return ae;
+        if (op == null) {
+            return expressionInfo;
+        }
+
+        /** Mirar si el operando es válido respecto al operador */
+        ok = op.image.equals("!") && typeEqual(Symbol.Types.BOOL, expressionInfo.type,
+            String.format("El operador \"%s\" requiere un valor de tipo BOOL, pero se ha proporcionado %s.", op.image, expressionInfo.type));
+
+        ok |= (op.image.equals("+") || op.image.equals("-")) && typeEqual(Symbol.Types.INT, expressionInfo.type,
+            String.format("El operador \"%s\" requiere un valor de tipo INT, pero se ha proporcionado %s.", op.image, expressionInfo.type));
+
+        /** Si hubo error semántico, se devuelve tipo indefinido */
+        if (!ok) {
+            factorInfo.type = Symbol.Types.UNDEFINED;
+            return factorInfo;
+        }
+
+        /** Evaluar la expresión recibida si es constante */
+        if (expressionInfo.isConst) {
+            if (op.image.equals("!")) {
+                val = String.valueOf(!Boolean.parseBoolean(expressionInfo.image));
+            }
+            else {
+                int num = Integer.parseInt(expressionInfo.image);
+                val = op.image.equals("-") ? String.valueOf(-num) : String.valueOf(num);
+            }
+        }
+
+        factorInfo.code.addBlock(expressionInfo.code);
+
+        if (op.image.equals("!")) {
+            factorInfo.code.addInst(PCodeInstruction.OpCode.NGB);
+        } 
+        else if (op.image.equals("-")) {
+            factorInfo.code.addInst(PCodeInstruction.OpCode.SBT);
+        }
+        else /** if (op.image.equals("+")) */ {
+            factorInfo.code.addInst(PCodeInstruction.OpCode.PLUS);
+        }
+
+        factorInfo.type = op.image.equals("!") ? Symbol.Types.BOOL : Symbol.Types.INT;
+        factorInfo.image = val;
+        factorInfo.isConst = expressionInfo.isConst;
+
+        return factorInfo;
+
     }
 }
+
 
 
 AtribExp termino() :
@@ -158,6 +198,7 @@ AtribExp termino() :
     AtribExp left, right;
     boolean ok = true;
     Token op;
+    String val = null;
 }
 {
     left = factor()
@@ -169,7 +210,6 @@ AtribExp termino() :
             String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
 
             /** Evaluar término si ambos factores constantes */
-            String val = null;
             boolean isConst = left.isConst && right.isConst;
             if(isConst && ok) {
                 int l = Integer.parseInt(left.image), r = Integer.parseInt(right.image);
@@ -185,8 +225,29 @@ AtribExp termino() :
                         break;
                 }
             }
-            if(ok) left = new AtribExp(Symbol.Types.INT, val, false, isConst);
-            else left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+
+            if (!isConst && ok) {
+                left.code.addBlock(right.code);
+                switch(op.image.toLowerCase()) {
+                    case "*":
+                        left.code.addInst(PCodeInstruction.OpCode.TMS);
+                        break;
+                    case "/":
+                        left.code.addInst(PCodeInstruction.OpCode.DIV);
+                        break;
+                    case "mod":
+                        left.code.addInst(PCodeInstruction.OpCode.MOD);
+                        break;
+                }
+            }
+
+            if (ok) {
+                left = new AtribExp(Symbol.Types.INT, val, false, isConst);
+            }
+            else {
+                left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            }
+             
         }
     )*
     { return left; }
@@ -216,8 +277,23 @@ AtribExp expresion_simple() :
                 val = op.image.equals("+") ? String.valueOf(l + r): String.valueOf(l - r);
             }
             
-            if(ok) left = new AtribExp(Symbol.Types.INT, val, false, isConst);
-            else left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            if (isConst && ok) {
+                left.code.addBlock(right.code);
+                switch(op.image.toLowerCase()) {
+                    case "+":
+                        left.code.addInst(PCodeInstruction.OpCode.PLUS);
+                        break;
+                    case "-":
+                        left.code.addInst(PCodeInstruction.OpCode.SBT);
+                        break;
+                }
+            }
+
+            if(ok) {
+                left = new AtribExp(Symbol.Types.INT, val, false, isConst);
+            } else {
+                left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            }
         }
     )*
     { return left; }

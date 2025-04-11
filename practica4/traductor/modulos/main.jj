@@ -20,6 +20,7 @@ package traductor;
 
 import lib.symbolTable.*;
 import lib.symbolTable.exceptions.*;
+import lib.tools.codeGeneration.*;
 
 import java.util.*;
 

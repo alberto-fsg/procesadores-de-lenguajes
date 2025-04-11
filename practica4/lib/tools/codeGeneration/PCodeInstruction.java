@@ -10,40 +10,40 @@ package lib.tools.codeGeneration;
 
 public class PCodeInstruction extends CodeElement{
 	
-	public enum OpCode {
-		AND (0), 
-		ASG (1), 
-		ASGI (2), 
-		CSF (3), 
-		DIV (4), 
-		DRF (5), 
-		DUP (6), 
-		ENP (7), 
-		EQ (8), 
-		GT (9), 
-		GTE (10),
-		JMF (11),
-		JMP (12),
-		JMT (13),
-		LT (14),
-		LTE (15),
-		LVP (16),
-		MOD (17),
-		NEQ (18),
-		NGB (19),
-		NGI (20),
-		NOP (21),
-		OR (22),
-		OSF (23),
-		PLUS (24),
-		POP (25),
-		RD (26),
-		SBT (27),
-		SRF (28),
-		STC (29),
-		SWP (30),
-		TMS (31),
-		WRT (32); 
+	public static enum OpCode {
+		AND (0),	// a and b
+		ASG (1),	// assign
+		ASGI (2),	// assign inverse
+		CSF (3),	// close stack frame
+		DIV (4),	// a / b
+		DRF (5),	// dereference
+		DUP (6), 	// push(pop1(); pop1())
+		ENP (7), 	// enter program at n
+		EQ (8),		// a == b 
+		GT (9),		// a > b
+		GTE (10),	// a >= b
+		JMF (11),	// pop()=0? PC = n else PC = PC+1
+		JMP (12),	// PC = n
+		JMT (13),	// pop()=1? PC = n else PC = PC+1
+		LT (14),	// a < b
+		LTE (15),	// a <= b
+		LVP (16),	// leave program
+		MOD (17),	// a mod b
+		NEQ (18),	// a != b
+		NGB (19),	// !a
+		NGI (20),	// -a
+		NOP (21),	// nada
+		OR (22),	// a or b
+		OSF (23),	// open stack frame
+		PLUS (24),	// a + b
+		POP (25),	// pop()
+		RD (26),	// if n = 0: read char and store at frames[pop()] else: as int
+		SBT (27),	// a - b
+		SRF (28),	// set reference
+		STC (29),	// store constant
+		SWP (30),	// push(pop1(); pop2())
+		TMS (31),	// a * b
+		WRT (32); 	// if n = 0: write pop() as char else: as int
 		
 		int code; 
 		private OpCode(int code) {
