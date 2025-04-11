@@ -1,7 +1,7 @@
 #!/bin/bash
 
-INPUT_DIR="./practica3/traductor/modulos"
-OUTPUT_FILE="./practica3/traductor/gcl_4.jj"
+INPUT_DIR="./practica4/traductor/modulos"
+OUTPUT_FILE="./practica4/traductor/gcl_4.jj"
 
 # si los directorios no existen abortar en lugar de estamparse
 if [ ! -d "$INPUT_DIR" ]; then
@@ -48,4 +48,4 @@ for file in "${FILES[@]}"; do
 done
 
 # compilar con Apache Ant
-ant -f practica3
+ant -f practica4

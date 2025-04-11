@@ -9,9 +9,9 @@ python3_code=$?
 ./build.sh > /dev/null 2>&1
 
 if [ $python_code -eq 0 ]; then 
-  python test_gcl.py ./practica3/dist/gcl_4.jar test
+  python test_gcl.py ./practica4/dist/gcl_4.jar test
 elif [ $python3_code -eq 0 ]; then
-  python3 test_gcl.py ./practica3/dist/gcl_4.jar test
+  python3 test_gcl.py ./practica4/dist/gcl_4.jar test
 else
   echo "Python no está instalado en el dispositivo."
 fi
