@@ -364,7 +364,7 @@ public class gcl {
      * 
     * @param condiciones Lista de expresiones booleanas que determinan cada caso
     * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
-    * @param otherwise     Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
+    * @param otherwise   Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
      */
     private static void generarSeleccion(
         java.util.List<AtribExp> condiciones,
