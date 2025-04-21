@@ -264,7 +264,7 @@ public class gcl {
     }
 
     /**
-     * Crea un símbolo de variable según su tipo (entero, booleano, carácter o arreglo).
+     * Crea un símbolo de variable según su tipo (entero, booleano, carácter o array).
      * 
      * @param nombre Nombre de la variable
      * @param tipo_variable Tipo y dimensiones de la variable
@@ -290,7 +290,7 @@ public class gcl {
     }
 
     /**
-     * Genera asignación de variable normal o de un componente de un array.en P-Code
+     * Genera asignación de variable normal o de un componente de un array en P-Code
      * 
      * @param nombre_variable Nombre de la variable/array a asignar
      * @param expresion_indice Expresión con el índice del componente si es una variable array (null en caso contrario)
