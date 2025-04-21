@@ -17,10 +17,10 @@ void declaracion_proc() :
     {
         insertProcedure(t, parametros);
     }
-    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
-    instrucciones()
+    ( instruccion() )*
     < tEND >
     { st.removeBlock(); }
 }
@@ -40,10 +40,10 @@ void declaracion_func() :
     {
         insertFunction(t, aT, parametros);
     }
-    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
-    instrucciones()
+    ( instruccion() )*
     < tEND >
     { st.removeBlock(); }
 }
@@ -96,7 +96,7 @@ ArrayList<Symbol> parametros_declaraciones() :
 {
     aT = tipo()
     ( <tREF> { isRef = true; } )?
-    lVars = lista_ids()
+    lVars = listaIDs()
     {
         for (String id : lVars) {
             Symbol sV = null;
@@ -130,7 +130,7 @@ ArrayList<Symbol> parametros_declaraciones() :
         <tSEMICOLON>
         aT = tipo()
         ( <tREF> { isRef = true; } )? 
-        lVars = lista_ids()
+        lVars = listaIDs()
         {
         for (String id : lVars) {
                 Symbol sV = null;

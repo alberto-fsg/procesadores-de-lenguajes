@@ -25,12 +25,17 @@ package traductor;
 import lib.symbolTable.*;
 import lib.symbolTable.exceptions.*;
 import lib.tools.codeGeneration.*;
+import lib.tools.codeGeneration.PCodeInstruction.OpCode;
 
 import java.util.*;
 
 public class gcl {
-    // tabla de símbolos global
+    // tabla de símbolos
     static SymbolTable st;
+
+    // código generado
+    static CodeBlock code = new CodeBlock();
+    static Map<String,Integer> varOffset = new HashMap<String,Integer>();
     
    public static void main(String[] args) {
 	   gcl parser = null;
@@ -46,8 +51,12 @@ public class gcl {
 		   }
 		   //Programa es el símbolo inicial de la gramática
 		   parser.Programa();
-		   //...
+
 		   System.out.println("***** Análisis terminado con éxito *****");
+
+           System.out.println(code.toString());
+
+           System.out.println("***** P-Code generado *****");
 	   }
 	   catch (java.io.FileNotFoundException e) {
 		   System.out.println ("Fichero " + args[0] + " no encontrado.");
@@ -230,6 +239,174 @@ public class gcl {
         String reset = "\u001B[0m";
         System.out.printf("%s%s:%s %s\n", verde, label, reset, message);
     }
+
+    /**
+     * Declara variables en la tabla de símbolos y asigna espacio en memoria.
+     * 
+     * @param tipoVar Tipo de las variables a declarar
+     * @param ids Lista de identificadores de variables
+     * @throws AlreadyDefinedSymbolException Si algún identificador ya existe
+     */
+    private static void declararVariablesGeneradorCodigo(AtribTipo tipoVar, List<String> ids) {
+        for (String nombre : ids) {
+            try {
+                Symbol simbolo = crearSimboloVariable(nombre, tipoVar);
+                st.insertSymbol(simbolo);
+
+                // Reservar espacio en memoria, offset indica en qué posición del stack frame está la variable
+                int offset = CGUtils.memorySpaces[st.level]++;
+                varOffset.put(nombre, offset);
+                
+                printMessage("Tabla de símbolos", 
+                    String.format("\"%s\" insertado en nivel %d (offset %d).", 
+                    nombre, st.level, offset));
+                    
+            } catch (AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya existe \"%s\".", nombre));
+            }
+        }
+    }
+
+    /**
+     * Crea un símbolo de variable según su tipo (entero, booleano, carácter o arreglo).
+     * 
+     * @param nombre Nombre de la variable
+     * @param tipo_variable Tipo y dimensiones de la variable
+     * @return Símbolo creado o null si el tipo no es válido o el nombre es null
+     */
+    private static Symbol crearSimboloVariable(String nombre, AtribTipo tipo_variable) {
+        if (nombre == null) {
+            return null;
+        }
+        
+        if (tipo_variable.isArray) {
+            return new SymbolArray(nombre, 0, tipo_variable.size-1, tipo_variable.type);
+        }
+        
+        switch (tipo_variable.type) {
+            case INT:  return new SymbolInt(nombre);
+            case BOOL: return new SymbolBool(nombre);
+            case CHAR: return new SymbolChar(nombre);
+            default:
+                printError("Tipo no válido para \"" + nombre + "\"");
+                return null;
+        }
+    }
+
+    /**
+     * Genera asignación de variable normal o de un componente de un array.en P-Code
+     * 
+     * @param nombre_variable Nombre de la variable/array a asignar
+     * @param expresion_indice Expresión con el índice del componente si es una variable array (null en caso contrario)
+     * @param expresion_valor Expresión con el valor a asignar
+     */
+    private static void asignacionVariableGeneradorCodigo(
+        String nombre_variable, 
+        AtribExp expresion_indice, 
+        AtribExp expresion_valor
+    ) {
+        try {
+            // Validación de que la variable tiene asociado un trozo de memoria
+            Symbol simbolo_var = st.getSymbol(nombre_variable);
+            Integer offset = varOffset.get(nombre_variable);
+            if (offset == null) {
+                printError(String.format("Variable \"%s\" no declarada (sin offset).", nombre_variable));
+                return;
+            }
+    
+            // Calculo dirección de destino
+            int offset_var = offset.intValue();
+            int nivel_anidamiento = st.level;
+            if (expresion_indice != null) {
+                // Caso array: base + índice
+                code.addBlock(expresion_indice.code);
+                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
+                code.addInst(PCodeInstruction.OpCode.PLUS);
+            } else {
+                // Caso variable simple
+                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
+            }
+
+            // Generación del valor
+            code.addBlock(expresion_valor.code);
+
+            // Almacenamiento
+            code.addInst(PCodeInstruction.OpCode.ASG);
+
+        } catch (SymbolNotFoundException e) {
+            printError(String.format("Variable \"%s\" no encontrada.", nombre_variable));
+        }
+    }
+
+
+    /** Genera bucle con inversión en P-Code
+     * 
+     * @param condicion bloque con el código para evaluar la condición del bucle
+     * @param cuerpo bloque con las instrucciones que forman el cuerpo del bucle
+     */
+    private static void generarBucle(AtribExp condicion, CodeBlock cuerpo) {
+        String etiquetaInicio = CGUtils.newLabel();
+        String etiquetaPrueba = CGUtils.newLabel();
+        String etiquetaFinal  = CGUtils.newLabel();
+
+        // Salto inicial a la prueba invertida
+        code.addInst(OpCode.JMP, etiquetaPrueba);
+
+        // Cuerpo
+        code.addLabel(etiquetaInicio);
+        code.addBlock(cuerpo);
+
+        // Prueba invertida
+        code.addLabel(etiquetaPrueba);
+        code.addBlock(condicion.code);
+        code.addInst(OpCode.JMF, etiquetaFinal);
+        code.addInst(OpCode.JMP, etiquetaInicio);
+        code.addLabel(etiquetaFinal);
+    }
+
+    /** Genera bloque switch en P-Code
+     * 
+    * @param condiciones Lista de expresiones booleanas que determinan cada caso
+    * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
+    * @param otherwise     Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
+     */
+    private static void generarSeleccion(
+        java.util.List<AtribExp> condiciones,
+        java.util.List<CodeBlock> cuerpos,
+        CodeBlock otherwise
+    ) {
+        String etiqueta_final = CGUtils.newLabel();
+        java.util.List<String> etiquetas_salto = new java.util.ArrayList<String>();
+
+        // Asociar una etiqueta a cada condición
+        for (int i = 0; i < condiciones.size(); i++) {
+            etiquetas_salto.add(CGUtils.newLabel());
+        }
+
+        // Generar código para cada condición
+        for (int i = 0; i < condiciones.size(); i++) {
+            // Evaluar la i-ésima condición
+            code.addBlock(condiciones.get(i).code);
+            
+            // Caso falso: continuar con la siguiente condición
+            code.addInst(OpCode.JMF, etiquetas_salto.get(i));
+            
+            // Caso verdadero: ejecutar el bloque y saltar al final del switch
+            code.addBlock(cuerpos.get(i));
+            code.addInst(OpCode.JMP, etiqueta_final);
+
+            // Etiqueta para continuar con la siguiente condición si el caso es falso
+            code.addLabel(etiquetas_salto.get(i));
+        }
+
+        // Manejar el bloque por defecto (si existe)
+        if (otherwise != null) {
+            code.addBlock(otherwise);
+        }
+
+        // Etiqueta a la que se salta si alguna condición es verdadera
+        code.addLabel(etiqueta_final);
+    }
 }
 
 PARSER_END(gcl)
@@ -351,10 +528,10 @@ void Programa() :
 {
     < tPROGRAMA >
     < tIDENTIFICADOR >
-    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
-    instrucciones()
+    ( instruccion() )*
     < tEND >
 }
 
@@ -392,7 +569,7 @@ AtribTipo tipoArray() :
         | <tINTEGER> { t = Symbol.Types.INT; }
     )
     <tOPENING_SQUARE_BRACKET>
-    aE = expresion_simple()
+    aE = expresionSimple()
     <tCLOSING_SQUARE_BRACKET>
     {
         return new AtribTipo(t, Integer.parseInt(aE.image));
@@ -400,81 +577,59 @@ AtribTipo tipoArray() :
 }
 
 // --- INICIO DE variables.jj ---
-void declaracion_variables() :
-{}
+ArrayList<String> listaIDs() :
 {
-    ( LOOKAHEAD(3) declaracion() )+
-}
-
-ArrayList<String> lista_ids() :
-{
-    ArrayList<String> lVars = new ArrayList<String>();
-    Token t;
+    Token             token_id;
+    ArrayList<String> ids = new ArrayList<String>();
 }
 {
-    t = <tIDENTIFICADOR>
-    { lVars.add(t.image); }
+    token_id = <tIDENTIFICADOR>    { ids.add(token_id.image); }
     (
-        <tCOMA>
-        t = <tIDENTIFICADOR>
-        { lVars.add(t.image); }
+      <tCOMA>
+      token_id = <tIDENTIFICADOR>  { ids.add(token_id.image); }
     )*
-    { return lVars; }
+    { return ids; }
 }
 
-void declaracion() :
+void declaracionVariables() :
 {
-    AtribTipo aT;
-    ArrayList<String> lVars;
+    AtribTipo         tipo_variables;
+    ArrayList<String> ids;
 }
 {
-    aT = tipo()
-    lVars = lista_ids()
+    tipo_variables = tipo()
+    ids            = listaIDs() 
     <tSEMICOLON>
     {
-        for(String id : lVars) {
-            try {
-                Symbol sV = null;
-                if(aT.isArray) {
-                    sV = new SymbolArray(id, 0, aT.size-1, aT.type);
-                } else {
-                    switch(aT.type) {
-                        case INT:
-                            sV = new SymbolInt(id); break;
-                        case BOOL:
-                            sV = new SymbolBool(id); break;
-                        case CHAR:
-                            sV = new SymbolChar(id); break;
-                        default:
-                            printError(String.format("Tipo no válido para variable \"%s\".", id));
-                    }
-                }
-                if(sV != null) {
-                    st.insertSymbol(sV);
-                    printMessage("Tabla de símbolos",
-                        String.format("\"%s\" insertado en nivel %d.", sV.name, st.level));
-                }
-            } catch(AlreadyDefinedSymbolException e) {
-                printError(String.format("Ya definida variable de identificador \"%s\".", id));
-            }
-        }
+        declararVariablesGeneradorCodigo(tipo_variables, ids);
     }
 }
 
-void asignacion() :
-{}
+void asignacionVariable() :
 {
-    < tIDENTIFICADOR >
-    ( < tOPENING_SQUARE_BRACKET > expresion_simple() < tCLOSING_SQUARE_BRACKET > )?
-    < tASSIGN >
-    expresion()
-    < tSEMICOLON >
+    Token token_id;
+    AtribExp index_expr = null; 
+    AtribExp value_expr;
+}
+{
+    token_id = <tIDENTIFICADOR>
+    ( 
+      <tOPENING_SQUARE_BRACKET>
+      index_expr = expresionSimple()
+      <tCLOSING_SQUARE_BRACKET>
+    )?
+    <tASSIGN>
+    value_expr = expresion()
+    <tSEMICOLON>
+    {
+        asignacionVariableGeneradorCodigo(token_id.image, index_expr, value_expr);
+    }
 }
 
 // --- INICIO DE expresiones.jj ---
 /**
  * Orden de prioridad de expansión (cuanto más izquierda, más prioridad).
- * primario - factor - termino - expresion_simple - relacion - expresion
+ * primario - factor - termino - expresionSimple - relacion - expresion
  */
 
 AtribExp primario() :
@@ -727,7 +882,7 @@ AtribExp termino() :
     { return left; }
 }
 
-AtribExp expresion_simple() :
+AtribExp expresionSimple() :
 {
     AtribExp left, right;
     boolean ok = true;
@@ -781,10 +936,10 @@ AtribExp relacion() :
     Token op;
 }
 {
-    left = expresion_simple()
+    left = expresionSimple()
     (
         op = operador_relacional()
-        right = expresion_simple()
+        right = expresionSimple()
         {
 
             /** Si el operador lo requiere, ambos operandos deben ser del mismo tipo = <> */
@@ -918,10 +1073,10 @@ void declaracion_proc() :
     {
         insertProcedure(t, parametros);
     }
-    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
-    instrucciones()
+    ( instruccion() )*
     < tEND >
     { st.removeBlock(); }
 }
@@ -941,10 +1096,10 @@ void declaracion_func() :
     {
         insertFunction(t, aT, parametros);
     }
-    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
-    instrucciones()
+    ( instruccion() )*
     < tEND >
     { st.removeBlock(); }
 }
@@ -997,7 +1152,7 @@ ArrayList<Symbol> parametros_declaraciones() :
 {
     aT = tipo()
     ( <tREF> { isRef = true; } )?
-    lVars = lista_ids()
+    lVars = listaIDs()
     {
         for (String id : lVars) {
             Symbol sV = null;
@@ -1031,7 +1186,7 @@ ArrayList<Symbol> parametros_declaraciones() :
         <tSEMICOLON>
         aT = tipo()
         ( <tREF> { isRef = true; } )? 
-        lVars = lista_ids()
+        lVars = listaIDs()
         {
         for (String id : lVars) {
                 Symbol sV = null;
@@ -1065,46 +1220,78 @@ ArrayList<Symbol> parametros_declaraciones() :
 }
 
 // --- INICIO DE instrucciones.jj ---
-void instrucciones() :
-{}
-{
-    ( instruccion() )*
-}
-
 void instruccion() :
 {}
 {
-    escribir_linea() <tSEMICOLON>
-|   escribir() <tSEMICOLON>
-|   leer_linea() <tSEMICOLON>
-|   leer() <tSEMICOLON>
-|   entAcar() <tSEMICOLON>
-|   carAent() <tSEMICOLON>
-|   LOOKAHEAD(2) llamar_funcion()
-|   LOOKAHEAD(2) asignacion()
-|   seleccion()
-|   bucle()
-|   LOOKAHEAD(2) declaracion_procs_funcs()
-|   < tABANDONAR > < tSEMICOLON>
-|   < tNADA > < tSEMICOLON>
-}
-
-void seleccion() :
-{}
-{
-    < tSELECTION > 
-    ( < tCASE > expresion() < tCOLON > instrucciones() )+
-    [ < tOTHERWISE > < tCOLON > instrucciones() ]
-    < tEND_SELECTION >
+      escribir_linea() <tSEMICOLON>
+    | escribir() <tSEMICOLON>
+    | leer_linea() <tSEMICOLON>
+    | leer() <tSEMICOLON>
+    | entAcar() <tSEMICOLON>
+    | carAent() <tSEMICOLON>
+    | LOOKAHEAD(2) llamar_funcion()
+    | LOOKAHEAD(2) asignacionVariable()
+    | seleccion()
+    | bucle()
+    | LOOKAHEAD(2) declaracion_procs_funcs()
+    | <tABANDONAR> <tSEMICOLON> { code.addInst(OpCode.LVP, 0); }
+    | <tNADA> <tSEMICOLON> { code.addInst(OpCode.NOP, 0); }
 }
 
 void bucle() :
-{}
 {
-    < tITERATION >
-    expresion()
-    instrucciones()
-    < tEND_ITERATION >
+    AtribExp condicion;
+    CodeBlock cuerpo = new CodeBlock();
+}
+{
+    <tITERATION>
+    condicion = expresion()
+
+    // Por cada instrucción del cuerpo:
+    //   1) la parsea generando su código en el bloque global `code`
+    //   2) lo mueve al bloque local `cuerpo` (añade a `cuerpo` y borra de `code`)
+    // De este modo se extraen las instrucciones del cuerpo.
+    ( instruccion() )* { cuerpo.addBlock(code); code.clearBlock(); }
+    <tEND_ITERATION>
+    {
+        generarBucle(condicion, cuerpo);
+    }
+}
+
+void seleccion() :
+{
+    java.util.List<AtribExp> condiciones = new java.util.ArrayList<AtribExp>();
+    java.util.List<CodeBlock> cuerpos = new java.util.ArrayList<CodeBlock>();
+    CodeBlock auxiliar; // Almacena temporalmente el cuerpo asociado a cada condición del select
+    CodeBlock otherwise = null;
+    AtribExp condicion;
+}
+{
+    <tSELECTION>
+    (
+        <tCASE> { auxiliar = new CodeBlock(); }
+        condicion = expresion()
+        <tCOLON>
+        ( instruccion() )* { 
+            auxiliar.addBlock(code); 
+            code.clearBlock(); 
+            condiciones.add(condicion); 
+            cuerpos.add(auxiliar); 
+        }
+    )+
+    [
+        <tOTHERWISE> <tCOLON>
+        { auxiliar = new CodeBlock(); }
+        ( instruccion() )* { 
+            auxiliar.addBlock(code); 
+            code.clearBlock(); 
+            otherwise = auxiliar; 
+        }
+    ]
+    <tEND_SELECTION>
+    {
+        generarSeleccion(condiciones, cuerpos, otherwise);
+    }
 }
 
 // --- INICIO DE especiales.jj ---
@@ -1153,7 +1340,7 @@ void leer_linea() :
     <tLEER_LIN>
     <tOPENING_PARENTHESIS>
     (
-        (lVars = lista_ids())
+        (lVars = listaIDs())
         {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         }
@@ -1168,7 +1355,7 @@ void leer() :
 {
     <tLEER> 
     <tOPENING_PARENTHESIS>
-    (lVars = lista_ids())
+    (lVars = listaIDs())
     {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
     }
@@ -1182,7 +1369,7 @@ void entAcar() :
 {
     < tENTACAR >
     <tOPENING_PARENTHESIS>
-    i = expresion_simple()
+    i = expresionSimple()
     {
         typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type));
     }

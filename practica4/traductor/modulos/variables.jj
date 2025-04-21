@@ -1,70 +1,48 @@
-void declaracion_variables() :
-{}
+ArrayList<String> listaIDs() :
 {
-    ( LOOKAHEAD(3) declaracion() )+
-}
-
-ArrayList<String> lista_ids() :
-{
-    ArrayList<String> lVars = new ArrayList<String>();
-    Token t;
+    Token             token_id;
+    ArrayList<String> ids = new ArrayList<String>();
 }
 {
-    t = <tIDENTIFICADOR>
-    { lVars.add(t.image); }
+    token_id = <tIDENTIFICADOR>    { ids.add(token_id.image); }
     (
-        <tCOMA>
-        t = <tIDENTIFICADOR>
-        { lVars.add(t.image); }
+      <tCOMA>
+      token_id = <tIDENTIFICADOR>  { ids.add(token_id.image); }
     )*
-    { return lVars; }
+    { return ids; }
 }
 
-void declaracion() :
+void declaracionVariables() :
 {
-    AtribTipo aT;
-    ArrayList<String> lVars;
+    AtribTipo         tipo_variables;
+    ArrayList<String> ids;
 }
 {
-    aT = tipo()
-    lVars = lista_ids()
+    tipo_variables = tipo()
+    ids            = listaIDs() 
     <tSEMICOLON>
     {
-        for(String id : lVars) {
-            try {
-                Symbol sV = null;
-                if(aT.isArray) {
-                    sV = new SymbolArray(id, 0, aT.size-1, aT.type);
-                } else {
-                    switch(aT.type) {
-                        case INT:
-                            sV = new SymbolInt(id); break;
-                        case BOOL:
-                            sV = new SymbolBool(id); break;
-                        case CHAR:
-                            sV = new SymbolChar(id); break;
-                        default:
-                            printError(String.format("Tipo no válido para variable \"%s\".", id));
-                    }
-                }
-                if(sV != null) {
-                    st.insertSymbol(sV);
-                    printMessage("Tabla de símbolos",
-                        String.format("\"%s\" insertado en nivel %d.", sV.name, st.level));
-                }
-            } catch(AlreadyDefinedSymbolException e) {
-                printError(String.format("Ya definida variable de identificador \"%s\".", id));
-            }
-        }
+        declararVariablesGeneradorCodigo(tipo_variables, ids);
     }
 }
 
-void asignacion() :
-{}
+void asignacionVariable() :
 {
-    < tIDENTIFICADOR >
-    ( < tOPENING_SQUARE_BRACKET > expresion_simple() < tCLOSING_SQUARE_BRACKET > )?
-    < tASSIGN >
-    expresion()
-    < tSEMICOLON >
+    Token token_id;
+    AtribExp index_expr = null; 
+    AtribExp value_expr;
+}
+{
+    token_id = <tIDENTIFICADOR>
+    ( 
+      <tOPENING_SQUARE_BRACKET>
+      index_expr = expresionSimple()
+      <tCLOSING_SQUARE_BRACKET>
+    )?
+    <tASSIGN>
+    value_expr = expresion()
+    <tSEMICOLON>
+    {
+        asignacionVariableGeneradorCodigo(token_id.image, index_expr, value_expr);
+    }
 }

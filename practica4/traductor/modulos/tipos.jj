@@ -31,7 +31,7 @@ AtribTipo tipoArray() :
         | <tINTEGER> { t = Symbol.Types.INT; }
     )
     <tOPENING_SQUARE_BRACKET>
-    aE = expresion_simple()
+    aE = expresionSimple()
     <tCLOSING_SQUARE_BRACKET>
     {
         return new AtribTipo(t, Integer.parseInt(aE.image));

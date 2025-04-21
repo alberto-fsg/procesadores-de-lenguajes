@@ -3,9 +3,9 @@ void Programa() :
 {
     < tPROGRAMA >
     < tIDENTIFICADOR >
-    ( LOOKAHEAD(3) declaracion_variables() )*
+    ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
     < tBEGGINING >
-    instrucciones()
+    ( instruccion() )*
     < tEND >
 }

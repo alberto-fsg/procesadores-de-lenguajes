@@ -1,6 +1,6 @@
 /**
  * Orden de prioridad de expansión (cuanto más izquierda, más prioridad).
- * primario - factor - termino - expresion_simple - relacion - expresion
+ * primario - factor - termino - expresionSimple - relacion - expresion
  */
 
 AtribExp primario() :
@@ -253,7 +253,7 @@ AtribExp termino() :
     { return left; }
 }
 
-AtribExp expresion_simple() :
+AtribExp expresionSimple() :
 {
     AtribExp left, right;
     boolean ok = true;
@@ -307,10 +307,10 @@ AtribExp relacion() :
     Token op;
 }
 {
-    left = expresion_simple()
+    left = expresionSimple()
     (
         op = operador_relacional()
-        right = expresion_simple()
+        right = expresionSimple()
         {
 
             /** Si el operador lo requiere, ambos operandos deben ser del mismo tipo = <> */

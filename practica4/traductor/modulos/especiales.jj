@@ -43,7 +43,7 @@ void leer_linea() :
     <tLEER_LIN>
     <tOPENING_PARENTHESIS>
     (
-        (lVars = lista_ids())
+        (lVars = listaIDs())
         {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         }
@@ -58,7 +58,7 @@ void leer() :
 {
     <tLEER> 
     <tOPENING_PARENTHESIS>
-    (lVars = lista_ids())
+    (lVars = listaIDs())
     {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
     }
@@ -72,7 +72,7 @@ void entAcar() :
 {
     < tENTACAR >
     <tOPENING_PARENTHESIS>
-    i = expresion_simple()
+    i = expresionSimple()
     {
         typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type));
     }

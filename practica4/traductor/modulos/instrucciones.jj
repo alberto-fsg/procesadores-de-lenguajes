@@ -1,41 +1,73 @@
-void instrucciones() :
-{}
-{
-    ( instruccion() )*
-}
-
 void instruccion() :
 {}
 {
-    escribir_linea() <tSEMICOLON>
-|   escribir() <tSEMICOLON>
-|   leer_linea() <tSEMICOLON>
-|   leer() <tSEMICOLON>
-|   entAcar() <tSEMICOLON>
-|   carAent() <tSEMICOLON>
-|   LOOKAHEAD(2) llamar_funcion()
-|   LOOKAHEAD(2) asignacion()
-|   seleccion()
-|   bucle()
-|   LOOKAHEAD(2) declaracion_procs_funcs()
-|   < tABANDONAR > < tSEMICOLON>
-|   < tNADA > < tSEMICOLON>
-}
-
-void seleccion() :
-{}
-{
-    < tSELECTION > 
-    ( < tCASE > expresion() < tCOLON > instrucciones() )+
-    [ < tOTHERWISE > < tCOLON > instrucciones() ]
-    < tEND_SELECTION >
+      escribir_linea() <tSEMICOLON>
+    | escribir() <tSEMICOLON>
+    | leer_linea() <tSEMICOLON>
+    | leer() <tSEMICOLON>
+    | entAcar() <tSEMICOLON>
+    | carAent() <tSEMICOLON>
+    | LOOKAHEAD(2) llamar_funcion()
+    | LOOKAHEAD(2) asignacionVariable()
+    | seleccion()
+    | bucle()
+    | LOOKAHEAD(2) declaracion_procs_funcs()
+    | <tABANDONAR> <tSEMICOLON> { code.addInst(OpCode.LVP, 0); }
+    | <tNADA> <tSEMICOLON> { code.addInst(OpCode.NOP, 0); }
 }
 
 void bucle() :
-{}
 {
-    < tITERATION >
-    expresion()
-    instrucciones()
-    < tEND_ITERATION >
+    AtribExp condicion;
+    CodeBlock cuerpo = new CodeBlock();
+}
+{
+    <tITERATION>
+    condicion = expresion()
+
+    // Por cada instrucción del cuerpo:
+    //   1) la parsea generando su código en el bloque global `code`
+    //   2) lo mueve al bloque local `cuerpo` (añade a `cuerpo` y borra de `code`)
+    // De este modo se extraen las instrucciones del cuerpo.
+    ( instruccion() )* { cuerpo.addBlock(code); code.clearBlock(); }
+    <tEND_ITERATION>
+    {
+        generarBucle(condicion, cuerpo);
+    }
+}
+
+void seleccion() :
+{
+    java.util.List<AtribExp> condiciones = new java.util.ArrayList<AtribExp>();
+    java.util.List<CodeBlock> cuerpos = new java.util.ArrayList<CodeBlock>();
+    CodeBlock auxiliar; // Almacena temporalmente el cuerpo asociado a cada condición del select
+    CodeBlock otherwise = null;
+    AtribExp condicion;
+}
+{
+    <tSELECTION>
+    (
+        <tCASE> { auxiliar = new CodeBlock(); }
+        condicion = expresion()
+        <tCOLON>
+        ( instruccion() )* { 
+            auxiliar.addBlock(code); 
+            code.clearBlock(); 
+            condiciones.add(condicion); 
+            cuerpos.add(auxiliar); 
+        }
+    )+
+    [
+        <tOTHERWISE> <tCOLON>
+        { auxiliar = new CodeBlock(); }
+        ( instruccion() )* { 
+            auxiliar.addBlock(code); 
+            code.clearBlock(); 
+            otherwise = auxiliar; 
+        }
+    ]
+    <tEND_SELECTION>
+    {
+        generarSeleccion(condiciones, cuerpos, otherwise);
+    }
 }

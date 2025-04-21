@@ -21,12 +21,17 @@ package traductor;
 import lib.symbolTable.*;
 import lib.symbolTable.exceptions.*;
 import lib.tools.codeGeneration.*;
+import lib.tools.codeGeneration.PCodeInstruction.OpCode;
 
 import java.util.*;
 
 public class gcl {
-    // tabla de símbolos global
+    // tabla de símbolos
     static SymbolTable st;
+
+    // código generado
+    static CodeBlock code = new CodeBlock();
+    static Map<String,Integer> varOffset = new HashMap<String,Integer>();
     
    public static void main(String[] args) {
 	   gcl parser = null;
@@ -42,8 +47,12 @@ public class gcl {
 		   }
 		   //Programa es el símbolo inicial de la gramática
 		   parser.Programa();
-		   //...
+
 		   System.out.println("***** Análisis terminado con éxito *****");
+
+           System.out.println(code.toString());
+
+           System.out.println("***** P-Code generado *****");
 	   }
 	   catch (java.io.FileNotFoundException e) {
 		   System.out.println ("Fichero " + args[0] + " no encontrado.");
@@ -225,6 +234,174 @@ public class gcl {
         String verde = "\u001B[32m";
         String reset = "\u001B[0m";
         System.out.printf("%s%s:%s %s\n", verde, label, reset, message);
+    }
+
+    /**
+     * Declara variables en la tabla de símbolos y asigna espacio en memoria.
+     * 
+     * @param tipoVar Tipo de las variables a declarar
+     * @param ids Lista de identificadores de variables
+     * @throws AlreadyDefinedSymbolException Si algún identificador ya existe
+     */
+    private static void declararVariablesGeneradorCodigo(AtribTipo tipoVar, List<String> ids) {
+        for (String nombre : ids) {
+            try {
+                Symbol simbolo = crearSimboloVariable(nombre, tipoVar);
+                st.insertSymbol(simbolo);
+
+                // Reservar espacio en memoria, offset indica en qué posición del stack frame está la variable
+                int offset = CGUtils.memorySpaces[st.level]++;
+                varOffset.put(nombre, offset);
+                
+                printMessage("Tabla de símbolos", 
+                    String.format("\"%s\" insertado en nivel %d (offset %d).", 
+                    nombre, st.level, offset));
+                    
+            } catch (AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya existe \"%s\".", nombre));
+            }
+        }
+    }
+
+    /**
+     * Crea un símbolo de variable según su tipo (entero, booleano, carácter o arreglo).
+     * 
+     * @param nombre Nombre de la variable
+     * @param tipo_variable Tipo y dimensiones de la variable
+     * @return Símbolo creado o null si el tipo no es válido o el nombre es null
+     */
+    private static Symbol crearSimboloVariable(String nombre, AtribTipo tipo_variable) {
+        if (nombre == null) {
+            return null;
+        }
+        
+        if (tipo_variable.isArray) {
+            return new SymbolArray(nombre, 0, tipo_variable.size-1, tipo_variable.type);
+        }
+        
+        switch (tipo_variable.type) {
+            case INT:  return new SymbolInt(nombre);
+            case BOOL: return new SymbolBool(nombre);
+            case CHAR: return new SymbolChar(nombre);
+            default:
+                printError("Tipo no válido para \"" + nombre + "\"");
+                return null;
+        }
+    }
+
+    /**
+     * Genera asignación de variable normal o de un componente de un array.en P-Code
+     * 
+     * @param nombre_variable Nombre de la variable/array a asignar
+     * @param expresion_indice Expresión con el índice del componente si es una variable array (null en caso contrario)
+     * @param expresion_valor Expresión con el valor a asignar
+     */
+    private static void asignacionVariableGeneradorCodigo(
+        String nombre_variable, 
+        AtribExp expresion_indice, 
+        AtribExp expresion_valor
+    ) {
+        try {
+            // Validación de que la variable tiene asociado un trozo de memoria
+            Symbol simbolo_var = st.getSymbol(nombre_variable);
+            Integer offset = varOffset.get(nombre_variable);
+            if (offset == null) {
+                printError(String.format("Variable \"%s\" no declarada (sin offset).", nombre_variable));
+                return;
+            }
+    
+            // Calculo dirección de destino
+            int offset_var = offset.intValue();
+            int nivel_anidamiento = st.level;
+            if (expresion_indice != null) {
+                // Caso array: base + índice
+                code.addBlock(expresion_indice.code);
+                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
+                code.addInst(PCodeInstruction.OpCode.PLUS);
+            } else {
+                // Caso variable simple
+                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
+            }
+
+            // Generación del valor
+            code.addBlock(expresion_valor.code);
+
+            // Almacenamiento
+            code.addInst(PCodeInstruction.OpCode.ASG);
+
+        } catch (SymbolNotFoundException e) {
+            printError(String.format("Variable \"%s\" no encontrada.", nombre_variable));
+        }
+    }
+
+
+    /** Genera bucle con inversión en P-Code
+     * 
+     * @param condicion bloque con el código para evaluar la condición del bucle
+     * @param cuerpo bloque con las instrucciones que forman el cuerpo del bucle
+     */
+    private static void generarBucle(AtribExp condicion, CodeBlock cuerpo) {
+        String etiquetaInicio = CGUtils.newLabel();
+        String etiquetaPrueba = CGUtils.newLabel();
+        String etiquetaFinal  = CGUtils.newLabel();
+
+        // Salto inicial a la prueba invertida
+        code.addInst(OpCode.JMP, etiquetaPrueba);
+
+        // Cuerpo
+        code.addLabel(etiquetaInicio);
+        code.addBlock(cuerpo);
+
+        // Prueba invertida
+        code.addLabel(etiquetaPrueba);
+        code.addBlock(condicion.code);
+        code.addInst(OpCode.JMF, etiquetaFinal);
+        code.addInst(OpCode.JMP, etiquetaInicio);
+        code.addLabel(etiquetaFinal);
+    }
+
+    /** Genera bloque switch en P-Code
+     * 
+    * @param condiciones Lista de expresiones booleanas que determinan cada caso
+    * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
+    * @param otherwise     Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
+     */
+    private static void generarSeleccion(
+        java.util.List<AtribExp> condiciones,
+        java.util.List<CodeBlock> cuerpos,
+        CodeBlock otherwise
+    ) {
+        String etiqueta_final = CGUtils.newLabel();
+        java.util.List<String> etiquetas_salto = new java.util.ArrayList<String>();
+
+        // Asociar una etiqueta a cada condición
+        for (int i = 0; i < condiciones.size(); i++) {
+            etiquetas_salto.add(CGUtils.newLabel());
+        }
+
+        // Generar código para cada condición
+        for (int i = 0; i < condiciones.size(); i++) {
+            // Evaluar la i-ésima condición
+            code.addBlock(condiciones.get(i).code);
+            
+            // Caso falso: continuar con la siguiente condición
+            code.addInst(OpCode.JMF, etiquetas_salto.get(i));
+            
+            // Caso verdadero: ejecutar el bloque y saltar al final del switch
+            code.addBlock(cuerpos.get(i));
+            code.addInst(OpCode.JMP, etiqueta_final);
+
+            // Etiqueta para continuar con la siguiente condición si el caso es falso
+            code.addLabel(etiquetas_salto.get(i));
+        }
+
+        // Manejar el bloque por defecto (si existe)
+        if (otherwise != null) {
+            code.addBlock(otherwise);
+        }
+
+        // Etiqueta a la que se salta si alguna condición es verdadera
+        code.addLabel(etiqueta_final);
     }
 }
 
