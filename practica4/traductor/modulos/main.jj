@@ -310,7 +310,7 @@ public class gcl {
                 return;
             }
     
-            // Calculo dirección de destino
+            // Calculo de dirección de destino
             int offset_var = offset.intValue();
             int nivel_anidamiento = st.level;
             if (expresion_indice != null) {
