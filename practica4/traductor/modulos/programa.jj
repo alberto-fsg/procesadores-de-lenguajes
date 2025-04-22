@@ -1,11 +1,45 @@
 void Programa() :
-{}
+{
+    Token identificadorPrograma;
+    CodeBlock cprog, cbloque, cprocfun = new CodeBlock();
+}
 {
     < tPROGRAMA >
-    < tIDENTIFICADOR >
+    identificadorPrograma = < tIDENTIFICADOR >
+
+    {
+        // Basado en diapositiva 16, Tema 6, Lección 11
+        cprog = new CodeBlock();
+    }
+
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_procs_funcs() )*
+    ( cprocfun = declaracion_procs_funcs() )?
     < tBEGGINING >
-    ( instruccion() )*
+    cbloque = BloqueSentencias()
+
+    {
+        // Basado en diapositiva 16, Tema 6, Lección 11
+        String etiqEnterProgram = CGUtils.newLabel();
+        cprog.addInst(OpCode.ENP, etiqEnterProgram); // Instrucción para saltar al programa ~enter program~
+        cprog.addBlock(cprocfun);
+        cprog.addComment("Comienzo del programa " + identificadorPrograma.image);
+        cprog.addLabel(etiqEnterProgram);
+        cprog.addBlock(cbloque);
+        cprog.addComment("Fin del programa " + identificadorPrograma.image);
+        cprog.addInst(OpCode.LVP); // Instrucción para salir del programa ~leave program~
+        code.addBlock(cprog);
+    }
+
     < tEND >
+}
+
+CodeBlock BloqueSentencias() :
+{
+    CodeBlock cprocfun = new CodeBlock(), aux;
+}
+{
+    (
+        aux = instruccion()   { cprocfun.addBlock(aux); }
+    )*
+    { return cprocfun; }
 }

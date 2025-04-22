@@ -31,11 +31,15 @@ public class gcl {
 
     // código generado
     static CodeBlock code = new CodeBlock();
-    static Map<String,Integer> varOffset = new HashMap<String,Integer>();
     
    public static void main(String[] args) {
 	   gcl parser = null;
 	   
+        for(int i = 0; i < CGUtils.memorySpaces.length; ++i) {
+            // El offset de cada nivel empieza en 3, los primeros tres espacios son reservados (Tema 5, lección 10)
+            CGUtils.memorySpaces[i] = 3;
+        }
+
 	   try {
            st = new SymbolTable();
 
@@ -87,8 +91,10 @@ public class gcl {
                 }
                 if (sV != null) {
                     sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
+                    sV.offset = CGUtils.memorySpaces[st.level]++;
                     st.insertSymbol(sV);
-                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                    printMessage("Tabla de símbolos",
+                        String.format("\"%s\" %d (offset %d).", sV.name, st.level, sV.offset));
                 }
             } catch (AlreadyDefinedSymbolException e) {
                 System.out.println("Error: Identificador ya existe: \"" + id + "\"");
@@ -166,8 +172,10 @@ public class gcl {
         } else {
             SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             try {
+                sFunc.offset = CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(sFunc);
                 insertParameters(parametros);
+                sFunc.tam = CGUtils.memorySpaces[st.level] - 3;
             } catch(AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
             }
@@ -178,9 +186,10 @@ public class gcl {
         st.insertBlock();
         for(Symbol param : parametros) {
             try {
+                param.offset = CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(param);
                 printMessage("Tabla de símbolos",
-                    String.format("\"%s\" insertado en nivel %d.", param.name, st.level));
+                    String.format("\"%s\" %d (offset %d).", param.name, st.level, param.offset));
             } catch(AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya definida variable de identificador \"%s\".", param.name));
             }
@@ -247,15 +256,12 @@ public class gcl {
         for (String nombre : ids) {
             try {
                 Symbol simbolo = crearSimboloVariable(nombre, tipoVar);
+                simbolo.offset = CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(simbolo);
-
-                // Reservar espacio en memoria, offset indica en qué posición del stack frame está la variable
-                int offset = CGUtils.memorySpaces[st.level]++;
-                varOffset.put(nombre, offset);
                 
                 printMessage("Tabla de símbolos", 
-                    String.format("\"%s\" insertado en nivel %d (offset %d).", 
-                    nombre, st.level, offset));
+                    String.format("\"%s\"  %d (offset %d).", 
+                    nombre, st.level, simbolo.offset));
                     
             } catch (AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya existe \"%s\".", nombre));
@@ -297,6 +303,7 @@ public class gcl {
      * @param expresion_valor Expresión con el valor a asignar
      */
     private static void asignacionVariableGeneradorCodigo(
+        CodeBlock c,
         String nombre_variable, 
         AtribExp expresion_indice, 
         AtribExp expresion_valor
@@ -304,30 +311,29 @@ public class gcl {
         try {
             // Validación de que la variable tiene asociado un trozo de memoria
             Symbol simbolo_var = st.getSymbol(nombre_variable);
-            Integer offset = varOffset.get(nombre_variable);
-            if (offset == null) {
+            int offset = simbolo_var.offset;
+            if (offset == -1) {
                 printError(String.format("Variable \"%s\" no declarada (sin offset).", nombre_variable));
                 return;
             }
     
             // Calculo de dirección de destino
-            int offset_var = offset.intValue();
-            int nivel_anidamiento = st.level;
+            int nivel_anidamiento = st.level - simbolo_var.nivel;;
             if (expresion_indice != null) {
                 // Caso array: base + índice
-                code.addBlock(expresion_indice.code);
-                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
-                code.addInst(PCodeInstruction.OpCode.PLUS);
+                c.addBlock(expresion_indice.code);
+                c.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                c.addInst(PCodeInstruction.OpCode.PLUS);
             } else {
                 // Caso variable simple
-                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
+                c.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
             }
 
             // Generación del valor
-            code.addBlock(expresion_valor.code);
+            c.addBlock(expresion_valor.code);
 
             // Almacenamiento
-            code.addInst(PCodeInstruction.OpCode.ASG);
+            c.addInst(PCodeInstruction.OpCode.ASG);
 
         } catch (SymbolNotFoundException e) {
             printError(String.format("Variable \"%s\" no encontrada.", nombre_variable));

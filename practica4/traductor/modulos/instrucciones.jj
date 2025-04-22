@@ -1,19 +1,31 @@
-void instruccion() :
-{}
+CodeBlock instruccion() :
 {
-      escribir_linea() <tSEMICOLON>
-    | escribir() <tSEMICOLON>
-    | leer_linea() <tSEMICOLON>
-    | leer() <tSEMICOLON>
-    | entAcar() <tSEMICOLON>
-    | carAent() <tSEMICOLON>
+    CodeBlock c = new CodeBlock();
+}
+{
+    (
+    c =  escribir_linea() <tSEMICOLON>
+    | c = escribir() <tSEMICOLON>
+    | c = leer_linea() <tSEMICOLON>
+    | c = leer() <tSEMICOLON>
+    | entAcar() <tSEMICOLON> // no sirven de nada, si se llaman solas
+    | carAent() <tSEMICOLON> // no sirven de nada, si se llaman solas
     | LOOKAHEAD(2) llamar_funcion()
-    | LOOKAHEAD(2) asignacionVariable()
+    | LOOKAHEAD(2) c = asignacionVariable()
     | seleccion()
     | bucle()
     | LOOKAHEAD(2) declaracion_procs_funcs()
-    | <tABANDONAR> <tSEMICOLON> { code.addInst(OpCode.LVP, 0); }
-    | <tNADA> <tSEMICOLON> { code.addInst(OpCode.NOP, 0); }
+    | <tABANDONAR> <tSEMICOLON>
+    {
+        code.addInst(OpCode.LVP, 0);
+    }
+    | <tNADA> <tSEMICOLON>
+    {
+        code.addInst(OpCode.NOP, 0);
+    }
+    )
+    
+    { return c; }
 }
 
 void bucle() :

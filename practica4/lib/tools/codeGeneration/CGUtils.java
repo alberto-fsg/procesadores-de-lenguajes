@@ -9,8 +9,6 @@
 
 package lib.tools.codeGeneration;
 
-import lib.tools.codeGeneration.PCodeInstruction.OpCode;
-
 public class CGUtils {
 	
 	private static int l=0; 

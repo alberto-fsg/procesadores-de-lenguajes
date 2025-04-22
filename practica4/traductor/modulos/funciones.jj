@@ -1,7 +1,9 @@
-void declaracion_procs_funcs() :
+CodeBlock declaracion_procs_funcs() :
 {}
 {
     ( declaracion_proc() | declaracion_func() )+
+    
+    { return new CodeBlock(); /** Temporal */ }
 }
 
 void declaracion_proc() :

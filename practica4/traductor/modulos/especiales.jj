@@ -1,43 +1,74 @@
-void escribir_linea() :
-{}
+CodeBlock escribir_linea() :
+{
+    ArrayList<AtribExp> args = new ArrayList<AtribExp>();
+    CodeBlock c = new CodeBlock();
+}
 {
     <tESCRIBIR_LIN>
     <tOPENING_PARENTHESIS>
-    (escribir_params())?
+    (args = escribir_params())?
     <tCLOSING_PARENTHESIS>
+    {
+        for (AtribExp a : args) {
+            c.addBlock(a.code);
+            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
+            c.addInst(OpCode.WRT, modo);
+        }
+        // Salto de línea
+        c.addInst(OpCode.STC, (int)'\n');
+        c.addInst(OpCode.WRT, 0);
+
+        return c;
+    }
 }
 
-void escribir() :
-{}
+CodeBlock escribir() :
+{
+    ArrayList<AtribExp> args = new ArrayList<AtribExp>();
+    CodeBlock c = new CodeBlock();
+}
 {
     <tESCRIBIR>
     <tOPENING_PARENTHESIS>
-    (escribir_params())
+    args = escribir_params()
     <tCLOSING_PARENTHESIS>
+    {
+        for (AtribExp a : args) {
+            c.addBlock(a.code);
+            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
+            c.addInst(OpCode.WRT, modo);
+        }
+        return c;
+    }
 }
 
-void escribir_params() :
+ArrayList<AtribExp> escribir_params() :
 {
+    ArrayList<AtribExp> args = new ArrayList<AtribExp>();
     AtribExp a;
 }
 {
-    (a = expresion())
+    (a = expresion()
     {
         typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
+        args.add(a);
     }
     (
         <tCOMA> (a = expresion())
         {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
+            args.add(a);
         }
-    )*
+    )*)
+    { return args; }
 }
 
-void leer_linea() :
+CodeBlock leer_linea() :
 {
-     ArrayList<String> lVars = new ArrayList<String>();
+    ArrayList<String> lVars = new ArrayList<String>();
+    CodeBlock c = new CodeBlock();
 }
 {
     <tLEER_LIN>
@@ -46,26 +77,50 @@ void leer_linea() :
         (lVars = listaIDs())
         {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+            for (String id : lVars) {
+                try {
+                    Symbol s = st.getSymbol(id);
+                    c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
+                    int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                    c.addInst(OpCode.RD, tipo);
+                } catch (SymbolNotFoundException e) {
+                    printError("Variable \"" + id + "\" no encontrada.");
+                }
+            }
         }
     )?
     <tCLOSING_PARENTHESIS>
+
+    { return c; }
 }
 
-void leer() :
+CodeBlock leer() :
 {
-     ArrayList<String> lVars = new ArrayList<String>();
+    ArrayList<String> lVars = new ArrayList<String>();
+    CodeBlock c = new CodeBlock();
 }
 {
     <tLEER> 
     <tOPENING_PARENTHESIS>
-    (lVars = listaIDs())
+    lVars = listaIDs()
     {
-            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+        typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+        for(String id : lVars) {
+            try {
+                Symbol s = st.getSymbol(id);
+                c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
+                int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                c.addInst(OpCode.RD, tipo);
+            } catch (SymbolNotFoundException e) {
+                printError("Variable \"" + id + "\" no encontrada.");
+            }
+        }
     }
     <tCLOSING_PARENTHESIS> 
+    { return c; }
 }
 
-void entAcar() :
+AtribExp entAcar() :
 {
     AtribExp i;
 }
@@ -73,13 +128,20 @@ void entAcar() :
     < tENTACAR >
     <tOPENING_PARENTHESIS>
     i = expresionSimple()
-    {
-        typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type));
-    }
     <tCLOSING_PARENTHESIS>
+
+    {
+        if(!typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type))) {
+            return new AtribExp(Symbol.Types.UNDEFINED, null, false, false); 
+        }
+        // No hace falta transformarlo porque CHAR e INT son ambos 32 bits en máquina P
+        AtribExp resultado = new AtribExp(Symbol.Types.CHAR, null, false, false);
+        resultado.code.addBlock(i.code);
+        return resultado;
+    }
 }
 
-void carAent() :
+AtribExp carAent() :
 {
     AtribExp c;
 }
@@ -87,8 +149,15 @@ void carAent() :
     < tCARAENT >
     < tOPENING_PARENTHESIS>
     c = primario()
-    {
-        typeEqual(Symbol.Types.CHAR, c.type, String.format("Tipo incorrecto. Se esperaba CHAR pero se encontró %s.", c.type));
-    }
     <tCLOSING_PARENTHESIS>
+
+    {
+        if(!typeEqual(Symbol.Types.CHAR, c.type, String.format("Tipo incorrecto. Se esperaba CHAR pero se encontró %s.", c.type))) {
+            return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+        }
+        // No hace falta transformarlo porque CHAR e INT son ambos 32 bits en máquina P
+        AtribExp resultado = new AtribExp(Symbol.Types.INT, null, false, false);
+        resultado.code.addBlock(c.code);
+        return resultado;
+    }
 }

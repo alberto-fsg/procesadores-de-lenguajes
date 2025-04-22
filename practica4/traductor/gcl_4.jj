@@ -35,11 +35,15 @@ public class gcl {
 
     // código generado
     static CodeBlock code = new CodeBlock();
-    static Map<String,Integer> varOffset = new HashMap<String,Integer>();
     
    public static void main(String[] args) {
 	   gcl parser = null;
 	   
+        for(int i = 0; i < CGUtils.memorySpaces.length; ++i) {
+            // El offset de cada nivel empieza en 3, los primeros tres espacios son reservados (Tema 5, lección 10)
+            CGUtils.memorySpaces[i] = 3;
+        }
+
 	   try {
            st = new SymbolTable();
 
@@ -91,8 +95,10 @@ public class gcl {
                 }
                 if (sV != null) {
                     sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
+                    sV.offset = CGUtils.memorySpaces[st.level]++;
                     st.insertSymbol(sV);
-                    System.out.println("[TABLA DE SÍMBOLOS] Insertado " + sV.toString());
+                    printMessage("Tabla de símbolos",
+                        String.format("\"%s\" %d (offset %d).", sV.name, st.level, sV.offset));
                 }
             } catch (AlreadyDefinedSymbolException e) {
                 System.out.println("Error: Identificador ya existe: \"" + id + "\"");
@@ -170,8 +176,10 @@ public class gcl {
         } else {
             SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             try {
+                sFunc.offset = CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(sFunc);
                 insertParameters(parametros);
+                sFunc.tam = CGUtils.memorySpaces[st.level] - 3;
             } catch(AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
             }
@@ -182,9 +190,10 @@ public class gcl {
         st.insertBlock();
         for(Symbol param : parametros) {
             try {
+                param.offset = CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(param);
                 printMessage("Tabla de símbolos",
-                    String.format("\"%s\" insertado en nivel %d.", param.name, st.level));
+                    String.format("\"%s\" %d (offset %d).", param.name, st.level, param.offset));
             } catch(AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya definida variable de identificador \"%s\".", param.name));
             }
@@ -251,15 +260,12 @@ public class gcl {
         for (String nombre : ids) {
             try {
                 Symbol simbolo = crearSimboloVariable(nombre, tipoVar);
+                simbolo.offset = CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(simbolo);
-
-                // Reservar espacio en memoria, offset indica en qué posición del stack frame está la variable
-                int offset = CGUtils.memorySpaces[st.level]++;
-                varOffset.put(nombre, offset);
                 
                 printMessage("Tabla de símbolos", 
-                    String.format("\"%s\" insertado en nivel %d (offset %d).", 
-                    nombre, st.level, offset));
+                    String.format("\"%s\"  %d (offset %d).", 
+                    nombre, st.level, simbolo.offset));
                     
             } catch (AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya existe \"%s\".", nombre));
@@ -268,7 +274,7 @@ public class gcl {
     }
 
     /**
-     * Crea un símbolo de variable según su tipo (entero, booleano, carácter o arreglo).
+     * Crea un símbolo de variable según su tipo (entero, booleano, carácter o array).
      * 
      * @param nombre Nombre de la variable
      * @param tipo_variable Tipo y dimensiones de la variable
@@ -294,13 +300,14 @@ public class gcl {
     }
 
     /**
-     * Genera asignación de variable normal o de un componente de un array.en P-Code
+     * Genera asignación de variable normal o de un componente de un array en P-Code
      * 
      * @param nombre_variable Nombre de la variable/array a asignar
      * @param expresion_indice Expresión con el índice del componente si es una variable array (null en caso contrario)
      * @param expresion_valor Expresión con el valor a asignar
      */
     private static void asignacionVariableGeneradorCodigo(
+        CodeBlock c,
         String nombre_variable, 
         AtribExp expresion_indice, 
         AtribExp expresion_valor
@@ -308,30 +315,29 @@ public class gcl {
         try {
             // Validación de que la variable tiene asociado un trozo de memoria
             Symbol simbolo_var = st.getSymbol(nombre_variable);
-            Integer offset = varOffset.get(nombre_variable);
-            if (offset == null) {
+            int offset = simbolo_var.offset;
+            if (offset == -1) {
                 printError(String.format("Variable \"%s\" no declarada (sin offset).", nombre_variable));
                 return;
             }
     
-            // Calculo dirección de destino
-            int offset_var = offset.intValue();
-            int nivel_anidamiento = st.level;
+            // Calculo de dirección de destino
+            int nivel_anidamiento = st.level - simbolo_var.nivel;;
             if (expresion_indice != null) {
                 // Caso array: base + índice
-                code.addBlock(expresion_indice.code);
-                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
-                code.addInst(PCodeInstruction.OpCode.PLUS);
+                c.addBlock(expresion_indice.code);
+                c.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                c.addInst(PCodeInstruction.OpCode.PLUS);
             } else {
                 // Caso variable simple
-                code.addInst(PCodeInstruction.OpCode.SRF, offset_var, nivel_anidamiento);
+                c.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
             }
 
             // Generación del valor
-            code.addBlock(expresion_valor.code);
+            c.addBlock(expresion_valor.code);
 
             // Almacenamiento
-            code.addInst(PCodeInstruction.OpCode.ASG);
+            c.addInst(PCodeInstruction.OpCode.ASG);
 
         } catch (SymbolNotFoundException e) {
             printError(String.format("Variable \"%s\" no encontrada.", nombre_variable));
@@ -368,7 +374,7 @@ public class gcl {
      * 
     * @param condiciones Lista de expresiones booleanas que determinan cada caso
     * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
-    * @param otherwise     Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
+    * @param otherwise   Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
      */
     private static void generarSeleccion(
         java.util.List<AtribExp> condiciones,
@@ -524,17 +530,50 @@ TOKEN_MGR_DECLS : {
 
 // --- INICIO DE programa.jj ---
 void Programa() :
-{}
+{
+    Token identificadorPrograma;
+    CodeBlock cprog, cbloque, cprocfun = new CodeBlock();
+}
 {
     < tPROGRAMA >
-    < tIDENTIFICADOR >
+    identificadorPrograma = < tIDENTIFICADOR >
+
+    {
+        // Basado en diapositiva 16, Tema 6, Lección 11
+        cprog = new CodeBlock();
+    }
+
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_procs_funcs() )*
+    ( cprocfun = declaracion_procs_funcs() )?
     < tBEGGINING >
-    ( instruccion() )*
+    cbloque = BloqueSentencias()
+
+    {
+        // Basado en diapositiva 16, Tema 6, Lección 11
+        String etiqEnterProgram = CGUtils.newLabel();
+        cprog.addInst(OpCode.ENP, etiqEnterProgram); // Instrucción para saltar al programa ~enter program~
+        cprog.addBlock(cprocfun);
+        cprog.addComment("Comienzo del programa " + identificadorPrograma.image);
+        cprog.addLabel(etiqEnterProgram);
+        cprog.addBlock(cbloque);
+        cprog.addComment("Fin del programa " + identificadorPrograma.image);
+        cprog.addInst(OpCode.LVP); // Instrucción para salir del programa ~leave program~
+        code.addBlock(cprog);
+    }
+
     < tEND >
 }
 
+CodeBlock BloqueSentencias() :
+{
+    CodeBlock cprocfun = new CodeBlock(), aux;
+}
+{
+    (
+        aux = instruccion()   { cprocfun.addBlock(aux); }
+    )*
+    { return cprocfun; }
+}
 // --- INICIO DE tipos.jj ---
 AtribTipo tipo() :
 {
@@ -605,11 +644,12 @@ void declaracionVariables() :
     }
 }
 
-void asignacionVariable() :
+CodeBlock asignacionVariable() :
 {
     Token token_id;
     AtribExp index_expr = null; 
     AtribExp value_expr;
+    CodeBlock c = new CodeBlock();
 }
 {
     token_id = <tIDENTIFICADOR>
@@ -622,7 +662,8 @@ void asignacionVariable() :
     value_expr = expresion()
     <tSEMICOLON>
     {
-        asignacionVariableGeneradorCodigo(token_id.image, index_expr, value_expr);
+        asignacionVariableGeneradorCodigo(c, token_id.image, index_expr, value_expr);
+        return c;
     }
 }
 
@@ -645,12 +686,10 @@ AtribExp primario() :
 {
     (
         /** Caso: llamada a entAcar */
-        entAcar()
-        { return new AtribExp(Symbol.Types.CHAR, null, false, false); }
+        primarioInfo = entAcar() { return primarioInfo; }
     |    
         /** Caso: llamada a carAent */
-        carAent()
-        { return new AtribExp(Symbol.Types.INT, null, false, false); }
+        primarioInfo = carAent() { return primarioInfo; }
     |
         /** Caso: llamada a función excluyendo procedimientos. */
         LOOKAHEAD(2) // Para distinguirlo de un array o variable.
@@ -665,8 +704,15 @@ AtribExp primario() :
                 printError(String.format("Función \"%s\" no encontrada en tabla de símbolos.", t.image));
                 return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
             }
-            if(typeEqual(Symbol.Types.FUNCTION, s.type, String.format("Tipo incorrecto. Se esperaba FUNCTION pero se encontró %s.", s.type)))
+            if(typeEqual(Symbol.Types.FUNCTION, s.type, String.format("Tipo incorrecto. Se esperaba FUNCTION pero se encontró %s.", s.type))) {
+                // Generación de código basada en diapositiva 45 de Tema 6, lección 11
+                SymbolFunction f = (SymbolFunction) s;
+                primarioInfo = new AtribExp(f.returnType, null, false, false);
+                primarioInfo.code.addInst(PCodeInstruction.OpCode.OSF, f.tam, st.level - s.nivel, (int)f.dir);
+
                 return new AtribExp(((SymbolFunction)s).returnType, null, false, false);
+
+            }
             else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
     |
@@ -693,7 +739,18 @@ AtribExp primario() :
                 printError(String.format("El índice %s es demasiado grande para el vector %s de tamaño %s.", ae.image, t.image, Integer.toString(s_array.maxInd + 1)));
                 ok = false;
             }
-            return ok ? new AtribExp(s_array.baseType, null, true, false) : new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+            // Generación de código basada en diapositiva 25 de Tema 6, lección 11
+            primarioInfo = new AtribExp(s_array.baseType, null, true, false);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
+            primarioInfo.code.addBlock(ae.code);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, s_array.minInd);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.SBT);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, 1);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.TMS);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.PLUS);
+            primarioInfo.code.addInst(PCodeInstruction.OpCode.DRF);
+
+            return ok ? primarioInfo : new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
     |
         /** Caso: acceso a una variable */
@@ -703,6 +760,8 @@ AtribExp primario() :
                 s = st.getSymbol(t.image);
                 
                 primarioInfo = new AtribExp(s.type, t.image, true, false);
+                primarioInfo.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
+                primarioInfo.code.addInst(PCodeInstruction.OpCode.DRF);
                 return primarioInfo;
 
             } catch (SymbolNotFoundException e) {
@@ -739,7 +798,7 @@ AtribExp primario() :
         /** Caso: constante bool con valor true */
         t = <tTRUE>
         {
-            primarioInfo = new AtribExp(Symbol.Types.BOOL, t.image, false, true);
+            primarioInfo = new AtribExp(Symbol.Types.BOOL, "true", false, true);
             primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, 1);
             return primarioInfo;
         }
@@ -747,7 +806,7 @@ AtribExp primario() :
         /** Caso: constante bool con valor false */
         t = <tFALSE>
         {
-            primarioInfo = new AtribExp(Symbol.Types.BOOL, t.image, false, true); 
+            primarioInfo = new AtribExp(Symbol.Types.BOOL, "false", false, true); 
             primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, 0);
             return primarioInfo;
         }
@@ -776,11 +835,19 @@ AtribExp factor() :
         }
 
         /** Mirar si el operando es válido respecto al operador */
-        ok = op.image.equals("!") && typeEqual(Symbol.Types.BOOL, expressionInfo.type,
-            String.format("El operador \"%s\" requiere un valor de tipo BOOL, pero se ha proporcionado %s.", op.image, expressionInfo.type));
-
-        ok |= (op.image.equals("+") || op.image.equals("-")) && typeEqual(Symbol.Types.INT, expressionInfo.type,
-            String.format("El operador \"%s\" requiere un valor de tipo INT, pero se ha proporcionado %s.", op.image, expressionInfo.type));
+        switch(op.image) {
+            case "!":
+                ok = typeEqual(Symbol.Types.BOOL, expressionInfo.type,
+                    String.format("El operador \"%s\" requiere un valor de tipo BOOL, pero se ha proporcionado %s.", op.image, expressionInfo.type));
+                break;
+            case "+":
+            case "-":
+                ok = typeEqual(Symbol.Types.INT, expressionInfo.type,
+                    String.format("El operador \"%s\" requiere un valor de tipo INT, pero se ha proporcionado %s.", op.image, expressionInfo.type));  
+                break;   
+            default:
+                ok = false;
+        }
 
         /** Si hubo error semántico, se devuelve tipo indefinido */
         if (!ok) {
@@ -789,38 +856,40 @@ AtribExp factor() :
         }
 
         /** Evaluar la expresión recibida si es constante */
-        if (expressionInfo.isConst) {
-            if (op.image.equals("!")) {
-                val = String.valueOf(!Boolean.parseBoolean(expressionInfo.image));
-            }
-            else {
-                int num = Integer.parseInt(expressionInfo.image);
-                val = op.image.equals("-") ? String.valueOf(-num) : String.valueOf(num);
+        boolean isConst = expressionInfo.isConst;
+        if(isConst) {
+            switch(op.image) {
+                case "!":
+                    val = String.valueOf(!Boolean.parseBoolean(expressionInfo.image));
+                    break;
+                case "+":
+                    val = expressionInfo.image;
+                    break;
+                case "-":
+                    val = String.valueOf(-Integer.parseInt(expressionInfo.image));
+                    break;
             }
         }
 
+        /** Generación de código */
         factorInfo.code.addBlock(expressionInfo.code);
-
-        if (op.image.equals("!")) {
-            factorInfo.code.addInst(PCodeInstruction.OpCode.NGB);
-        } 
-        else if (op.image.equals("-")) {
-            factorInfo.code.addInst(PCodeInstruction.OpCode.SBT);
-        }
-        else /** if (op.image.equals("+")) */ {
-            factorInfo.code.addInst(PCodeInstruction.OpCode.PLUS);
+        switch(op.image) {
+            case "!":
+                factorInfo.code.addInst(PCodeInstruction.OpCode.NGB); break;
+            case "-":
+                factorInfo.code.addInst(PCodeInstruction.OpCode.NGI); break;
+            case "+":
+                break; // El entero se queda igual
         }
 
-        factorInfo.type = op.image.equals("!") ? Symbol.Types.BOOL : Symbol.Types.INT;
+        factorInfo.type = (op.image.equals("!")) ? Symbol.Types.BOOL : Symbol.Types.INT;
         factorInfo.image = val;
-        factorInfo.isConst = expressionInfo.isConst;
+        factorInfo.isConst = isConst;
+        factorInfo.isVar = true; // Si era referencia, ya no lo es
 
         return factorInfo;
-
     }
 }
-
-
 
 AtribExp termino() :
 {
@@ -828,6 +897,7 @@ AtribExp termino() :
     boolean ok = true;
     Token op;
     String val = null;
+    boolean isConst = false;
 }
 {
     left = factor()
@@ -836,25 +906,23 @@ AtribExp termino() :
         right = factor()
         {
             ok &= typeEqual(Symbol.Types.INT, Arrays.asList(left.type, right.type),
-            String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
+                String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
 
             /** Evaluar término si ambos factores constantes */
-            boolean isConst = left.isConst && right.isConst;
+            isConst = left.isConst && right.isConst;
             if(isConst && ok) {
                 int l = Integer.parseInt(left.image), r = Integer.parseInt(right.image);
                 switch(op.image.toLowerCase()) {
                     case "*":
-                        val = String.valueOf(l * r);
-                        break;
+                        val = String.valueOf(l * r); break;
                     case "/":
-                        val = (r != 0) ? String.valueOf(l / r) : "0";
-                        break;
+                        val = (r != 0) ? String.valueOf(l / r) : "0"; break;
                     case "mod":
-                        val = String.valueOf(l % r);
-                        break;
+                        val = (r != 0) ? String.valueOf(l % r) : "0"; break;
                 }
             }
 
+            /** Generación de código */
             if (!isConst && ok) {
                 left.code.addBlock(right.code);
                 switch(op.image.toLowerCase()) {
@@ -885,7 +953,8 @@ AtribExp termino() :
 AtribExp expresionSimple() :
 {
     AtribExp left, right;
-    boolean ok = true;
+    boolean ok = true, isConst = false;
+    String val = null;
     Token op;
 }
 {
@@ -894,19 +963,18 @@ AtribExp expresionSimple() :
         LOOKAHEAD(2) (op = <tPLUS> | op = <tMINUS>)
         right = termino()
         {
-            ok &= typeEqual(Symbol.Types.INT, Arrays.asList(right.type, left.type),
+            ok = typeEqual(Symbol.Types.INT, Arrays.asList(right.type, left.type),
                 String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Recibido %s de tipo %s.", op.image, right.image, right.type));
             
             /** Evaluar expresión simple si ambos factores constantes */
-            String val = null;
-            boolean isConst = left.isConst && right.isConst;
+            isConst = left.isConst && right.isConst;
             if (isConst && ok) {
                 int l = Integer.parseInt(left.image);
                 int r = Integer.parseInt(right.image);
                 val = op.image.equals("+") ? String.valueOf(l + r): String.valueOf(l - r);
             }
             
-            if (isConst && ok) {
+            if (!isConst && ok) {
                 left.code.addBlock(right.code);
                 switch(op.image.toLowerCase()) {
                     case "+":
@@ -932,8 +1000,9 @@ AtribExp expresionSimple() :
 AtribExp relacion() :
 {
     AtribExp left, right;
-    boolean ok = true;
+    boolean ok = true, isConst = false;
     Token op;
+    Boolean result = null;
 }
 {
     left = expresionSimple()
@@ -953,9 +1022,8 @@ AtribExp relacion() :
                     String.format("Los operandos del operador \"%s\" deben ser de tipo INT. Se proporciono %s y %s.", op.image, left.type, right.type));
             
             /** Evaluar la relación si las dos expresiones simples son constantes */
-            boolean result = true;
-            boolean isConst = left.isConst && right.isConst;
-            if (isConst) {                
+            isConst = left.isConst && right.isConst;
+            if (ok && isConst) {                
                 switch (left.type) {
                     case INT:
                         int l = Integer.parseInt(left.image);
@@ -976,20 +1044,36 @@ AtribExp relacion() :
                         break;
                 }
             }
-            left = new AtribExp(Symbol.Types.BOOL, String.valueOf(result), false, isConst);
+            // Generación de código
+            if(ok && !isConst) {
+                left.code.addBlock(right.code);
+                switch(op.image) {
+                    case "=":   left.code.addInst(PCodeInstruction.OpCode.EQ);  break;
+                    case "<>":  left.code.addInst(PCodeInstruction.OpCode.NEQ); break;
+                    case "<":   left.code.addInst(PCodeInstruction.OpCode.LT);  break;
+                    case "<=":  left.code.addInst(PCodeInstruction.OpCode.LTE); break;
+                    case ">":   left.code.addInst(PCodeInstruction.OpCode.GT);  break;
+                    case ">=":  left.code.addInst(PCodeInstruction.OpCode.GTE); break;
+                }
+            }
+
+            if(ok)
+                left = new AtribExp(Symbol.Types.BOOL, String.valueOf(result), false, isConst);
+            else
+                left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
         }
     )?
     { 
-        if(ok) return left;
-        else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+        return left;
     }
 }
 
 AtribExp expresion() :
 {
     AtribExp left, right;
-    boolean ok = true;
+    boolean ok = true, isConst = false;
     Token op;
+    String val = null;
 }
 {
     left = relacion()
@@ -1006,20 +1090,31 @@ AtribExp expresion() :
                 String.format("Los operandos para el operador \"%s\" deben ser de tipo BOOL. Recibido %s %s.", op.image, left.type, right.type));
                         
             /** Evaluar la expresion si las 2 relaciones son constantes.*/
-            String val = null;
-            boolean isConst = left.isConst && right.isConst;
+            isConst = left.isConst && right.isConst;
             if (isConst && ok) {
                 boolean l = Boolean.parseBoolean(left.image);
                 boolean r = Boolean.parseBoolean(right.image);
                 
                 val = op.image.equals("&") ? String.valueOf(l && r) : String.valueOf(l || r);
             }
-            left = new AtribExp(Symbol.Types.BOOL, val, false, isConst);
+
+            if(ok && !isConst) {
+                left.code.addBlock(right.code);
+                if (op.image.equals("&")) {
+                    left.code.addInst(PCodeInstruction.OpCode.AND);
+                } else {
+                    left.code.addInst(PCodeInstruction.OpCode.OR);
+                }
+            }
+
+            if(ok)
+                left = new AtribExp(Symbol.Types.BOOL, val, false, isConst);
+            else
+                left = new AtribExp(Symbol.Types.UNDEFINED, null, false, false);       
         }
     )*
-    { 
-        if(ok) return left;
-        else return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+    {
+        return left; 
     }
 }
 
@@ -1054,10 +1149,12 @@ Token operador_relacional() :
 }
 
 // --- INICIO DE funciones.jj ---
-void declaracion_procs_funcs() :
+CodeBlock declaracion_procs_funcs() :
 {}
 {
     ( declaracion_proc() | declaracion_func() )+
+    
+    { return new CodeBlock(); /** Temporal */ }
 }
 
 void declaracion_proc() :
@@ -1220,22 +1317,34 @@ ArrayList<Symbol> parametros_declaraciones() :
 }
 
 // --- INICIO DE instrucciones.jj ---
-void instruccion() :
-{}
+CodeBlock instruccion() :
 {
-      escribir_linea() <tSEMICOLON>
-    | escribir() <tSEMICOLON>
-    | leer_linea() <tSEMICOLON>
-    | leer() <tSEMICOLON>
-    | entAcar() <tSEMICOLON>
-    | carAent() <tSEMICOLON>
+    CodeBlock c = new CodeBlock();
+}
+{
+    (
+    c =  escribir_linea() <tSEMICOLON>
+    | c = escribir() <tSEMICOLON>
+    | c = leer_linea() <tSEMICOLON>
+    | c = leer() <tSEMICOLON>
+    | entAcar() <tSEMICOLON> // no sirven de nada, si se llaman solas
+    | carAent() <tSEMICOLON> // no sirven de nada, si se llaman solas
     | LOOKAHEAD(2) llamar_funcion()
-    | LOOKAHEAD(2) asignacionVariable()
+    | LOOKAHEAD(2) c = asignacionVariable()
     | seleccion()
     | bucle()
     | LOOKAHEAD(2) declaracion_procs_funcs()
-    | <tABANDONAR> <tSEMICOLON> { code.addInst(OpCode.LVP, 0); }
-    | <tNADA> <tSEMICOLON> { code.addInst(OpCode.NOP, 0); }
+    | <tABANDONAR> <tSEMICOLON>
+    {
+        code.addInst(OpCode.LVP, 0);
+    }
+    | <tNADA> <tSEMICOLON>
+    {
+        code.addInst(OpCode.NOP, 0);
+    }
+    )
+    
+    { return c; }
 }
 
 void bucle() :
@@ -1295,46 +1404,77 @@ void seleccion() :
 }
 
 // --- INICIO DE especiales.jj ---
-void escribir_linea() :
-{}
+CodeBlock escribir_linea() :
+{
+    ArrayList<AtribExp> args = new ArrayList<AtribExp>();
+    CodeBlock c = new CodeBlock();
+}
 {
     <tESCRIBIR_LIN>
     <tOPENING_PARENTHESIS>
-    (escribir_params())?
+    (args = escribir_params())?
     <tCLOSING_PARENTHESIS>
+    {
+        for (AtribExp a : args) {
+            c.addBlock(a.code);
+            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
+            c.addInst(OpCode.WRT, modo);
+        }
+        // Salto de línea
+        c.addInst(OpCode.STC, (int)'\n');
+        c.addInst(OpCode.WRT, 0);
+
+        return c;
+    }
 }
 
-void escribir() :
-{}
+CodeBlock escribir() :
+{
+    ArrayList<AtribExp> args = new ArrayList<AtribExp>();
+    CodeBlock c = new CodeBlock();
+}
 {
     <tESCRIBIR>
     <tOPENING_PARENTHESIS>
-    (escribir_params())
+    args = escribir_params()
     <tCLOSING_PARENTHESIS>
+    {
+        for (AtribExp a : args) {
+            c.addBlock(a.code);
+            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
+            c.addInst(OpCode.WRT, modo);
+        }
+        return c;
+    }
 }
 
-void escribir_params() :
+ArrayList<AtribExp> escribir_params() :
 {
+    ArrayList<AtribExp> args = new ArrayList<AtribExp>();
     AtribExp a;
 }
 {
-    (a = expresion())
+    (a = expresion()
     {
         typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
+        args.add(a);
     }
     (
         <tCOMA> (a = expresion())
         {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED),
             a.type, String.format("No se puede escribir tipo de dato \"%s\"", a.type));
+            args.add(a);
         }
-    )*
+    )*)
+    { return args; }
 }
 
-void leer_linea() :
+CodeBlock leer_linea() :
 {
-     ArrayList<String> lVars = new ArrayList<String>();
+    ArrayList<String> lVars = new ArrayList<String>();
+    CodeBlock c = new CodeBlock();
 }
 {
     <tLEER_LIN>
@@ -1343,26 +1483,50 @@ void leer_linea() :
         (lVars = listaIDs())
         {
             typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+            for (String id : lVars) {
+                try {
+                    Symbol s = st.getSymbol(id);
+                    c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
+                    int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                    c.addInst(OpCode.RD, tipo);
+                } catch (SymbolNotFoundException e) {
+                    printError("Variable \"" + id + "\" no encontrada.");
+                }
+            }
         }
     )?
     <tCLOSING_PARENTHESIS>
+
+    { return c; }
 }
 
-void leer() :
+CodeBlock leer() :
 {
-     ArrayList<String> lVars = new ArrayList<String>();
+    ArrayList<String> lVars = new ArrayList<String>();
+    CodeBlock c = new CodeBlock();
 }
 {
     <tLEER> 
     <tOPENING_PARENTHESIS>
-    (lVars = listaIDs())
+    lVars = listaIDs()
     {
-            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+        typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+        for(String id : lVars) {
+            try {
+                Symbol s = st.getSymbol(id);
+                c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
+                int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                c.addInst(OpCode.RD, tipo);
+            } catch (SymbolNotFoundException e) {
+                printError("Variable \"" + id + "\" no encontrada.");
+            }
+        }
     }
     <tCLOSING_PARENTHESIS> 
+    { return c; }
 }
 
-void entAcar() :
+AtribExp entAcar() :
 {
     AtribExp i;
 }
@@ -1370,13 +1534,20 @@ void entAcar() :
     < tENTACAR >
     <tOPENING_PARENTHESIS>
     i = expresionSimple()
-    {
-        typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type));
-    }
     <tCLOSING_PARENTHESIS>
+
+    {
+        if(!typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type))) {
+            return new AtribExp(Symbol.Types.UNDEFINED, null, false, false); 
+        }
+        // No hace falta transformarlo porque CHAR e INT son ambos 32 bits en máquina P
+        AtribExp resultado = new AtribExp(Symbol.Types.CHAR, null, false, false);
+        resultado.code.addBlock(i.code);
+        return resultado;
+    }
 }
 
-void carAent() :
+AtribExp carAent() :
 {
     AtribExp c;
 }
@@ -1384,9 +1555,16 @@ void carAent() :
     < tCARAENT >
     < tOPENING_PARENTHESIS>
     c = primario()
-    {
-        typeEqual(Symbol.Types.CHAR, c.type, String.format("Tipo incorrecto. Se esperaba CHAR pero se encontró %s.", c.type));
-    }
     <tCLOSING_PARENTHESIS>
+
+    {
+        if(!typeEqual(Symbol.Types.CHAR, c.type, String.format("Tipo incorrecto. Se esperaba CHAR pero se encontró %s.", c.type))) {
+            return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+        }
+        // No hace falta transformarlo porque CHAR e INT son ambos 32 bits en máquina P
+        AtribExp resultado = new AtribExp(Symbol.Types.INT, null, false, false);
+        resultado.code.addBlock(c.code);
+        return resultado;
+    }
 }
 

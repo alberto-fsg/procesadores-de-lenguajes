@@ -20,6 +20,8 @@ public class SymbolFunction extends Symbol implements Cloneable {
 
     public Types returnType; //tipo de la función
 
+    public int tam = 0;
+
     public SymbolFunction(String _name, ArrayList<Symbol> _parList, 
                           Types _returnType) {
     	super(_name, Types.FUNCTION, ParameterClass.NONE);

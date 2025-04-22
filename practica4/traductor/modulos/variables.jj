@@ -26,11 +26,12 @@ void declaracionVariables() :
     }
 }
 
-void asignacionVariable() :
+CodeBlock asignacionVariable() :
 {
     Token token_id;
     AtribExp index_expr = null; 
     AtribExp value_expr;
+    CodeBlock c = new CodeBlock();
 }
 {
     token_id = <tIDENTIFICADOR>
@@ -43,6 +44,7 @@ void asignacionVariable() :
     value_expr = expresion()
     <tSEMICOLON>
     {
-        asignacionVariableGeneradorCodigo(token_id.image, index_expr, value_expr);
+        asignacionVariableGeneradorCodigo(c, token_id.image, index_expr, value_expr);
+        return c;
     }
 }
