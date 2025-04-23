@@ -12,8 +12,8 @@ CodeBlock instruccion() :
     | carAent() <tSEMICOLON> // no sirven de nada, si se llaman solas
     | LOOKAHEAD(2) llamar_funcion()
     | LOOKAHEAD(2) c = asignacionVariable()
-    | seleccion()
-    | bucle()
+    | c = seleccion()
+    | c = bucle()
     | LOOKAHEAD(2) declaracion_procs_funcs()
     | <tABANDONAR> <tSEMICOLON>
     {
@@ -28,33 +28,35 @@ CodeBlock instruccion() :
     { return c; }
 }
 
-void bucle() :
+CodeBlock bucle() :
 {
     AtribExp condicion;
     CodeBlock cuerpo = new CodeBlock();
+    CodeBlock b = new CodeBlock();  // Bloque final para el bucle generado
+    CodeBlock c;                    // Bloque temporal para cada instrucción
 }
 {
     <tITERATION>
     condicion = expresion()
 
-    // Por cada instrucción del cuerpo:
-    //   1) la parsea generando su código en el bloque global `code`
-    //   2) lo mueve al bloque local `cuerpo` (añade a `cuerpo` y borra de `code`)
-    // De este modo se extraen las instrucciones del cuerpo.
-    ( instruccion() )* { cuerpo.addBlock(code); code.clearBlock(); }
+    ( c = instruccion() { cuerpo.addBlock(c); } )*
     <tEND_ITERATION>
     {
-        generarBucle(condicion, cuerpo);
+        b = bucleGenerarCodigo(condicion, cuerpo);
     }
+    { return b; }
 }
 
-void seleccion() :
+
+CodeBlock seleccion() :
 {
     java.util.List<AtribExp> condiciones = new java.util.ArrayList<AtribExp>();
     java.util.List<CodeBlock> cuerpos = new java.util.ArrayList<CodeBlock>();
     CodeBlock auxiliar; // Almacena temporalmente el cuerpo asociado a cada condición del select
     CodeBlock otherwise = null;
     AtribExp condicion;
+    CodeBlock c;                   // Bloque temporal para cada instrucción
+    CodeBlock s = new CodeBlock(); // Bloque final para el bucle generado
 }
 {
     <tSELECTION>
@@ -62,24 +64,23 @@ void seleccion() :
         <tCASE> { auxiliar = new CodeBlock(); }
         condicion = expresion()
         <tCOLON>
-        ( instruccion() )* { 
-            auxiliar.addBlock(code); 
-            code.clearBlock(); 
-            condiciones.add(condicion); 
-            cuerpos.add(auxiliar); 
+        ( c = instruccion() { auxiliar.addBlock(c); } )*
+        {
+            condiciones.add(condicion);
+            cuerpos.add(auxiliar);
         }
     )+
     [
         <tOTHERWISE> <tCOLON>
         { auxiliar = new CodeBlock(); }
-        ( instruccion() )* { 
-            auxiliar.addBlock(code); 
-            code.clearBlock(); 
-            otherwise = auxiliar; 
+        ( c = instruccion() { auxiliar.addBlock(c); } )*
+        {
+            otherwise = auxiliar;
         }
     ]
     <tEND_SELECTION>
     {
-        generarSeleccion(condiciones, cuerpos, otherwise);
+        s = seleccionGenerarCodigo(condiciones, cuerpos, otherwise);
     }
+    { return s; }
 }

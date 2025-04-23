@@ -58,7 +58,7 @@ public class gcl {
 
 		   System.out.println("***** Análisis terminado con éxito *****");
 
-           System.out.println(code.toString());
+           System.out.println("\n" + code.toString());
 
            System.out.println("***** P-Code generado *****");
 	   }
@@ -160,17 +160,58 @@ public class gcl {
         return ok;
     }
 
-    private static void insertProcedure(Token identificador, ArrayList<Symbol> parametros) {
+    private static CodeBlock insertProcedure(Token identificador, ArrayList<Symbol> parametros /*,CodeBlock cuerpo*/) {
         SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
+        CodeBlock cb = new CodeBlock();
+        
         try {
             st.insertSymbol(sProc);
-            insertParameters(parametros);
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
         }
+
+        // Punto de entrada del procedimiento
+        cb.addLabel(identificador.image);
+
+        // Crear nuevo bloque de activación
+        st.insertBlock();
+
+        // Procesar parámetros
+        for (Symbol param : parametros) {
+            // Asignar posición en el marco de activación
+            param.offset = CGUtils.memorySpaces[st.level]++;
+            try {
+                st.insertSymbol(param);
+            } catch (AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya definida variable de identificador \"%s\".", param.name));
+            }
+
+            // Generar código según el modo de paso
+            if (param.parClass == Symbol.ParameterClass.REF) {
+                // Paso por referencia
+                cb.addInst(PCodeInstruction.OpCode.ASGI);
+            } else {
+                if (param.type == Symbol.Types.ARRAY) {
+                    // Paso por valor de un arreglo
+                    cb.addBlock(generarCopiaArray(param));
+                } else {
+                    // Paso por valor de un escalar
+                    cb.addInst(PCodeInstruction.OpCode.ASG);
+                }
+            }
+        }
+
+        // Añadir cuerpo del procedimiento
+        //cb.addBlock(cuerpo);
+
+        // Cierre del marco y retorno
+        cb.addInst(PCodeInstruction.OpCode.CSF);
+
+        return cb;
     }
 
-    private static void insertFunction(Token identificador, AtribTipo returnType, ArrayList<Symbol> parametros) {
+    private static CodeBlock insertFunction(Token identificador, AtribTipo returnType, ArrayList<Symbol> parametros) {
+        CodeBlock cb = new CodeBlock();
         if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
             printError(String.format("Una función solo puede devolver valores de tipo INT, BOOL o CHAR. Tipo dado: %s.", returnType.type));
         } else {
@@ -184,6 +225,59 @@ public class gcl {
                 printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
             }
         }
+        return cb;
+    }
+
+    /**
+     * Genera el código para copiar un array pasado por valor.
+     *
+     * @param array Array del que se genera la copia.
+     * @return Bloque de código que genera la copia del array.
+     */
+    private static CodeBlock generarCopiaArray(Symbol array) {
+        CodeBlock cb = new CodeBlock();
+
+        String etiqueta_inicio = array.name + "_copia_inicio";
+        String etiqueta_final  = array.name + "_copia_final";
+
+        // Longitud del array = maxInd - minInd + 1
+        SymbolArray symbol_array = (SymbolArray) array;
+        int longitud = symbol_array.maxInd - symbol_array.minInd + 1;
+
+        // Inicializar índice: idx = 0
+        cb.addInst(OpCode.STC, 0);
+
+        // Etiqueta de inicio de bucle
+        cb.addLabel(etiqueta_inicio);
+
+        // Comparar: idx < longitud, si no se cumple saltar al final
+        cb.addInst(OpCode.DUP);                      // duplicar idx (LT lo destruye)
+        cb.addInst(OpCode.STC, longitud);            // cargar longitud
+        cb.addInst(OpCode.LT);                       // comparar idx < longitud
+        cb.addInst(OpCode.JMF, etiqueta_final);      // si no, saltar al final
+
+        // Cargar elemento origen: DRF [base + idx]
+        int bloques_diferencia = st.level - array.nivel;
+        cb.addInst(OpCode.SRF, bloques_diferencia, array.offset); // dirección base origen
+        cb.addInst(OpCode.SWP);                                   // traer idx arriba
+        cb.addInst(OpCode.PLUS);                                  // base + idx
+        cb.addInst(OpCode.DRF);                                   // cargar valor
+
+        // Guardar en destino: ASG [base + idx] = valor
+        cb.addInst(OpCode.SRF, bloques_diferencia, array.offset); // dirección base destino
+        cb.addInst(OpCode.SWP);                                   // traer idx arriba
+        cb.addInst(OpCode.PLUS);                                  // base + idx
+        cb.addInst(OpCode.ASG);                                   // guardar valor
+
+        // Incrementar idx y repetir
+        cb.addInst(OpCode.STC, 1);                // cargar 1
+        cb.addInst(OpCode.PLUS);                  // idx = idx + 1
+        cb.addInst(OpCode.JMP, etiqueta_inicio);  // saltar al inicio del bucle
+
+        // Fin del bucle
+        cb.addLabel(etiqueta_final);
+
+        return cb;
     }
 
     private static void insertParameters(ArrayList<Symbol> parametros) {
@@ -256,7 +350,7 @@ public class gcl {
      * @param ids Lista de identificadores de variables
      * @throws AlreadyDefinedSymbolException Si algún identificador ya existe
      */
-    private static void declararVariablesGeneradorCodigo(AtribTipo tipoVar, List<String> ids) {
+    private static void declararVariablesGenerarCodigo(AtribTipo tipoVar, List<String> ids) {
         for (String nombre : ids) {
             try {
                 Symbol simbolo = crearSimboloVariable(nombre, tipoVar);
@@ -305,43 +399,47 @@ public class gcl {
      * @param nombre_variable Nombre de la variable/array a asignar
      * @param expresion_indice Expresión con el índice del componente si es una variable array (null en caso contrario)
      * @param expresion_valor Expresión con el valor a asignar
+     * @return el código generado
      */
-    private static void asignacionVariableGeneradorCodigo(
-        CodeBlock c,
+    private static CodeBlock asignacionVariableGenerarCodigo(
         String nombre_variable, 
         AtribExp expresion_indice, 
         AtribExp expresion_valor
     ) {
+        CodeBlock cb = new CodeBlock();
         try {
+
             // Validación de que la variable tiene asociado un trozo de memoria
             Symbol simbolo_var = st.getSymbol(nombre_variable);
             int offset = simbolo_var.offset;
             if (offset == -1) {
                 printError(String.format("Variable \"%s\" no declarada (sin offset).", nombre_variable));
-                return;
+                return cb;
             }
     
             // Calculo de dirección de destino
             int nivel_anidamiento = st.level - simbolo_var.nivel;;
             if (expresion_indice != null) {
                 // Caso array: base + índice
-                c.addBlock(expresion_indice.code);
-                c.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
-                c.addInst(PCodeInstruction.OpCode.PLUS);
+                cb.addBlock(expresion_indice.code);
+                cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                cb.addInst(PCodeInstruction.OpCode.PLUS);
             } else {
                 // Caso variable simple
-                c.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
             }
 
             // Generación del valor
-            c.addBlock(expresion_valor.code);
+            cb.addBlock(expresion_valor.code);
 
             // Almacenamiento
-            c.addInst(PCodeInstruction.OpCode.ASG);
+            cb.addInst(PCodeInstruction.OpCode.ASG);
 
         } catch (SymbolNotFoundException e) {
             printError(String.format("Variable \"%s\" no encontrada.", nombre_variable));
         }
+
+        return cb;
     }
 
 
@@ -349,38 +447,46 @@ public class gcl {
      * 
      * @param condicion bloque con el código para evaluar la condición del bucle
      * @param cuerpo bloque con las instrucciones que forman el cuerpo del bucle
+     * @return el código generado
      */
-    private static void generarBucle(AtribExp condicion, CodeBlock cuerpo) {
-        String etiquetaInicio = CGUtils.newLabel();
-        String etiquetaPrueba = CGUtils.newLabel();
-        String etiquetaFinal  = CGUtils.newLabel();
+    private static CodeBlock bucleGenerarCodigo(AtribExp condicion, CodeBlock cuerpo) {
+        CodeBlock cb = new CodeBlock();
+
+        String etiqueta_inicio = CGUtils.newLabel();
+        String etiqueta_prueba = CGUtils.newLabel();
+        String etiqueta_final  = CGUtils.newLabel();
 
         // Salto inicial a la prueba invertida
-        code.addInst(OpCode.JMP, etiquetaPrueba);
+        cb.addInst(OpCode.JMP, etiqueta_prueba);
 
         // Cuerpo
-        code.addLabel(etiquetaInicio);
-        code.addBlock(cuerpo);
+        cb.addLabel(etiqueta_inicio);
+        cb.addBlock(cuerpo);
 
         // Prueba invertida
-        code.addLabel(etiquetaPrueba);
-        code.addBlock(condicion.code);
-        code.addInst(OpCode.JMF, etiquetaFinal);
-        code.addInst(OpCode.JMP, etiquetaInicio);
-        code.addLabel(etiquetaFinal);
+        cb.addLabel(etiqueta_prueba);
+        cb.addBlock(condicion.code);
+        cb.addInst(OpCode.JMF, etiqueta_final);
+        cb.addInst(OpCode.JMP, etiqueta_inicio);
+        cb.addLabel(etiqueta_final);
+
+        return cb;
     }
 
     /** Genera bloque switch en P-Code
      * 
-    * @param condiciones Lista de expresiones booleanas que determinan cada caso
-    * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
-    * @param otherwise   Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
+     * @param condiciones Lista de expresiones booleanas que determinan cada caso
+     * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
+     * @param otherwise   Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
+     * @return el código generado
      */
-    private static void generarSeleccion(
+    private static CodeBlock seleccionGenerarCodigo(
         java.util.List<AtribExp> condiciones,
         java.util.List<CodeBlock> cuerpos,
         CodeBlock otherwise
     ) {
+        CodeBlock cb = new CodeBlock();
+
         String etiqueta_final = CGUtils.newLabel();
         java.util.List<String> etiquetas_salto = new java.util.ArrayList<String>();
 
@@ -392,26 +498,50 @@ public class gcl {
         // Generar código para cada condición
         for (int i = 0; i < condiciones.size(); i++) {
             // Evaluar la i-ésima condición
-            code.addBlock(condiciones.get(i).code);
+            cb.addBlock(condiciones.get(i).code);
             
             // Caso falso: continuar con la siguiente condición
-            code.addInst(OpCode.JMF, etiquetas_salto.get(i));
+            cb.addInst(OpCode.JMF, etiquetas_salto.get(i));
             
             // Caso verdadero: ejecutar el bloque y saltar al final del switch
-            code.addBlock(cuerpos.get(i));
-            code.addInst(OpCode.JMP, etiqueta_final);
+            cb.addBlock(cuerpos.get(i));
+            cb.addInst(OpCode.JMP, etiqueta_final);
 
             // Etiqueta para continuar con la siguiente condición si el caso es falso
-            code.addLabel(etiquetas_salto.get(i));
+            cb.addLabel(etiquetas_salto.get(i));
         }
 
         // Manejar el bloque por defecto (si existe)
         if (otherwise != null) {
-            code.addBlock(otherwise);
+            cb.addBlock(otherwise);
         }
 
         // Etiqueta a la que se salta si alguna condición es verdadera
-        code.addLabel(etiqueta_final);
+        cb.addLabel(etiqueta_final);
+
+        return cb;
+    }
+
+    public static CodeBlock declaracionProcedimientoGenerarCodigo(
+        String nombre,
+        ArrayList<Symbol> parametros,
+        CodeBlock cuerpo
+    ) {
+        CodeBlock cb = new CodeBlock();
+    
+        cb.addLabel(nombre);
+
+        // Asignar parámetros (importante que quien llame haga push en orden)
+        for (Symbol param : parametros) {
+            cb.addInst(PCodeInstruction.OpCode.SRF, 0, param.offset);
+            cb.addInst(PCodeInstruction.OpCode.ASGI);
+        }
+
+        cb.addBlock(cuerpo);
+
+        cb.addInst(PCodeInstruction.OpCode.CSF);
+        
+        return cb;
     }
 }
 
@@ -574,6 +704,7 @@ CodeBlock BloqueSentencias() :
     )*
     { return cprocfun; }
 }
+
 // --- INICIO DE tipos.jj ---
 AtribTipo tipo() :
 {
@@ -640,7 +771,7 @@ void declaracionVariables() :
     ids            = listaIDs() 
     <tSEMICOLON>
     {
-        declararVariablesGeneradorCodigo(tipo_variables, ids);
+        declararVariablesGenerarCodigo(tipo_variables, ids);
     }
 }
 
@@ -649,7 +780,6 @@ CodeBlock asignacionVariable() :
     Token token_id;
     AtribExp index_expr = null; 
     AtribExp value_expr;
-    CodeBlock c = new CodeBlock();
 }
 {
     token_id = <tIDENTIFICADOR>
@@ -662,8 +792,7 @@ CodeBlock asignacionVariable() :
     value_expr = expresion()
     <tSEMICOLON>
     {
-        asignacionVariableGeneradorCodigo(c, token_id.image, index_expr, value_expr);
-        return c;
+        return asignacionVariableGenerarCodigo(token_id.image, index_expr, value_expr);
     }
 }
 
@@ -1172,6 +1301,17 @@ void declaracion_proc() :
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
+    /*
+    (
+        {
+            CodeBlock instruccionBlock;
+        }
+        instruccionBlock = instruccion()
+        {
+            cuerpo.addBlock(instruccionBlock);
+        }
+    )*
+    */
     < tBEGGINING >
     ( instruccion() )*
     < tEND >
@@ -1331,8 +1471,8 @@ CodeBlock instruccion() :
     | carAent() <tSEMICOLON> // no sirven de nada, si se llaman solas
     | LOOKAHEAD(2) llamar_funcion()
     | LOOKAHEAD(2) c = asignacionVariable()
-    | seleccion()
-    | bucle()
+    | c = seleccion()
+    | c = bucle()
     | LOOKAHEAD(2) declaracion_procs_funcs()
     | <tABANDONAR> <tSEMICOLON>
     {
@@ -1347,33 +1487,35 @@ CodeBlock instruccion() :
     { return c; }
 }
 
-void bucle() :
+CodeBlock bucle() :
 {
     AtribExp condicion;
     CodeBlock cuerpo = new CodeBlock();
+    CodeBlock b = new CodeBlock();  // Bloque final para el bucle generado
+    CodeBlock c;                    // Bloque temporal para cada instrucción
 }
 {
     <tITERATION>
     condicion = expresion()
 
-    // Por cada instrucción del cuerpo:
-    //   1) la parsea generando su código en el bloque global `code`
-    //   2) lo mueve al bloque local `cuerpo` (añade a `cuerpo` y borra de `code`)
-    // De este modo se extraen las instrucciones del cuerpo.
-    ( instruccion() )* { cuerpo.addBlock(code); code.clearBlock(); }
+    ( c = instruccion() { cuerpo.addBlock(c); } )*
     <tEND_ITERATION>
     {
-        generarBucle(condicion, cuerpo);
+        b = bucleGenerarCodigo(condicion, cuerpo);
     }
+    { return b; }
 }
 
-void seleccion() :
+
+CodeBlock seleccion() :
 {
     java.util.List<AtribExp> condiciones = new java.util.ArrayList<AtribExp>();
     java.util.List<CodeBlock> cuerpos = new java.util.ArrayList<CodeBlock>();
     CodeBlock auxiliar; // Almacena temporalmente el cuerpo asociado a cada condición del select
     CodeBlock otherwise = null;
     AtribExp condicion;
+    CodeBlock c;                   // Bloque temporal para cada instrucción
+    CodeBlock s = new CodeBlock(); // Bloque final para el bucle generado
 }
 {
     <tSELECTION>
@@ -1381,26 +1523,25 @@ void seleccion() :
         <tCASE> { auxiliar = new CodeBlock(); }
         condicion = expresion()
         <tCOLON>
-        ( instruccion() )* { 
-            auxiliar.addBlock(code); 
-            code.clearBlock(); 
-            condiciones.add(condicion); 
-            cuerpos.add(auxiliar); 
+        ( c = instruccion() { auxiliar.addBlock(c); } )*
+        {
+            condiciones.add(condicion);
+            cuerpos.add(auxiliar);
         }
     )+
     [
         <tOTHERWISE> <tCOLON>
         { auxiliar = new CodeBlock(); }
-        ( instruccion() )* { 
-            auxiliar.addBlock(code); 
-            code.clearBlock(); 
-            otherwise = auxiliar; 
+        ( c = instruccion() { auxiliar.addBlock(c); } )*
+        {
+            otherwise = auxiliar;
         }
     ]
     <tEND_SELECTION>
     {
-        generarSeleccion(condiciones, cuerpos, otherwise);
+        s = seleccionGenerarCodigo(condiciones, cuerpos, otherwise);
     }
+    { return s; }
 }
 
 // --- INICIO DE especiales.jj ---

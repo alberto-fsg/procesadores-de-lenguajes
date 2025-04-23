@@ -21,6 +21,17 @@ void declaracion_proc() :
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
+    /*
+    (
+        {
+            CodeBlock instruccionBlock;
+        }
+        instruccionBlock = instruccion()
+        {
+            cuerpo.addBlock(instruccionBlock);
+        }
+    )*
+    */
     < tBEGGINING >
     ( instruccion() )*
     < tEND >
