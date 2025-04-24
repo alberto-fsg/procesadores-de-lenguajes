@@ -419,11 +419,14 @@ public class gcl {
     
             // Calculo de dirección de destino
             int nivel_anidamiento = st.level - simbolo_var.nivel;;
+            cb.addComment("assignment " + nombre_variable);
             if (expresion_indice != null) {
                 // Caso array: base + índice
-                cb.addBlock(expresion_indice.code);
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                cb.addBlock(expresion_indice.code);
                 cb.addInst(PCodeInstruction.OpCode.PLUS);
+                cb.addInst(PCodeInstruction.OpCode.STC, 0);
+                cb.addInst(PCodeInstruction.OpCode.SBT);
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
@@ -919,8 +922,12 @@ AtribExp primario() :
         /** Caso: constante string. */
         t = <tSTRING>
         {
-            primarioInfo = new AtribExp(Symbol.Types.STRING, t.image, false, true); 
-            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, t.image.substring(1, t.image.length() - 1));
+            String contenido = t.image.substring(1, t.image.length() - 1); // Quitar las comillas
+            primarioInfo = new AtribExp(Symbol.Types.STRING, contenido, false, true); 
+            for(int i = contenido.length() - 1; i >= 0; i--) {
+                char c = contenido.charAt(i);
+                primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, (int) c);
+            }
             return primarioInfo;
         }
     |
@@ -1286,10 +1293,11 @@ CodeBlock declaracion_procs_funcs() :
     { return new CodeBlock(); /** Temporal */ }
 }
 
-void declaracion_proc() :
+CodeBlock declaracion_proc() :
 { 
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
+    CodeBlock c = new CodeBlock();
 }
 {
     t = <tIDENTIFICADOR>
@@ -1301,28 +1309,28 @@ void declaracion_proc() :
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
-    /*
-    (
-        {
-            CodeBlock instruccionBlock;
-        }
-        instruccionBlock = instruccion()
-        {
-            cuerpo.addBlock(instruccionBlock);
-        }
-    )*
-    */
     < tBEGGINING >
     ( instruccion() )*
     < tEND >
     { st.removeBlock(); }
+
+    {
+        // Generación de código
+        c.addInst(OpCode.OSF, parametros.size());
+        for(Symbol param: parametros) {
+        }
+        c.addComment("Comienzo de procedimiento " + t.image);
+        // TODO: Instrucciones
+        c.addInst(OpCode.CSF);
+    }
 }
 
-void declaracion_func() :
+CodeBlock declaracion_func() :
 { 
     Token t;
     AtribTipo aT;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
+    CodeBlock c = new CodeBlock();
 }
 {
     aT = tipoEscalar()
@@ -1339,13 +1347,26 @@ void declaracion_func() :
     ( instruccion() )*
     < tEND >
     { st.removeBlock(); }
+
+    {
+        // Generación de código
+        c.addInst(OpCode.OSF, parametros.size());
+        for(Symbol param : parametros) {
+        }
+        c.addComment("Comienzo de función " + t.image);
+        // TODO: Instrucciones
+        c.addInst(OpCode.DRF);
+        c.addInst(OpCode.CSF);
+        return c;
+    }
 }
 
-void llamar_funcion() :
+CodeBlock llamar_funcion() :
 { 
     ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
     Symbol fun;
     Token t;
+    CodeBlock c = new CodeBlock();
 }
 {
     t = < tIDENTIFICADOR >
@@ -1356,6 +1377,15 @@ void llamar_funcion() :
     }
     < tCLOSING_PARENTHESIS >
     < tSEMICOLON >
+
+    {
+        // Generación de código
+        c.addInst(OpCode.OSF, lPar.size(), fun.nivel, (int)fun.dir);
+        for(AtribExp ae : lPar) {
+            c.addBlock(ae.code);
+        }
+        c.addInst(OpCode.CSF);
+    }
 }
 
 ArrayList<AtribExp> parametros_llamada_funcion() :
@@ -1556,15 +1586,26 @@ CodeBlock escribir_linea() :
     (args = escribir_params())?
     <tCLOSING_PARENTHESIS>
     {
+        c.addComment("Comienzo escribir línea");
         for (AtribExp a : args) {
             c.addBlock(a.code);
-            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
-            c.addInst(OpCode.WRT, modo);
+            if(a.type == Symbol.Types.STRING) {
+                String str = a.image;
+                for(char caract : str.toCharArray()) {
+                    c.addInst(OpCode.WRT, 0);
+                }
+            }
+            else if(a.type == Symbol.Types.CHAR) {
+                c.addInst(OpCode.WRT, 0);
+            }
+            else if(a.type == Symbol.Types.INT) {
+                c.addInst(OpCode.WRT, 1);
+            }
         }
         // Salto de línea
         c.addInst(OpCode.STC, (int)'\n');
         c.addInst(OpCode.WRT, 0);
-
+        c.addComment("Fin escribir línea");
         return c;
     }
 }
@@ -1580,11 +1621,23 @@ CodeBlock escribir() :
     args = escribir_params()
     <tCLOSING_PARENTHESIS>
     {
+        c.addComment("Comienzo escribir");
         for (AtribExp a : args) {
             c.addBlock(a.code);
-            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
-            c.addInst(OpCode.WRT, modo);
+            if(a.type == Symbol.Types.STRING) {
+                String str = a.image;
+                for(char caract : str.toCharArray()) {
+                    c.addInst(OpCode.WRT, 0);
+                }
+            }
+            else if(a.type == Symbol.Types.CHAR) {
+                c.addInst(OpCode.WRT, 0);
+            }
+            else if(a.type == Symbol.Types.INT) {
+                c.addInst(OpCode.WRT, 1);
+            }
         }
+        c.addComment("Fin escribir");
         return c;
     }
 }

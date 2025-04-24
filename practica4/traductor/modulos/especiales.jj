@@ -9,15 +9,26 @@ CodeBlock escribir_linea() :
     (args = escribir_params())?
     <tCLOSING_PARENTHESIS>
     {
+        c.addComment("Comienzo escribir línea");
         for (AtribExp a : args) {
             c.addBlock(a.code);
-            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
-            c.addInst(OpCode.WRT, modo);
+            if(a.type == Symbol.Types.STRING) {
+                String str = a.image;
+                for(char caract : str.toCharArray()) {
+                    c.addInst(OpCode.WRT, 0);
+                }
+            }
+            else if(a.type == Symbol.Types.CHAR) {
+                c.addInst(OpCode.WRT, 0);
+            }
+            else if(a.type == Symbol.Types.INT) {
+                c.addInst(OpCode.WRT, 1);
+            }
         }
         // Salto de línea
         c.addInst(OpCode.STC, (int)'\n');
         c.addInst(OpCode.WRT, 0);
-
+        c.addComment("Fin escribir línea");
         return c;
     }
 }
@@ -33,11 +44,23 @@ CodeBlock escribir() :
     args = escribir_params()
     <tCLOSING_PARENTHESIS>
     {
+        c.addComment("Comienzo escribir");
         for (AtribExp a : args) {
             c.addBlock(a.code);
-            int modo = (a.type == Symbol.Types.CHAR) ? 0 : 1;
-            c.addInst(OpCode.WRT, modo);
+            if(a.type == Symbol.Types.STRING) {
+                String str = a.image;
+                for(char caract : str.toCharArray()) {
+                    c.addInst(OpCode.WRT, 0);
+                }
+            }
+            else if(a.type == Symbol.Types.CHAR) {
+                c.addInst(OpCode.WRT, 0);
+            }
+            else if(a.type == Symbol.Types.INT) {
+                c.addInst(OpCode.WRT, 1);
+            }
         }
+        c.addComment("Fin escribir");
         return c;
     }
 }

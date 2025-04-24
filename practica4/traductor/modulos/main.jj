@@ -415,11 +415,14 @@ public class gcl {
     
             // Calculo de dirección de destino
             int nivel_anidamiento = st.level - simbolo_var.nivel;;
+            cb.addComment("assignment " + nombre_variable);
             if (expresion_indice != null) {
                 // Caso array: base + índice
-                cb.addBlock(expresion_indice.code);
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                cb.addBlock(expresion_indice.code);
                 cb.addInst(PCodeInstruction.OpCode.PLUS);
+                cb.addInst(PCodeInstruction.OpCode.STC, 0);
+                cb.addInst(PCodeInstruction.OpCode.SBT);
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);

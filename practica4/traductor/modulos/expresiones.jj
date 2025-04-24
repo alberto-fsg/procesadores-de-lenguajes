@@ -120,8 +120,12 @@ AtribExp primario() :
         /** Caso: constante string. */
         t = <tSTRING>
         {
-            primarioInfo = new AtribExp(Symbol.Types.STRING, t.image, false, true); 
-            primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, t.image.substring(1, t.image.length() - 1));
+            String contenido = t.image.substring(1, t.image.length() - 1); // Quitar las comillas
+            primarioInfo = new AtribExp(Symbol.Types.STRING, contenido, false, true); 
+            for(int i = contenido.length() - 1; i >= 0; i--) {
+                char c = contenido.charAt(i);
+                primarioInfo.code.addInst(PCodeInstruction.OpCode.STC, (int) c);
+            }
             return primarioInfo;
         }
     |
