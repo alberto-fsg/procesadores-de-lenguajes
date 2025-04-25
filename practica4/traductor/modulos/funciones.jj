@@ -1,30 +1,66 @@
 CodeBlock declaracion_proc() :
-{ 
+{
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
-    CodeBlock cuerpo = null;
+    CodeBlock headerPartCode; // Para guardar el código generado por setupProcedure
+    CodeBlock cuerpo = new CodeBlock();     // Para el código de las instrucciones del cuerpo
+    CodeBlock footerPartCode; // Para guardar el código generado por cleanupProcedure
+    CodeBlock finalProcedureCode = new CodeBlock(); // Para combinar todas las partes
 }
 {
+    // --- 1. Parsear la Cabecera y llamar a la función de Setup ---
     t = <tIDENTIFICADOR>
-    < tOPENING_PARENTHESIS >
-    ( parametros = parametros_declaraciones() )?
-    < tCLOSING_PARENTHESIS >
-    ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_proc() | declaracion_func() )*
-    < tBEGGINING >
-    (
+    <tOPENING_PARENTHESIS>
+    ( parametros = parametros_declaraciones() )? // Asume que esta regla parsea y retorna la lista
+    <tCLOSING_PARENTHESIS>
+
+    // Bloque de Acción Semántica 1: Llamar a la función de setup.
+    // Esta función creará el símbolo, el ámbito, procesará parámetros y generará código.
+    {
+        headerPartCode = setupProcedure(t, parametros);
+        finalProcedureCode.addBlock(headerPartCode); // Añadir el código de cabecera generado al bloque final
+    }
+
+    // Parsear Declaraciones Locales y Procedimientos/Funciones Anidados
+    // Estas declaraciones ocurrirán DENTRO del ámbito creado por setupProcedure.
+    ( LOOKAHEAD(3) declaracionVariables() )* // Asume esta regla parsea variables locales
+    ( declaracion_proc() | declaracion_func() )* // Llamadas recursivas para anidados
+
+    // --- 2. Parsear el Cuerpo del Procedimiento ---
+    <tBEGGINING>
+    {
+         // Asegurarse de que 'cuerpo' esté inicializado antes del bucle de instrucciones
+         cuerpo = new CodeBlock();
+    }
+    ( // Bucle para parsear cero o más instrucciones en el cuerpo
         {
-        CodeBlock instruccionBlock;
+            CodeBlock instruccionBlock; // Bloque temporal para el código generado por una instrucción
         }
-        instruccionBlock = instruccion()
+        instruccionBlock = instruccion() // Asume que esta regla parsea una instrucción y retorna su CodeBlock
         {
+            // Añadir el código generado por la instrucción al bloque del cuerpo
             cuerpo.addBlock(instruccionBlock);
         }
     )*
-    < tEND >
-    { 
-    st.removeBlock();
-    return insertProcedure(t, parametros, cuerpo);
+    <tEND>
+
+    // Después de parsear el cuerpo, añadir el CodeBlock 'cuerpo' al CodeBlock final del procedimiento.
+    {
+        finalProcedureCode.addBlock(cuerpo);
+    }
+
+
+    // --- 3. Llamar a la función de Cleanup y Finalizar ---
+    // Bloque de Acción Semántica 2: Llamar a la función de cleanup.
+    // Esta función generará CSF y eliminará el ámbito.
+    {
+        footerPartCode = cleanupProcedure();
+        finalProcedureCode.addBlock(footerPartCode); // Añadir el código de pie de página generado al bloque final
+    }
+
+    // El resultado de la regla es el CodeBlock completo del procedimiento.
+    {
+        return finalProcedureCode;
     }
 }
 
