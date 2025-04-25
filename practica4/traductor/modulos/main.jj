@@ -156,95 +156,37 @@ public class gcl {
         return ok;
     }
 
-    // Asumimos que esta clase (donde reside declaracion_proc) tiene acceso a 'st',
-    // 'CGUtils', 'PCodeInstruction', 'Symbol', 'Token', 'CodeBlock', etc.
-
-    /**
-     * Realiza las acciones de setup para un procedimiento:
-     * Crea e inserta el símbolo, añade la etiqueta de entrada,
-     * crea un nuevo ámbito (Activation Block), procesa e inserta los parámetros
-     * en el nuevo ámbito y genera el código P-Code para el manejo de parámetros.
-     *
-     * @param identificador Token del nombre del procedimiento.
-     * @param parametros Lista de símbolos de los parámetros.
-     * @return Un CodeBlock que contiene la etiqueta de entrada y el código de manejo de parámetros.
-     */
     private static CodeBlock setupProcedure(Token identificador, ArrayList<Symbol> parametros) {
         CodeBlock headerCode = new CodeBlock();
-
-        // 1. Crear e insertar el símbolo del procedimiento en la tabla de símbolos
-        //    (Inicialmente se inserta en el ámbito actual, el que está activo antes del proc)
         SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
         try {
             st.insertSymbol(sProc);
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Error: Ya definido valor de identificador \"%s\" para procedimiento.", identificador.image));
-            // Dependiendo de la estrategia de manejo de errores, podrías querer salir o devolver un bloque vacío
-            // For now, we print error and continue, which might lead to more errors later.
         }
-
-        // 2. Añadir la etiqueta de entrada para el código del procedimiento
         headerCode.addLabel(identificador.image);
 
-        // 3. Crear un nuevo bloque de activación (ámbito) para los parámetros y variables locales
-        st.insertBlock(); // Esto apila un nuevo ámbito en la pila de la tabla de símbolos
-
-        // 4. Procesar los parámetros: asignar offsets e insertar símbolos en el nuevo ámbito,
-        //    y generar código P-Code para su manejo.
+        st.insertBlock();
         for (Symbol param : parametros) {
-            // Asignar posición (offset) en el marco de activación actual (st.level)
-            // CGUtils.memorySpaces[st.level] lleva la cuenta del siguiente offset disponible en el ámbito actual
             param.offset = CGUtils.memorySpaces[st.level]++;
 
-            // Insertar el símbolo del parámetro en la tabla de símbolos del ámbito actual
             try {
-                st.insertSymbol(param); // Insertar en el ámbito creado por st.insertBlock()
+                st.insertSymbol(param);
             } catch (AlreadyDefinedSymbolException e) {
                 printError(String.format("Error: Ya definida variable de identificador \"%s\" en el ámbito del procedimiento.", param.name));
-                // Continuar procesando otros parámetros/código
-            }
-
-            // Generar P-Code según el modo de paso del parámetro
-            // Se asume que el llamador ha puesto los parámetros en la pila según la convención
-            if (param.parClass == Symbol.ParameterClass.REF) {
-                // Paso por referencia: La dirección está en la pila. ASGI podría cargar el *valor*
-                // en esa dirección, o manejar la referencia según el P-code específico.
-                // Mantenemos la lógica original aquí.
-                headerCode.addInst(PCodeInstruction.OpCode.ASGI);
-            } else { // Symbol.ParameterClass.VALUE
-                if (param.type == Symbol.Types.ARRAY) {
-                    // Paso por valor de un arreglo: requiere copiar el contenido del arreglo
-                    // Se asume que generarCopiaArray() es otra función de ayuda que devuelve un CodeBlock
-                    headerCode.addBlock(generarCopiaArray(param));
-                } else {
-                    // Paso por valor de un escalar: El valor está en la pila. ASG lo almacena.
-                    headerCode.addInst(PCodeInstruction.OpCode.ASG);
-                }
             }
         }
-
-        // Retornamos el código de cabecera generado (etiqueta + manejo de parámetros).
-        // En este punto, la tabla de símbolos 'st' está en el ámbito local del procedimiento.
         return headerCode;
     }
 
-    /**
-     * Realiza las acciones de cleanup para un procedimiento:
-     * Genera la instrucción CSF y elimina el ámbito actual (Activation Block).
-     *
-     * @return Un CodeBlock que contiene la instrucción CSF.
-     */
     private static CodeBlock cleanupProcedure() {
         CodeBlock footerCode = new CodeBlock();
 
-        // 1. Generar la instrucción P-Code para cerrar el marco de pila y retornar
         footerCode.addInst(PCodeInstruction.OpCode.CSF);
 
-        // 2. Eliminar el bloque de activación (ámbito) actual de la pila de la tabla de símbolos
-        //    Esto saca el ámbito local del procedimiento.
         st.removeBlock();
 
-        return footerCode; // Retornamos el código de pie de página generado.
+        return footerCode;
     }
 
 
