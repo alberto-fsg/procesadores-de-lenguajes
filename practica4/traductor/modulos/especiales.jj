@@ -103,9 +103,11 @@ CodeBlock leer_linea() :
             for (String id : lVars) {
                 try {
                     Symbol s = st.getSymbol(id);
+                    c.addComment("Comienzo leer");
                     c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                     int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                     c.addInst(OpCode.RD, tipo);
+                    c.addComment("Fin leer");
                 } catch (SymbolNotFoundException e) {
                     printError("Variable \"" + id + "\" no encontrada.");
                 }
@@ -131,9 +133,11 @@ CodeBlock leer() :
         for(String id : lVars) {
             try {
                 Symbol s = st.getSymbol(id);
+                c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                 c.addInst(OpCode.RD, tipo);
+                c.addComment("Fin leer línea");
             } catch (SymbolNotFoundException e) {
                 printError("Variable \"" + id + "\" no encontrada.");
             }

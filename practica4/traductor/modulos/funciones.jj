@@ -61,11 +61,12 @@ void declaracion_func() :
     { st.removeBlock(); }
 }
 
-void llamar_funcion() :
+CodeBlock llamar_funcion() :
 { 
     ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
     Symbol fun;
     Token t;
+    CodeBlock c = new CodeBlock();
 }
 {
     t = < tIDENTIFICADOR >
@@ -76,6 +77,29 @@ void llamar_funcion() :
     }
     < tCLOSING_PARENTHESIS >
     < tSEMICOLON >
+
+    {
+        // Generación de código
+        try {
+            fun = st.getSymbol(t.image);
+        } catch (SymbolNotFoundException e) {
+            printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
+            return new CodeBlock();
+        }
+        // añadir código de los parámetros
+        for(AtribExp ae : lPar) {
+            c.addBlock(ae.code);
+        }
+        // abrir stack frame
+        c.addInst(OpCode.OSF, lPar.size(), st.level - fun.nivel, fun.offset);
+
+        // si es una función (no procedimiento)
+        if(fun instanceof SymbolFunction) {
+            c.addInst(PCodeInstruction.OpCode.DRF);
+        }
+
+        return c;
+    }
 }
 
 ArrayList<AtribExp> parametros_llamada_funcion() :
