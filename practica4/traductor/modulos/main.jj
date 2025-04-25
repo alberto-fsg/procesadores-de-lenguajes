@@ -165,6 +165,7 @@ public class gcl {
             printError(String.format("Error: Ya definido valor de identificador \"%s\" para procedimiento.", identificador.image));
         }
         headerCode.addLabel(identificador.image);
+        sProc.label = identificador.image;
 
         st.insertBlock();
         for (Symbol param : parametros) {

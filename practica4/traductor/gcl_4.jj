@@ -161,63 +161,37 @@ public class gcl {
     }
 
     private static CodeBlock setupProcedure(Token identificador, ArrayList<Symbol> parametros) {
-        CodeBlock headerCode = new CodeBlock(); // Este CodeBlock solo contendrá la etiqueta ahora
-
-        // 1. Crear e insertar el símbolo del procedimiento en la tabla de símbolos
-        //    (Inicialmente se inserta en el ámbito actual, el que está activo antes del proc)
+        CodeBlock headerCode = new CodeBlock();
         SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
         try {
-            st.insertSymbol(sProc); // Insertar en el ámbito que precede al del procedimiento
+            st.insertSymbol(sProc);
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Error: Ya definido valor de identificador \"%s\" para procedimiento.", identificador.image));
-            // Manejar el error apropiadamente (ej: devolver un bloque vacío, marcar error global)
         }
-
-        // 2. Añadir la etiqueta de entrada para el código del procedimiento
         headerCode.addLabel(identificador.image);
+        sProc.label = identificador.image;
 
-        // 3. Crear un nuevo bloque de activación (ámbito) para los parámetros y variables locales
-        st.insertBlock(); // Esto apila un nuevo ámbito en la pila de la tabla de símbolos
-
-        // 4. Procesar parámetros: asignar offsets e insertar símbolos en el nuevo ámbito.
-        //    El código P-Code para ACCEDER o ASIGNAR parámetros (SRF/DRF) se generará
-        //    en las reglas de parsing del cuerpo del procedimiento, NO aquí.
+        st.insertBlock();
         for (Symbol param : parametros) {
-            // Asignar posición (offset) en el marco de activación actual (st.level)
-            param.offset = CGUtils.memorySpaces[st.level]++; // Asumiendo que memorySpaces[st.level] lleva la cuenta
+            param.offset = CGUtils.memorySpaces[st.level]++;
 
-            // Insertar el símbolo del parámetro en la tabla de símbolos del ámbito actual
             try {
-                st.insertSymbol(param); // Insertar en el ámbito creado por st.insertBlock()
+                st.insertSymbol(param);
             } catch (AlreadyDefinedSymbolException e) {
                 printError(String.format("Error: Ya definida variable de identificador \"%s\" en el ámbito del procedimiento.", param.name));
             }
-
-            // *** IMPORTANTE: Hemos eliminado la generación de código P-Code (ASGI, ASG, generarCopiaArray) aquí. ***
-            // *** Esa lógica se genera cuando se usa el parámetro en una instrucción/expresión dentro del cuerpo. ***
         }
-
-        // Retornamos el CodeBlock de cabecera, que ahora solo contiene la etiqueta.
-        // En este punto, la tabla de símbolos 'st' está en el ámbito local del procedimiento con los símbolos de parámetro.
         return headerCode;
     }
 
-    /**
-     * Realiza las acciones de cleanup para un procedimiento:
-     * Genera la instrucción CSF y elimina el ámbito actual (Activation Block).
-     *
-     * @return Un CodeBlock que contiene únicamente la instrucción CSF.
-     */
     private static CodeBlock cleanupProcedure() {
         CodeBlock footerCode = new CodeBlock();
 
-        // 1. Generar la instrucción P-Code para cerrar el marco de pila y retornar
         footerCode.addInst(PCodeInstruction.OpCode.CSF);
 
-        // 2. Eliminar el bloque de activación (ámbito) actual de la pila de la tabla de símbolos
-        st.removeBlock(); // Saca el ámbito local del procedimiento.
+        st.removeBlock();
 
-        return footerCode; // Retornamos el CodeBlock de pie de página (solo CSF).
+        return footerCode;
     }
 
 
@@ -1300,65 +1274,44 @@ CodeBlock declaracion_proc() :
 {
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
-    CodeBlock headerPartCode; // Recibirá el CodeBlock con solo la etiqueta
-    CodeBlock cuerpo = new CodeBlock();     // Para el código de las instrucciones del cuerpo
-    CodeBlock footerPartCode; // Recibirá el CodeBlock con solo el CSF
-    CodeBlock finalProcedureCode = new CodeBlock(); // Para combinar todas las partes
+    CodeBlock headerPartCode;
+    CodeBlock cuerpo = new CodeBlock();
+    CodeBlock footerPartCode;
+    CodeBlock finalProcedureCode = new CodeBlock();
 }
 {
-    // --- 1. Parsear la Cabecera y llamar a la función de Setup ---
     t = <tIDENTIFICADOR>
     <tOPENING_PARENTHESIS>
-    ( parametros = parametros_declaraciones() )? // Asume que esta regla parsea y retorna la lista
+    ( parametros = parametros_declaraciones() )?
     <tCLOSING_PARENTHESIS>
-
-    // Bloque de Acción Semántica 1: Llamar a la función de setup.
-    // Esta función crea el símbolo, el ámbito e inserta los símbolos de parámetro con offsets.
-    // Devuelve un CodeBlock que contiene SOLAMENTE la etiqueta de entrada.
     {
         headerPartCode = setupProcedure(t, parametros);
-        // Añadir el CodeBlock de cabecera (que ahora solo contiene la etiqueta) al bloque final
         finalProcedureCode.addBlock(headerPartCode);
     }
-
-    // Parsear Declaraciones Locales y Procedimientos/Funciones Anidados
-    // Estas declaraciones ocurrirán DENTRO del ámbito creado por setupProcedure y usarán ese ámbito.
-    ( LOOKAHEAD(3) declaracionVariables() )* // Asume esta regla parsea variables locales
-    ( declaracion_proc() | declaracion_func() )* // Llamadas recursivas para anidados
-
-    // --- 2. Parsear el Cuerpo del Procedimiento ---
+    ( LOOKAHEAD(3) declaracionVariables() )*
+    ( declaracion_proc() | declaracion_func() )*
     <tBEGGINING>
     {
-         // Asegurarse de que 'cuerpo' esté inicializado antes del bucle de instrucciones
          cuerpo = new CodeBlock();
     }
-    ( // Bucle para parsear cero o más instrucciones en el cuerpo
+    (
         {
-            CodeBlock instruccionBlock; // Bloque temporal para el código generado por una instrucción
+            CodeBlock instruccionBlock;
         }
-        instruccionBlock = instruccion() // Asume que esta regla parsea una instrucción y retorna su CodeBlock
+        instruccionBlock = instruccion()
         {
-            // Añadir el código generado por la instrucción al bloque del cuerpo
             cuerpo.addBlock(instruccionBlock);
         }
     )*
     <tEND>
 
-    // Después de parsear el cuerpo, añadir el CodeBlock 'cuerpo' al CodeBlock final del procedimiento.
     {
         finalProcedureCode.addBlock(cuerpo);
     }
-
-    // --- 3. Llamar a la función de Cleanup y Finalizar ---
-    // Bloque de Acción Semántica 2: Llamar a la función de cleanup.
-    // Esta función generará CSF y eliminará el ámbito.
     {
         footerPartCode = cleanupProcedure();
-        // Añadir el CodeBlock de pie de página (que solo contiene el CSF) al bloque final
         finalProcedureCode.addBlock(footerPartCode);
     }
-
-    // El resultado de la regla es el CodeBlock completo del procedimiento.
     {
         return finalProcedureCode;
     }
@@ -1421,7 +1374,7 @@ CodeBlock llamar_funcion() :
             c.addBlock(ae.code);
         }
         // abrir stack frame
-        c.addOSFInst(lPar.size(), st.level - fun.nivel, t.image);
+        c.addOSFInst(lPar.size(), st.level - fun.nivel, fun.label);
             
         // si es una función (no procedimiento)
         if(fun instanceof SymbolFunction) {

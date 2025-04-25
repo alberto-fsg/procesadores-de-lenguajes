@@ -17,7 +17,7 @@ public class SymbolProcedure extends Symbol implements Cloneable {
     //se eliminan de la tabla, pero la propia función/proc sigue en la tabla, haciendo
     //necesario mantener la información de los parámetros.
     public ArrayList<Symbol> parList;
-
+    
     public SymbolProcedure(String _name,ArrayList<Symbol> _parList) {
     	super(_name, Types.PROCEDURE, ParameterClass.NONE);
         parList = _parList;

@@ -102,7 +102,7 @@ CodeBlock llamar_funcion() :
             c.addBlock(ae.code);
         }
         // abrir stack frame
-        c.addOSFInst(lPar.size(), st.level - fun.nivel, t.image);
+        c.addOSFInst(lPar.size(), st.level - fun.nivel, fun.label);
             
         // si es una función (no procedimiento)
         if(fun instanceof SymbolFunction) {

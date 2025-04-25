@@ -32,6 +32,8 @@ abstract public class Symbol implements Cloneable {
     public int nivel; //nivel dentro de la TS
     public int offset = -1;
 
+    public String label;
+
     public Symbol (String _name, Types _type) {
     	this (_name, -1, _type, ParameterClass.NONE, false); 
     }
