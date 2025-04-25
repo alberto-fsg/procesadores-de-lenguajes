@@ -677,7 +677,7 @@ void Programa() :
     }
 
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( cprocfun = declaracion_procs_funcs() )?
+    ( cprocfun = declaracion_proc() | cprocfun = declaracion_func() )?
     < tBEGGINING >
     cbloque = BloqueSentencias()
 
@@ -1285,21 +1285,6 @@ Token operador_relacional() :
 }
 
 // --- INICIO DE funciones.jj ---
-CodeBlock declaracion_procs_funcs() :
-{
-    CodeBlock cb = null;
-}
-{
-    (
-        { cb.addBlock(declaracion_proc()); } 
-        | 
-        { cb.addBlock(declaracion_func()); }
-    )*
-    {
-        return cb;
-    }
-}
-
 CodeBlock declaracion_proc() :
 { 
     Token t;
@@ -1312,7 +1297,7 @@ CodeBlock declaracion_proc() :
     ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_procs_funcs() )*
+    ( declaracion_proc() | declaracion_func() )*
     < tBEGGINING >
     (
         {
@@ -1347,7 +1332,7 @@ CodeBlock declaracion_func() :
         insertFunction(t, aT, parametros);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_procs_funcs() )*
+    ( declaracion_proc() | declaracion_func() )*
     < tBEGGINING >
     ( instruccion() )*
     < tEND >
@@ -1357,11 +1342,12 @@ CodeBlock declaracion_func() :
     }
 }
 
-void llamar_funcion() :
+CodeBlock llamar_funcion() :
 { 
     ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
     Symbol fun;
     Token t;
+    CodeBlock c = new CodeBlock();
 }
 {
     t = < tIDENTIFICADOR >
@@ -1372,6 +1358,29 @@ void llamar_funcion() :
     }
     < tCLOSING_PARENTHESIS >
     < tSEMICOLON >
+
+    {
+        // Generación de código
+        try {
+            fun = st.getSymbol(t.image);
+        } catch (SymbolNotFoundException e) {
+            printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
+            return new CodeBlock();
+        }
+        // añadir código de los parámetros
+        for(AtribExp ae : lPar) {
+            c.addBlock(ae.code);
+        }
+        // abrir stack frame
+        c.addInst(OpCode.OSF, lPar.size(), st.level - fun.nivel, fun.offset);
+
+        // si es una función (no procedimiento)
+        if(fun instanceof SymbolFunction) {
+            c.addInst(PCodeInstruction.OpCode.DRF);
+        }
+
+        return c;
+    }
 }
 
 ArrayList<AtribExp> parametros_llamada_funcion() :
@@ -1489,7 +1498,7 @@ CodeBlock instruccion() :
     | LOOKAHEAD(2) c = asignacionVariable()
     | c = seleccion()
     | c = bucle()
-    | LOOKAHEAD(2) declaracion_procs_funcs()
+    | LOOKAHEAD(2) ( declaracion_proc() | declaracion_func() )
     | <tABANDONAR> <tSEMICOLON>
     {
         code.addInst(OpCode.LVP, 0);
@@ -1666,9 +1675,11 @@ CodeBlock leer_linea() :
             for (String id : lVars) {
                 try {
                     Symbol s = st.getSymbol(id);
+                    c.addComment("Comienzo leer");
                     c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                     int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                     c.addInst(OpCode.RD, tipo);
+                    c.addComment("Fin leer");
                 } catch (SymbolNotFoundException e) {
                     printError("Variable \"" + id + "\" no encontrada.");
                 }
@@ -1694,9 +1705,11 @@ CodeBlock leer() :
         for(String id : lVars) {
             try {
                 Symbol s = st.getSymbol(id);
+                c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                 c.addInst(OpCode.RD, tipo);
+                c.addComment("Fin leer línea");
             } catch (SymbolNotFoundException e) {
                 printError("Variable \"" + id + "\" no encontrada.");
             }

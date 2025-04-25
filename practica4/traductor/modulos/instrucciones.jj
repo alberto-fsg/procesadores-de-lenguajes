@@ -14,7 +14,7 @@ CodeBlock instruccion() :
     | LOOKAHEAD(2) c = asignacionVariable()
     | c = seleccion()
     | c = bucle()
-    | LOOKAHEAD(2) declaracion_procs_funcs()
+    | LOOKAHEAD(2) ( declaracion_proc() | declaracion_func() )
     | <tABANDONAR> <tSEMICOLON>
     {
         code.addInst(OpCode.LVP, 0);

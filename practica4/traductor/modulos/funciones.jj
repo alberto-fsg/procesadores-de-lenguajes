@@ -1,18 +1,3 @@
-CodeBlock declaracion_procs_funcs() :
-{
-    CodeBlock cb = null;
-}
-{
-    (
-        { cb.addBlock(declaracion_proc()); } 
-        | 
-        { cb.addBlock(declaracion_func()); }
-    )*
-    {
-        return cb;
-    }
-}
-
 CodeBlock declaracion_proc() :
 { 
     Token t;
@@ -25,7 +10,7 @@ CodeBlock declaracion_proc() :
     ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_procs_funcs() )*
+    ( declaracion_proc() | declaracion_func() )*
     < tBEGGINING >
     (
         {
@@ -60,7 +45,7 @@ CodeBlock declaracion_func() :
         insertFunction(t, aT, parametros);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_procs_funcs() )*
+    ( declaracion_proc() | declaracion_func() )*
     < tBEGGINING >
     ( instruccion() )*
     < tEND >
