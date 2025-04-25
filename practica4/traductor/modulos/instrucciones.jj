@@ -10,7 +10,7 @@ CodeBlock instruccion() :
     | c = leer() <tSEMICOLON>
     | entAcar() <tSEMICOLON> // no sirven de nada, si se llaman solas
     | carAent() <tSEMICOLON> // no sirven de nada, si se llaman solas
-    | LOOKAHEAD(2) llamar_funcion()
+    | LOOKAHEAD(2) c = llamar_funcion()
     | LOOKAHEAD(2) c = asignacionVariable()
     | c = seleccion()
     | c = bucle()

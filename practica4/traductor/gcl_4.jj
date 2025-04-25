@@ -1450,8 +1450,8 @@ CodeBlock llamar_funcion() :
             c.addBlock(ae.code);
         }
         // abrir stack frame
-        c.addInst(OpCode.OSF, lPar.size(), st.level - fun.nivel, fun.offset);
-
+        c.addOSFInst(lPar.size(), st.level - fun.nivel, t.image);
+            
         // si es una función (no procedimiento)
         if(fun instanceof SymbolFunction) {
             c.addInst(PCodeInstruction.OpCode.DRF);
@@ -1572,7 +1572,7 @@ CodeBlock instruccion() :
     | c = leer() <tSEMICOLON>
     | entAcar() <tSEMICOLON> // no sirven de nada, si se llaman solas
     | carAent() <tSEMICOLON> // no sirven de nada, si se llaman solas
-    | LOOKAHEAD(2) llamar_funcion()
+    | LOOKAHEAD(2) c = llamar_funcion()
     | LOOKAHEAD(2) c = asignacionVariable()
     | c = seleccion()
     | c = bucle()

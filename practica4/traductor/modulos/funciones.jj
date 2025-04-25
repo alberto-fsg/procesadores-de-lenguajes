@@ -121,8 +121,8 @@ CodeBlock llamar_funcion() :
             c.addBlock(ae.code);
         }
         // abrir stack frame
-        c.addInst(OpCode.OSF, lPar.size(), st.level - fun.nivel, fun.offset);
-
+        c.addOSFInst(lPar.size(), st.level - fun.nivel, t.image);
+            
         // si es una función (no procedimiento)
         if(fun instanceof SymbolFunction) {
             c.addInst(PCodeInstruction.OpCode.DRF);
