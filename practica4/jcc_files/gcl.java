@@ -139,7 +139,7 @@ public class gcl implements gclConstants {
         return ok;
     }
 
-    private static CodeBlock insertProcedure(Token identificador, ArrayList<Symbol> parametros /*,CodeBlock cuerpo*/) {
+    private static CodeBlock insertProcedure(Token identificador, ArrayList<Symbol> parametros, CodeBlock cuerpo) {
         SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
         CodeBlock cb = new CodeBlock();
 
@@ -1374,6 +1374,7 @@ public class gcl implements gclConstants {
   static final public void declaracion_proc() throws ParseException {
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
+    CodeBlock cuerpo = null;
     t = jj_consume_token(tIDENTIFICADOR);
     jj_consume_token(tOPENING_PARENTHESIS);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1387,7 +1388,6 @@ public class gcl implements gclConstants {
       ;
     }
     jj_consume_token(tCLOSING_PARENTHESIS);
-        insertProcedure(t, parametros);
     label_9:
     while (true) {
       if (jj_2_6(3)) {
@@ -1436,10 +1436,13 @@ public class gcl implements gclConstants {
         jj_la1[24] = jj_gen;
         break label_11;
       }
-      instruccion();
+        CodeBlock instruccionBlock;
+      instruccionBlock = instruccion();
+            cuerpo.addBlock(instruccionBlock);
     }
     jj_consume_token(tEND);
-      st.removeBlock();
+    insertProcedure(t, parametros, cuerpo);
+    st.removeBlock();
   }
 
   static final public void declaracion_func() throws ParseException {
@@ -1515,38 +1518,16 @@ public class gcl implements gclConstants {
       st.removeBlock();
   }
 
-  static final public CodeBlock llamar_funcion() throws ParseException {
+  static final public void llamar_funcion() throws ParseException {
     ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
     Symbol fun;
     Token t;
-    CodeBlock c = new CodeBlock();
     t = jj_consume_token(tIDENTIFICADOR);
     jj_consume_token(tOPENING_PARENTHESIS);
     lPar = parametros_llamada_funcion();
         checkParameters(t, lPar);
     jj_consume_token(tCLOSING_PARENTHESIS);
     jj_consume_token(tSEMICOLON);
-        // Generación de código
-        try {
-            fun = st.getSymbol(t.image);
-        } catch (SymbolNotFoundException e) {
-            printError(String.format("Funci\u00f3n \"%s\" no encontrada en la tabla de s\u00edmbolos.", t.image));
-            {if (true) return new CodeBlock();}
-        }
-        // añadir código de los parámetros
-        for(AtribExp ae : lPar) {
-            c.addBlock(ae.code);
-        }
-        // abrir stack frame
-        c.addInst(OpCode.OSF, lPar.size(), st.level - fun.nivel, fun.offset);
-
-        // si es una función (no procedimiento)
-        if(fun instanceof SymbolFunction) {
-            c.addInst(PCodeInstruction.OpCode.DRF);
-        }
-
-        {if (true) return c;}
-    throw new Error("Missing return statement in function");
   }
 
   static final public ArrayList<AtribExp> parametros_llamada_funcion() throws ParseException {
@@ -2010,11 +1991,9 @@ public class gcl implements gclConstants {
             for (String id : lVars) {
                 try {
                     Symbol s = st.getSymbol(id);
-                    c.addComment("Comienzo leer");
                     c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                     int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                     c.addInst(OpCode.RD, tipo);
-                    c.addComment("Fin leer");
                 } catch (SymbolNotFoundException e) {
                     printError("Variable \"" + id + "\" no encontrada.");
                 }
@@ -2039,11 +2018,9 @@ public class gcl implements gclConstants {
         for(String id : lVars) {
             try {
                 Symbol s = st.getSymbol(id);
-                c.addComment("Comienzo leer l\u00ednea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                 c.addInst(OpCode.RD, tipo);
-                c.addComment("Fin leer l\u00ednea");
             } catch (SymbolNotFoundException e) {
                 printError("Variable \"" + id + "\" no encontrada.");
             }
@@ -2160,13 +2137,13 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3R_57() {
-    if (jj_scan_token(tTRUE)) return true;
+  static private boolean jj_3R_59() {
+    if (jj_scan_token(tENTACAR)) return true;
     return false;
   }
 
-  static private boolean jj_3_10() {
-    if (jj_3R_27()) return true;
+  static private boolean jj_3R_57() {
+    if (jj_scan_token(tTRUE)) return true;
     return false;
   }
 
@@ -2180,16 +2157,6 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3_9() {
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_8() {
-    if (jj_3R_25()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_42() {
     if (jj_3R_46()) return true;
     return false;
@@ -2197,11 +2164,6 @@ public class gcl implements gclConstants {
 
   static private boolean jj_3R_30() {
     if (jj_scan_token(tCHARACTER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_6() {
-    if (jj_3R_22()) return true;
     return false;
   }
 
@@ -2217,6 +2179,11 @@ public class gcl implements gclConstants {
     }
     if (jj_scan_token(tOPENING_SQUARE_BRACKET)) return true;
     if (jj_3R_47()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_6() {
+    if (jj_3R_22()) return true;
     return false;
   }
 
@@ -2236,14 +2203,14 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3R_50() {
-    if (jj_scan_token(tBOOLEAN)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_45() {
     if (jj_scan_token(tIDENTIFICADOR)) return true;
     if (jj_scan_token(tOPENING_PARENTHESIS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_50() {
+    if (jj_scan_token(tBOOLEAN)) return true;
     return false;
   }
 
@@ -2345,6 +2312,11 @@ public class gcl implements gclConstants {
     return false;
   }
 
+  static private boolean jj_3_10() {
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
   static private boolean jj_3_2() {
     if (jj_3R_23()) return true;
     return false;
@@ -2365,6 +2337,16 @@ public class gcl implements gclConstants {
     return false;
   }
 
+  static private boolean jj_3_9() {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_8() {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_47() {
     if (jj_3R_24()) return true;
     return false;
@@ -2380,11 +2362,6 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3R_60() {
-    if (jj_scan_token(tCARAENT)) return true;
-    return false;
-  }
-
   static private boolean jj_3R_53() {
     if (jj_scan_token(tIDENTIFICADOR)) return true;
     return false;
@@ -2392,12 +2369,6 @@ public class gcl implements gclConstants {
 
   static private boolean jj_3R_34() {
     if (jj_scan_token(tOPENING_SQUARE_BRACKET)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_25() {
-    if (jj_scan_token(tIDENTIFICADOR)) return true;
-    if (jj_scan_token(tOPENING_PARENTHESIS)) return true;
     return false;
   }
 
@@ -2410,8 +2381,9 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3R_59() {
-    if (jj_scan_token(tENTACAR)) return true;
+  static private boolean jj_3R_25() {
+    if (jj_scan_token(tIDENTIFICADOR)) return true;
+    if (jj_scan_token(tOPENING_PARENTHESIS)) return true;
     return false;
   }
 
@@ -2430,8 +2402,8 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3_7() {
-    if (jj_3R_22()) return true;
+  static private boolean jj_3R_60() {
+    if (jj_scan_token(tCARAENT)) return true;
     return false;
   }
 
@@ -2439,6 +2411,11 @@ public class gcl implements gclConstants {
     if (jj_3R_28()) return true;
     if (jj_3R_29()) return true;
     if (jj_scan_token(tSEMICOLON)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_7() {
+    if (jj_3R_22()) return true;
     return false;
   }
 
@@ -2467,14 +2444,14 @@ public class gcl implements gclConstants {
     return false;
   }
 
-  static private boolean jj_3R_46() {
-    if (jj_3R_43()) return true;
-    if (jj_scan_token(tIDENTIFICADOR)) return true;
+  static private boolean jj_3R_37() {
+    if (jj_scan_token(tCOMA)) return true;
     return false;
   }
 
-  static private boolean jj_3R_37() {
-    if (jj_scan_token(tCOMA)) return true;
+  static private boolean jj_3R_46() {
+    if (jj_3R_43()) return true;
+    if (jj_scan_token(tIDENTIFICADOR)) return true;
     return false;
   }
 

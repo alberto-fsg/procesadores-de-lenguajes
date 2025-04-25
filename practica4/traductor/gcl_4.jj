@@ -160,7 +160,7 @@ public class gcl {
         return ok;
     }
 
-    private static CodeBlock insertProcedure(Token identificador, ArrayList<Symbol> parametros /*,CodeBlock cuerpo*/) {
+    private static CodeBlock insertProcedure(Token identificador, ArrayList<Symbol> parametros, CodeBlock cuerpo) {
         SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
         CodeBlock cb = new CodeBlock();
         
@@ -1286,47 +1286,53 @@ Token operador_relacional() :
 
 // --- INICIO DE funciones.jj ---
 CodeBlock declaracion_procs_funcs() :
-{}
 {
-    ( declaracion_proc() | declaracion_func() )+
-    
-    { return new CodeBlock(); /** Temporal */ }
+    CodeBlock cb = null;
+}
+{
+    (
+        { cb.addBlock(declaracion_proc()); } 
+        | 
+        { cb.addBlock(declaracion_func()); }
+    )*
+    {
+        return cb;
+    }
 }
 
-void declaracion_proc() :
+CodeBlock declaracion_proc() :
 { 
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
+    CodeBlock cuerpo = null;
 }
 {
     t = <tIDENTIFICADOR>
     < tOPENING_PARENTHESIS >
     ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
-    {
-        insertProcedure(t, parametros);
-    }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
-    /*
+    < tBEGGINING >
     (
         {
-            CodeBlock instruccionBlock;
+        CodeBlock instruccionBlock;
         }
         instruccionBlock = instruccion()
         {
             cuerpo.addBlock(instruccionBlock);
         }
     )*
-    */
-    < tBEGGINING >
-    ( instruccion() )*
     < tEND >
-    { st.removeBlock(); }
+    { 
+    st.removeBlock();
+    return insertProcedure(t, parametros, cuerpo);
+    }
 }
 
-void declaracion_func() :
+CodeBlock declaracion_func() :
 { 
+
     Token t;
     AtribTipo aT;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
@@ -1345,15 +1351,17 @@ void declaracion_func() :
     < tBEGGINING >
     ( instruccion() )*
     < tEND >
-    { st.removeBlock(); }
+    {
+        st.removeBlock();
+        return null;
+    }
 }
 
-CodeBlock llamar_funcion() :
+void llamar_funcion() :
 { 
     ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
     Symbol fun;
     Token t;
-    CodeBlock c = new CodeBlock();
 }
 {
     t = < tIDENTIFICADOR >
@@ -1364,29 +1372,6 @@ CodeBlock llamar_funcion() :
     }
     < tCLOSING_PARENTHESIS >
     < tSEMICOLON >
-
-    {
-        // Generación de código
-        try {
-            fun = st.getSymbol(t.image);
-        } catch (SymbolNotFoundException e) {
-            printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
-            return new CodeBlock();
-        }
-        // añadir código de los parámetros
-        for(AtribExp ae : lPar) {
-            c.addBlock(ae.code);
-        }
-        // abrir stack frame
-        c.addInst(OpCode.OSF, lPar.size(), st.level - fun.nivel, fun.offset);
-
-        // si es una función (no procedimiento)
-        if(fun instanceof SymbolFunction) {
-            c.addInst(PCodeInstruction.OpCode.DRF);
-        }
-
-        return c;
-    }
 }
 
 ArrayList<AtribExp> parametros_llamada_funcion() :
@@ -1681,11 +1666,9 @@ CodeBlock leer_linea() :
             for (String id : lVars) {
                 try {
                     Symbol s = st.getSymbol(id);
-                    c.addComment("Comienzo leer");
                     c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                     int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                     c.addInst(OpCode.RD, tipo);
-                    c.addComment("Fin leer");
                 } catch (SymbolNotFoundException e) {
                     printError("Variable \"" + id + "\" no encontrada.");
                 }
@@ -1711,11 +1694,9 @@ CodeBlock leer() :
         for(String id : lVars) {
             try {
                 Symbol s = st.getSymbol(id);
-                c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
                 c.addInst(OpCode.RD, tipo);
-                c.addComment("Fin leer línea");
             } catch (SymbolNotFoundException e) {
                 printError("Variable \"" + id + "\" no encontrada.");
             }

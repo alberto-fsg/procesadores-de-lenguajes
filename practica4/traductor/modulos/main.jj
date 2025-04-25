@@ -156,7 +156,7 @@ public class gcl {
         return ok;
     }
 
-    private static CodeBlock insertProcedure(Token identificador, ArrayList<Symbol> parametros /*,CodeBlock cuerpo*/) {
+    private static CodeBlock insertProcedure(Token identificador, ArrayList<Symbol> parametros, CodeBlock cuerpo) {
         SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
         CodeBlock cb = new CodeBlock();
         

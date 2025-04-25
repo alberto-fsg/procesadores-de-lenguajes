@@ -1,45 +1,51 @@
 CodeBlock declaracion_procs_funcs() :
-{}
 {
-    ( declaracion_proc() | declaracion_func() )+
-    
-    { return new CodeBlock(); /** Temporal */ }
+    CodeBlock cb = null;
+}
+{
+    (
+        { cb.addBlock(declaracion_proc()); } 
+        | 
+        { cb.addBlock(declaracion_func()); }
+    )*
+    {
+        return cb;
+    }
 }
 
-void declaracion_proc() :
+CodeBlock declaracion_proc() :
 { 
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
+    CodeBlock cuerpo = null;
 }
 {
     t = <tIDENTIFICADOR>
     < tOPENING_PARENTHESIS >
     ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
-    {
-        insertProcedure(t, parametros);
-    }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_procs_funcs() )*
-    /*
+    < tBEGGINING >
     (
         {
-            CodeBlock instruccionBlock;
+        CodeBlock instruccionBlock;
         }
         instruccionBlock = instruccion()
         {
             cuerpo.addBlock(instruccionBlock);
         }
     )*
-    */
-    < tBEGGINING >
-    ( instruccion() )*
     < tEND >
-    { st.removeBlock(); }
+    { 
+    st.removeBlock();
+    return insertProcedure(t, parametros, cuerpo);
+    }
 }
 
-void declaracion_func() :
+CodeBlock declaracion_func() :
 { 
+
     Token t;
     AtribTipo aT;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
@@ -58,7 +64,10 @@ void declaracion_func() :
     < tBEGGINING >
     ( instruccion() )*
     < tEND >
-    { st.removeBlock(); }
+    {
+        st.removeBlock();
+        return null;
+    }
 }
 
 CodeBlock llamar_funcion() :
