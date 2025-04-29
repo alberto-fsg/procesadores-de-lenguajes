@@ -22,6 +22,7 @@ import lib.symbolTable.*;
 import lib.symbolTable.exceptions.*;
 import lib.tools.codeGeneration.*;
 import lib.tools.codeGeneration.PCodeInstruction.OpCode;
+import java.io.UnsupportedEncodingException;
 
 import java.util.*;
 
@@ -32,7 +33,7 @@ public class gcl {
     // código generado
     static CodeBlock code = new CodeBlock();
     
-   public static void main(String[] args) {
+    public static void main(String[] args) {
 	   gcl parser = null;
 	   
         for(int i = 0; i < CGUtils.memorySpaces.length; ++i) {
@@ -156,40 +157,16 @@ public class gcl {
         return ok;
     }
 
-    private static CodeBlock setupProcedure(Token identificador, ArrayList<Symbol> parametros) {
-        CodeBlock headerCode = new CodeBlock();
+    private static void insertProcedure(Token identificador, ArrayList<Symbol> parametros) {
         SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
         try {
+            // al procedure no hay que darle offset
             st.insertSymbol(sProc);
+            insertParameters(parametros);
         } catch(AlreadyDefinedSymbolException e) {
-            printError(String.format("Error: Ya definido valor de identificador \"%s\" para procedimiento.", identificador.image));
+            printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
         }
-        headerCode.addLabel(identificador.image);
-        sProc.label = identificador.image;
-
-        st.insertBlock();
-        for (Symbol param : parametros) {
-            param.offset = CGUtils.memorySpaces[st.level]++;
-
-            try {
-                st.insertSymbol(param);
-            } catch (AlreadyDefinedSymbolException e) {
-                printError(String.format("Error: Ya definida variable de identificador \"%s\" en el ámbito del procedimiento.", param.name));
-            }
-        }
-        return headerCode;
     }
-
-    private static CodeBlock cleanupProcedure() {
-        CodeBlock footerCode = new CodeBlock();
-
-        footerCode.addInst(PCodeInstruction.OpCode.CSF);
-
-        st.removeBlock();
-
-        return footerCode;
-    }
-
 
     private static CodeBlock insertFunction(Token identificador, AtribTipo returnType, ArrayList<Symbol> parametros) {
         CodeBlock cb = new CodeBlock();
@@ -201,7 +178,6 @@ public class gcl {
                 sFunc.offset = CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(sFunc);
                 insertParameters(parametros);
-                sFunc.tam = CGUtils.memorySpaces[st.level] - 3;
             } catch(AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
             }
@@ -265,7 +241,10 @@ public class gcl {
         st.insertBlock();
         for(Symbol param : parametros) {
             try {
-                param.offset = CGUtils.memorySpaces[st.level]++;
+                param.offset = CGUtils.memorySpaces[st.level];
+                if(param instanceof SymbolArray)
+                    CGUtils.memorySpaces[st.level] += ((SymbolArray)param).maxInd - ((SymbolArray)param).minInd + 1; 
+                else CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(param);
                 printMessage("Tabla de símbolos",
                     String.format("\"%s\" %d (offset %d).", param.name, st.level, param.offset));
@@ -302,7 +281,7 @@ public class gcl {
                         params.get(i).type, parametros.get(i).type));
                 }
                 // Comprobar que parámetro pasado es una variable si se requiere paso por referencia
-                if(params.get(i).parClass == Symbol.ParameterClass.REF && !parametros.get(i).isVar) {
+                if(params.get(i).parClass == Symbol.ParameterClass.REF && parametros.get(i).isConst) {
                     printError("Parámetro por referencia. Espera variable, recibido constante.");
                 }
             }
@@ -334,13 +313,16 @@ public class gcl {
     private static void declararVariablesGenerarCodigo(AtribTipo tipoVar, List<String> ids) {
         for (String nombre : ids) {
             try {
-                Symbol simbolo = crearSimboloVariable(nombre, tipoVar);
-                simbolo.offset = CGUtils.memorySpaces[st.level]++;
-                st.insertSymbol(simbolo);
+                Symbol var = crearSimboloVariable(nombre, tipoVar);
+                var.offset = CGUtils.memorySpaces[st.level];
+                if(var instanceof SymbolArray)
+                    CGUtils.memorySpaces[st.level] += ((SymbolArray)var).maxInd - ((SymbolArray)var).minInd + 1; 
+                else CGUtils.memorySpaces[st.level]++;
+                st.insertSymbol(var);
                 
                 printMessage("Tabla de símbolos", 
                     String.format("\"%s\"  %d (offset %d).", 
-                    nombre, st.level, simbolo.offset));
+                    nombre, st.level, var.offset));
                     
             } catch (AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya existe \"%s\".", nombre));
@@ -411,6 +393,8 @@ public class gcl {
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                if(nivel_anidamiento != st.level)
+                    cb.addInst(PCodeInstruction.OpCode.DRF);
             }
 
             // Generación del valor
@@ -503,28 +487,6 @@ public class gcl {
         // Etiqueta a la que se salta si alguna condición es verdadera
         cb.addLabel(etiqueta_final);
 
-        return cb;
-    }
-
-    public static CodeBlock declaracionProcedimientoGenerarCodigo(
-        String nombre,
-        ArrayList<Symbol> parametros,
-        CodeBlock cuerpo
-    ) {
-        CodeBlock cb = new CodeBlock();
-    
-        cb.addLabel(nombre);
-
-        // Asignar parámetros (importante que quien llame haga push en orden)
-        for (Symbol param : parametros) {
-            cb.addInst(PCodeInstruction.OpCode.SRF, 0, param.offset);
-            cb.addInst(PCodeInstruction.OpCode.ASGI);
-        }
-
-        cb.addBlock(cuerpo);
-
-        cb.addInst(PCodeInstruction.OpCode.CSF);
-        
         return cb;
     }
 }

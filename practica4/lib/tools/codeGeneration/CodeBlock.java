@@ -12,7 +12,6 @@
 package lib.tools.codeGeneration;
 
 import java.util.ArrayList;
-
 import lib.tools.codeGeneration.PCodeInstruction.OpCode;
 
 public class CodeBlock {
@@ -24,7 +23,19 @@ public class CodeBlock {
 	ArrayList<CodeElement> code;
 	
 	public CodeBlock() {
-		code = new ArrayList<CodeElement>(); 
+		code = new ArrayList<>(); 
+	}
+
+	public int getNumInstructions() {
+		int num = 0;
+		for(CodeElement c : code)
+			if(c instanceof PCodeInstruction)
+				++num;
+		return num;
+	}
+
+	public void pop() {
+		code.remove(code.size() - 1);
 	}
 
 	public void addInst (OpCode opCode, int... args) {
@@ -40,7 +51,7 @@ public class CodeBlock {
 	}
 
 	public void removeLastInst() {
-		if (code.size()>0) {
+		if (!code.isEmpty()) {
 			code.remove(code.size()-1); 
 		}
 	}
@@ -66,6 +77,7 @@ public class CodeBlock {
 		code.clear();
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder strBldr = new StringBuilder(); 
 		for (CodeElement element: code) {
@@ -76,7 +88,7 @@ public class CodeBlock {
 				}
 			}
 			else {
-				strBldr.append(element.toString());
+				if(element != null) strBldr.append(element.toString());
 				strBldr.append("\n"); 
 			}
 		}
@@ -84,7 +96,7 @@ public class CodeBlock {
 	}
 	
 	public boolean isEmpty() {
-		return code.size() == 0; 
+		return code.isEmpty(); 
 	}
 	
 }

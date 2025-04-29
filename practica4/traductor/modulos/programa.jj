@@ -13,7 +13,7 @@ void Programa() :
     }
 
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( cprocfun = declaracion_proc() | cprocfun = declaracion_func() )?
+    ( cprocfun = declaracion_proc_func() )?
     < tBEGGINING >
     cbloque = BloqueSentencias()
 

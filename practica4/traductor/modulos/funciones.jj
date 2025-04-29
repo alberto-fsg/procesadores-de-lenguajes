@@ -1,11 +1,23 @@
+CodeBlock declaracion_proc_func() :
+{
+    CodeBlock res = new CodeBlock();
+    CodeBlock aux = new CodeBlock();
+}
+{
+    (
+          aux = declaracion_proc()  { res.addBlock(aux); } 
+        | aux = declaracion_func()  { res.addBlock(aux); }
+    )+
+    { return res; }
+}
+
 CodeBlock declaracion_proc() :
 {
     Token t;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
-    CodeBlock headerPartCode;
-    CodeBlock cuerpo = new CodeBlock();
-    CodeBlock footerPartCode;
-    CodeBlock finalProcedureCode = new CodeBlock();
+    CodeBlock cres = new CodeBlock();
+    CodeBlock cinst = new CodeBlock();
+    CodeBlock aux = new CodeBlock();
 }
 {
     t = <tIDENTIFICADOR>
@@ -13,35 +25,37 @@ CodeBlock declaracion_proc() :
     ( parametros = parametros_declaraciones() )?
     <tCLOSING_PARENTHESIS>
     {
-        headerPartCode = setupProcedure(t, parametros);
-        finalProcedureCode.addBlock(headerPartCode);
+        insertProcedure(t, parametros);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_proc() | declaracion_func() )*
     <tBEGGINING>
-    {
-         cuerpo = new CodeBlock();
-    }
-    (
-        {
-            CodeBlock instruccionBlock;
-        }
-        instruccionBlock = instruccion()
-        {
-            cuerpo.addBlock(instruccionBlock);
-        }
-    )*
+    ( aux = instruccion() { cinst.addBlock(aux); } )*
     <tEND>
+    {
+        // DECLARACIÓN DE CÓDGIO
+        String etiqInicioProc = CGUtils.newLabel();
+        st.getSymbol(t.image).label = etiqInicioProc;
+        
+        cres.addLabel(etiqInicioProc);
+        
+        // Parámetros
+        for (int i = parametros.size() - 1; i >= 0; --i) {
+            Symbol param = parametros.get(i);
+            cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
+            cres.addInst(OpCode.ASGI);
+        }
 
-    {
-        finalProcedureCode.addBlock(cuerpo);
-    }
-    {
-        footerPartCode = cleanupProcedure();
-        finalProcedureCode.addBlock(footerPartCode);
-    }
-    {
-        return finalProcedureCode;
+        // Cuerpo procedimiento
+        cres.addComment("inicio procedimiento " + t.image);
+        cres.addBlock(cinst);
+
+        // Fin procedimiento
+        cres.addInst(OpCode.CSF);
+        cres.addComment("fin procedimiento " + t.image);
+
+        st.removeBlock();
+        return cres;
     }
 }
 
@@ -90,19 +104,33 @@ CodeBlock llamar_funcion() :
     < tSEMICOLON >
 
     {
-        // Generación de código
+        // GENERACIÓN DE CÓDIGO
         try {
             fun = st.getSymbol(t.image);
         } catch (SymbolNotFoundException e) {
             printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
             return new CodeBlock();
         }
+        c.addComment("call " + t.image);
         // añadir código de los parámetros
-        for(AtribExp ae : lPar) {
-            c.addBlock(ae.code);
+        if(fun instanceof SymbolFunction) {
+            SymbolFunction f = (SymbolFunction) fun;
+            for(int i = 0; i < lPar.size(); i++) {
+                if(f.parList.get(i).parClass == Symbol.ParameterClass.REF)
+                    lPar.get(i).code.pop();
+                c.addBlock(lPar.get(i).code);
+            }
+            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
         }
-        // abrir stack frame
-        c.addOSFInst(lPar.size(), st.level - fun.nivel, fun.label);
+        if(fun instanceof SymbolProcedure) {
+            SymbolProcedure p = (SymbolProcedure) fun;
+            for(int i = 0; i < lPar.size(); i++) {
+                if(p.parList.get(i).parClass == Symbol.ParameterClass.REF)
+                    lPar.get(i).code.pop();
+                c.addBlock(lPar.get(i).code);
+            }
+            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
+        }
             
         // si es una función (no procedimiento)
         if(fun instanceof SymbolFunction) {

@@ -4,21 +4,26 @@ import lib.tools.codeGeneration.*;
 
 public class AtribExp {
     public Symbol.Types type;
-    public String image;
-    public Boolean isVar;
     public Boolean isConst;
     public CodeBlock code;
+    public String image;
 
     public AtribExp() {
-        type = Symbol.Types.UNDEFINED;
-        code = new CodeBlock();
+        this(Symbol.Types.UNDEFINED, false, "");
     }
 
-    public AtribExp(Symbol.Types type, String image, Boolean isVar, Boolean isConst) {
+    public AtribExp(Symbol.Types type, Boolean isConst) {
+        this(type, isConst, "");
+    }
+
+    public AtribExp(Symbol.Types type, Boolean isConst, String image) {
             this.type = type;
             this.image = image;
-            this.isVar = isVar;
             this.isConst = isConst;
             code = new CodeBlock();
+    }
+
+    public static AtribExp copy(AtribExp ae) {
+        return new AtribExp(ae.type, ae.isConst, ae.image);
     }
 }

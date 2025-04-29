@@ -13,10 +13,8 @@ CodeBlock escribir_linea() :
         for (AtribExp a : args) {
             c.addBlock(a.code);
             if(a.type == Symbol.Types.STRING) {
-                String str = a.image;
-                for(char caract : str.toCharArray()) {
+                for(int i = 0; i < a.code.getNumInstructions(); ++i)
                     c.addInst(OpCode.WRT, 0);
-                }
             }
             else if(a.type == Symbol.Types.CHAR) {
                 c.addInst(OpCode.WRT, 0);
@@ -48,10 +46,8 @@ CodeBlock escribir() :
         for (AtribExp a : args) {
             c.addBlock(a.code);
             if(a.type == Symbol.Types.STRING) {
-                String str = a.image;
-                for(char caract : str.toCharArray()) {
+                for(int i = 0; i < a.code.getNumInstructions(); ++i)
                     c.addInst(OpCode.WRT, 0);
-                }
             }
             else if(a.type == Symbol.Types.CHAR) {
                 c.addInst(OpCode.WRT, 0);
@@ -149,42 +145,42 @@ CodeBlock leer() :
 
 AtribExp entAcar() :
 {
-    AtribExp i;
+    AtribExp res;
 }
 {
     < tENTACAR >
     <tOPENING_PARENTHESIS>
-    i = expresionSimple()
+    res = expresionSimple()
     <tCLOSING_PARENTHESIS>
 
     {
-        if(!typeEqual(Symbol.Types.INT, i.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", i.type))) {
-            return new AtribExp(Symbol.Types.UNDEFINED, null, false, false); 
+        if(!typeEqual(Symbol.Types.INT, res.type, String.format("Tipo incorrecto. Se esperaba INT pero se encontró %s.", res.type))) {
+            return new AtribExp(); 
         }
         // No hace falta transformarlo porque CHAR e INT son ambos 32 bits en máquina P
-        AtribExp resultado = new AtribExp(Symbol.Types.CHAR, null, false, false);
-        resultado.code.addBlock(i.code);
-        return resultado;
+        res.type = Symbol.Types.CHAR;
+        res.isConst = true;
+        return res;
     }
 }
 
 AtribExp carAent() :
 {
-    AtribExp c;
+    AtribExp res;
 }
 {
     < tCARAENT >
     < tOPENING_PARENTHESIS>
-    c = primario()
+    res = primario()
     <tCLOSING_PARENTHESIS>
 
     {
-        if(!typeEqual(Symbol.Types.CHAR, c.type, String.format("Tipo incorrecto. Se esperaba CHAR pero se encontró %s.", c.type))) {
-            return new AtribExp(Symbol.Types.UNDEFINED, null, false, false);
+        if(!typeEqual(Symbol.Types.CHAR, res.type, String.format("Tipo incorrecto. Se esperaba CHAR pero se encontró %s.", res.type))) {
+            return new AtribExp();
         }
         // No hace falta transformarlo porque CHAR e INT son ambos 32 bits en máquina P
-        AtribExp resultado = new AtribExp(Symbol.Types.INT, null, false, false);
-        resultado.code.addBlock(c.code);
-        return resultado;
+        res.type = Symbol.Types.INT;
+        res.isConst = true;
+        return res;
     }
 }

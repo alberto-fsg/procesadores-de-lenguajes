@@ -47,40 +47,53 @@ CodeBlock bucle() :
     { return b; }
 }
 
-
 CodeBlock seleccion() :
 {
-    java.util.List<AtribExp> condiciones = new java.util.ArrayList<AtribExp>();
-    java.util.List<CodeBlock> cuerpos = new java.util.ArrayList<CodeBlock>();
-    CodeBlock auxiliar; // Almacena temporalmente el cuerpo asociado a cada condición del select
-    CodeBlock otherwise = null;
-    AtribExp condicion;
-    CodeBlock c;                   // Bloque temporal para cada instrucción
-    CodeBlock s = new CodeBlock(); // Bloque final para el bucle generado
+    AtribExp auxCond;
+    CodeBlock cres = new CodeBlock(), auxInst;
+    ArrayList<AtribExp> condiciones = new ArrayList<AtribExp>();
+    ArrayList<CodeBlock> cuerpos = new ArrayList<CodeBlock>();
 }
 {
     <tSELECTION>
     (
-        <tCASE> { auxiliar = new CodeBlock(); }
-        condicion = expresion()
+        <tCASE>
+        auxCond = expresion()   { condiciones.add(auxCond); }
         <tCOLON>
-        ( c = instruccion() { auxiliar.addBlock(c); } )*
-        {
-            condiciones.add(condicion);
-            cuerpos.add(auxiliar);
-        }
+        auxInst = instrSelect() { cuerpos.add(auxInst); }
     )+
     [
         <tOTHERWISE> <tCOLON>
-        { auxiliar = new CodeBlock(); }
-        ( c = instruccion() { auxiliar.addBlock(c); } )*
-        {
-            otherwise = auxiliar;
-        }
+        auxInst = instrSelect() { cuerpos.add(auxInst); }
     ]
     <tEND_SELECTION>
+
     {
-        s = seleccionGenerarCodigo(condiciones, cuerpos, otherwise);
+        // GENERACIÓN DE CÓDIGO
+        cres.addComment("inicio select");
+        int i;
+        for(i = 0; i < condiciones.size(); ++i) {
+            String etiq = CGUtils.newLabel();
+            cres.addBlock(condiciones.get(i).code);
+            cres.addInst(OpCode.JMF, etiq);
+            cres.addBlock(cuerpos.get(i));
+            cres.addLabel(etiq);
+        }
+        if(i == cuerpos.size() - 1) { // Hay Otherwise
+            cres.addBlock(cuerpos.get(i));
+        }
+        cres.addComment("fin select");
+        return cres;
     }
-    { return s; }
+}
+
+CodeBlock instrSelect() :
+{
+    CodeBlock cres = new CodeBlock(), aux;
+}
+{
+    (
+        aux = instruccion()     { cres.addBlock(aux); }
+    )*
+    { return cres; }
 }
