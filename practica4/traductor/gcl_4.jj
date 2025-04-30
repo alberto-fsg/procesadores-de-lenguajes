@@ -400,7 +400,7 @@ public class gcl {
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
-                if(st.level <= 0)
+                if(simbolo_var.nivel > st.level)
                     cb.addInst(PCodeInstruction.OpCode.DRF);
             }
 
@@ -430,6 +430,8 @@ public class gcl {
         String etiqueta_inicio = CGUtils.newLabel();
         String etiqueta_prueba = CGUtils.newLabel();
         String etiqueta_final  = CGUtils.newLabel();
+
+        cb.addComment("inicio bucle");
 
         // Salto inicial a la prueba invertida
         cb.addInst(OpCode.JMP, etiqueta_prueba);
