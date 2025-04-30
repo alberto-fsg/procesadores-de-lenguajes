@@ -752,6 +752,7 @@ AtribExp primario() :
     AtribExp prim, ae;
     Symbol s;
     Token t;
+    ArrayList<AtribExp> lPar = new ArrayList<AtribExp>();
 }
 {
     (
@@ -762,20 +763,28 @@ AtribExp primario() :
         LOOKAHEAD(2)
         t = <tIDENTIFICADOR>
         <tOPENING_PARENTHESIS>
-        parametros_llamada_funcion()
+        lPar = parametros_llamada_funcion()
+        {
+            checkParameters(t, lPar);
+        }
         <tCLOSING_PARENTHESIS>
         {
-            // Este de aquí, esta mal. Tendré que rehacerlo
             try {
                 s = st.getSymbol(t.image);
+                SymbolFunction f = (SymbolFunction) s;
+                prim = new AtribExp(f.returnType, false);
+                prim.code.addComment("call " + t.image);
+                for(int i = 0; i < lPar.size(); i++) {
+                    if(f.parList.get(i).parClass == Symbol.ParameterClass.REF)
+                        lPar.get(i).code.pop();
+                    prim.code.addBlock(lPar.get(i).code);
+                }
+                prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel, s.label);
+                prim.code.addInst(PCodeInstruction.OpCode.DRF);
             } catch(SymbolNotFoundException e) {
-                printError(String.format("Función \"%s\" no encontrada en tabla de símbolos.", t.image));
+                printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
                 return new AtribExp();
             }
-            SymbolFunction f = (SymbolFunction) s;
-
-            prim = new AtribExp(f.returnType, false);
-            return prim;
         }
     |
         LOOKAHEAD(2)
