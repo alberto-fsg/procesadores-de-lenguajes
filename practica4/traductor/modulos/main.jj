@@ -158,50 +158,55 @@ public class gcl {
      * @param array Array del que se genera la copia.
      * @return Bloque de código que genera la copia del array.
      */
-    private static CodeBlock generarCopiaArray(Symbol array) {
+    private static CodeBlock generarCopiaArray(SymbolArray destArray, SymbolArray sourceArray, Symbol indexVar) {
         CodeBlock cb = new CodeBlock();
 
-        String etiqueta_inicio = CGUtils.newLabel();//array.name + "_copia_inicio";
-        String etiqueta_final  = CGUtils.newLabel();//array.name + "_copia_final";
+        String loopLabel = CGUtils.newLabel();
 
-        SymbolArray symbol_array = (SymbolArray) array;
-        int minInd = symbol_array.minInd;
-        int maxInd = symbol_array.maxInd;
-        int longitud = maxInd - minInd + 1;
+        int minInd = destArray.minInd;
+        int maxInd = destArray.maxInd;
 
-        // Let's assume copy will be placed at copyOffset (in current frame)
-        int copyOffset = symbol_array.offset;
+        // STEP 1: Initialize index to minInd
+        cb.addInst(OpCode.STC, minInd);              // push minInd
+        cb.addInst(OpCode.SRF, 0, indexVar.offset);  // push address of index
+        cb.addInst(OpCode.ASG);                      // index := minInd
 
-        // idx = minInd
-        cb.addInst(OpCode.STC, minInd);
+        // STEP 2: Begin loop
+        cb.addLabel(loopLabel);
 
-        cb.addLabel(etiqueta_inicio);
+        // Load index
+        cb.addInst(OpCode.SRF, 0, indexVar.offset);  // push address of index
+        cb.addInst(OpCode.DRF);                      // idx
+        cb.addInst(OpCode.DUP);                      // idx (duplicate for use in dest and src)
 
-        // if idx >= maxInd + 1 jump to end
-        cb.addInst(OpCode.DUP);
-        cb.addInst(OpCode.STC, maxInd + 1);
-        cb.addInst(OpCode.LT);
-        cb.addInst(OpCode.JMF, etiqueta_final);
+        // --- Source array access: source[idx] ---
+        cb.addInst(OpCode.SRF, 0, sourceArray.offset); // push source base address
+        cb.addInst(OpCode.DRF);                        // deref -> base pointer
+        cb.addInst(OpCode.PLUS);                       // base + idx
+        cb.addInst(OpCode.DRF);                        // value = source[idx]
 
-        // --- Load from original array
-        cb.addInst(OpCode.SRF, st.level - array.nivel, array.offset);  // base of original
-        cb.addInst(OpCode.DUP);        // duplicate idx
-        cb.addInst(OpCode.SWP);        // idx on top
-        cb.addInst(OpCode.PLUS);       // address = base + idx
-        cb.addInst(OpCode.DRF);        // load value
+        // --- Destination array access: dest[idx] ---
+        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // reload index
+        cb.addInst(OpCode.DRF);                        // idx
+        cb.addInst(OpCode.SRF, 0, destArray.offset);   // push dest base address
+        cb.addInst(OpCode.DRF);                        // deref -> base pointer
+        cb.addInst(OpCode.PLUS);                       // base + idx
+        cb.addInst(OpCode.ASG);                        // dest[idx] = source[idx]
 
-        // --- Store in local copy
-        cb.addInst(OpCode.SRF, 0, copyOffset);  // base of local copy (current frame)
-        cb.addInst(OpCode.SWP);        // bring idx up
-        cb.addInst(OpCode.PLUS);       // compute address
-        cb.addInst(OpCode.ASG);        // store value
+        // --- Increment index ---
+        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
+        cb.addInst(OpCode.DRF);                        // idx
+        cb.addInst(OpCode.STC, 1);                     // 1
+        cb.addInst(OpCode.PLUS);                       // idx + 1
+        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
+        cb.addInst(OpCode.ASG);                        // index := index + 1
 
-        // idx = idx + 1
-        cb.addInst(OpCode.STC, 1);
-        cb.addInst(OpCode.PLUS);
-        cb.addInst(OpCode.JMP, etiqueta_inicio);
-
-        cb.addLabel(etiqueta_final);
+        // --- Compare with limit ---
+        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
+        cb.addInst(OpCode.DRF);                        // idx
+        cb.addInst(OpCode.STC, maxInd + 1);            // upper limit (exclusive)
+        cb.addInst(OpCode.LT);                         // idx < max + 1
+        cb.addInst(OpCode.JMT, loopLabel);             // if true, jump to loop start
 
         return cb;
     }
