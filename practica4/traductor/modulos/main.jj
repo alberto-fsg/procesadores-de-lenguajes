@@ -386,6 +386,7 @@ public class gcl {
             if (expresion_indice != null) {
                 // Caso array: base + índice
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
+                if(simbolo_var.parClass == Symbol.ParameterClass.REF) cb.addInst(PCodeInstruction.OpCode.DRF);
                 cb.addBlock(expresion_indice.code);
                 cb.addInst(PCodeInstruction.OpCode.PLUS);
                 cb.addInst(PCodeInstruction.OpCode.STC, 0);

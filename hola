@@ -1,0 +1,1121 @@
+[0;33mCompilando el proyecto[0m
+
+Buildfile: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/build.xml
+
+init:
+    [mkdir] Created dir: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/build
+    [mkdir] Created dir: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/build/META-INF
+    [mkdir] Created dir: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/jcc_files
+    [mkdir] Created dir: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/dist
+     [copy] Copying 1 file to /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/dist
+
+jcc:
+   [javacc] Java Compiler Compiler Version 4.1d1 (Parser Generator)
+   [javacc] (type "javacc" with no arguments for help)
+   [javacc] Reading from file /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/traductor/gcl_4.jj . . .
+   [javacc] File "TokenMgrError.java" does not exist.  Will create one.
+   [javacc] File "ParseException.java" does not exist.  Will create one.
+   [javacc] File "Token.java" does not exist.  Will create one.
+   [javacc] File "SimpleCharStream.java" does not exist.  Will create one.
+   [javacc] Parser generated successfully.
+
+compile:
+    [javac] Compiling 27 source files to /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/build
+    [javac] warning: [options] bootstrap class path not set in conjunction with -source 8
+    [javac] Note: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/jcc_files/gcl.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 1 warning
+
+dist:
+      [jar] Building jar: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/dist/gcl_4.jar
+
+BUILD SUCCESSFUL
+Total time: 4 seconds
+[0;33mEjecutando las pruebas[0m
+
+[32mTabla de símbolos:[0m "n"  0 (offset 3).
+[32mTabla de símbolos:[0m "limite_n"  0 (offset 4).
+[32mTabla de símbolos:[0m "digitos"  0 (offset 5).
+[32mTabla de símbolos:[0m "pi"  0 (offset 6).
+[32mTabla de símbolos:[0m "sumanloop"  0 (offset 107).
+[32mTabla de símbolos:[0m "resultaloop"  0 (offset 208).
+[32mTabla de símbolos:[0m "sumo"  0 (offset 309).
+[32mTabla de símbolos:[0m "s" 1 (offset 3).
+[32mTabla de símbolos:[0m "i"  1 (offset 104).
+[32mTabla de símbolos:[0m "s" 1 (offset 105).
+[32mTabla de símbolos:[0m "i"  1 (offset 206).
+[32mTabla de símbolos:[0m "s" 1 (offset 207).
+[32mTabla de símbolos:[0m "r" 1 (offset 308).
+[32mTabla de símbolos:[0m "i"  1 (offset 409).
+[32mTabla de símbolos:[0m "n"  1 (offset 410).
+[32mTabla de símbolos:[0m "s" 1 (offset 411).
+[32mTabla de símbolos:[0m "r" 1 (offset 512).
+[32mTabla de símbolos:[0m "i"  1 (offset 613).
+[32mTabla de símbolos:[0m "n"  1 (offset 614).
+[32mTabla de símbolos:[0m "llevo_uno"  1 (offset 615).
+[32mTabla de símbolos:[0m "s" 1 (offset 616).
+[32mTabla de símbolos:[0m "r" 1 (offset 717).
+[32mTabla de símbolos:[0m "n" 1 (offset 818).
+[32mTabla de símbolos:[0m "i"  1 (offset 819).
+***** Análisis terminado con éxito *****
+
+  ENP L30
+L3:
+  SRF  0  3
+  ASGI
+; --inicio procedimiento iniciar
+; --assignment i
+  SRF  0 104
+  DRF
+  STC  0
+  ASG
+  JMP L1
+L0:
+; --assignment s
+  SRF  0  3
+  SRF  0 104
+  DRF
+  PLUS
+  STC  0
+  SBT
+  STC  0
+  ASG
+; --assignment i
+  SRF  0 104
+  DRF
+  SRF  0 104
+  DRF
+  STC  1
+  PLUS
+  ASG
+L1:
+  SRF  0 104
+  DRF
+  SRF  1  5
+  DRF
+  LTE
+  JMF L2
+  JMP L0
+L2:
+  CSF
+; --fin procedimiento iniciar
+L8:
+  SRF  0 105
+  ASGI
+; --inicio procedimiento mostrar_numero
+; --Comienzo escribir
+  SRF  0 105
+  DRF
+  STC  0
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  WRT  1
+  STC 46
+  WRT  0
+; --Fin escribir
+; --assignment i
+  SRF  0 206
+  DRF
+  STC  1
+  ASG
+  JMP L6
+L5:
+; --inicio select
+  SRF  0 206
+  DRF
+  STC  1
+  SBT
+  STC  5
+  MOD
+  STC  0
+  EQ
+  JMF L4
+; --Comienzo escribir
+  STC 32
+  WRT  0
+; --Fin escribir
+L4:
+; --fin select
+; --Comienzo escribir
+  SRF  0 105
+  DRF
+  SRF  0 206
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  WRT  1
+; --Fin escribir
+; --assignment i
+  SRF  0 206
+  DRF
+  SRF  0 206
+  DRF
+  STC  1
+  PLUS
+  ASG
+L6:
+  SRF  0 206
+  DRF
+  SRF  1  5
+  DRF
+  LTE
+  JMF L7
+  JMP L5
+L7:
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+  CSF
+; --fin procedimiento mostrar_numero
+L14:
+  SRF  0 308
+  ASGI
+  SRF  0 207
+  ASGI
+; --inicio procedimiento sumar
+; --assignment i
+  SRF  0 409
+  DRF
+  SRF  1  5
+  DRF
+  ASG
+  JMP L12
+L11:
+; --assignment n
+  SRF  0 410
+  DRF
+  SRF  0 207
+  DRF
+  SRF  0 409
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SRF  0 308
+  SRF  0 409
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  PLUS
+  ASG
+; --inicio select
+  SRF  0 410
+  DRF
+  STC  9
+  GT
+  JMF L10
+; --assignment s
+  SRF  0 207
+  SRF  0 409
+  DRF
+  PLUS
+  STC  0
+  SBT
+  SRF  0 410
+  DRF
+  STC 10
+  MOD
+  ASG
+; --inicio select
+  SRF  0 409
+  DRF
+  STC  0
+  GT
+  JMF L9
+; --assignment s
+  SRF  0 207
+  SRF  0 409
+  DRF
+  STC  1
+  SBT
+  PLUS
+  STC  0
+  SBT
+  SRF  0 207
+  DRF
+  SRF  0 409
+  DRF
+  STC  1
+  SBT
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SRF  0 410
+  DRF
+  STC 10
+  DIV
+  PLUS
+  ASG
+L9:
+; --fin select
+L10:
+; --assignment s
+  SRF  0 207
+  SRF  0 409
+  DRF
+  PLUS
+  STC  0
+  SBT
+  SRF  0 410
+  DRF
+  ASG
+; --fin select
+; --assignment i
+  SRF  0 409
+  DRF
+  SRF  0 409
+  DRF
+  STC  1
+  SBT
+  ASG
+L12:
+  SRF  0 409
+  DRF
+  STC  0
+  GTE
+  JMF L13
+  JMP L11
+L13:
+  CSF
+; --fin procedimiento sumar
+L20:
+  SRF  0 512
+  ASGI
+  SRF  0 411
+  ASGI
+; --inicio procedimiento restar
+; --assignment i
+  SRF  0 613
+  DRF
+  SRF  1  5
+  DRF
+  ASG
+; --assignment llevo_uno
+  SRF  0 615
+  DRF
+  STC  0
+  ASG
+  JMP L18
+L17:
+; --inicio select
+  SRF  0 615
+  DRF
+  JMF L15
+; --assignment n
+  SRF  0 614
+  DRF
+  SRF  0 411
+  DRF
+  SRF  0 613
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  STC  1
+  SBT
+  SRF  0 512
+  SRF  0 613
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SBT
+  ASG
+L15:
+; --assignment n
+  SRF  0 614
+  DRF
+  SRF  0 411
+  DRF
+  SRF  0 613
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SRF  0 512
+  SRF  0 613
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SBT
+  ASG
+; --fin select
+; --inicio select
+  SRF  0 614
+  DRF
+  STC  0
+  LT
+  JMF L16
+; --assignment s
+  SRF  0 411
+  SRF  0 613
+  DRF
+  PLUS
+  STC  0
+  SBT
+  SRF  0 614
+  DRF
+  STC 10
+  PLUS
+  ASG
+; --assignment llevo_uno
+  SRF  0 615
+  DRF
+  STC  1
+  ASG
+L16:
+; --assignment s
+  SRF  0 411
+  SRF  0 613
+  DRF
+  PLUS
+  STC  0
+  SBT
+  SRF  0 614
+  DRF
+  ASG
+; --assignment llevo_uno
+  SRF  0 615
+  DRF
+  STC  0
+  ASG
+; --fin select
+; --assignment i
+  SRF  0 613
+  DRF
+  SRF  0 613
+  DRF
+  STC  1
+  SBT
+  ASG
+L18:
+  SRF  0 613
+  DRF
+  STC  0
+  GTE
+  JMF L19
+  JMP L17
+L19:
+  CSF
+; --fin procedimiento restar
+L25:
+  SRF  0 818
+  ASGI
+  SRF  0 717
+  ASGI
+  SRF  0 616
+  ASGI
+; --inicio procedimiento dividir
+; --assignment i
+  SRF  0 819
+  DRF
+  STC  0
+  ASG
+  JMP L23
+L22:
+; --inicio select
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SRF  0 818
+  DRF
+  DRF
+  DIV
+  STC  0
+  GT
+  JMF L21
+; --assignment r
+  SRF  0 717
+  SRF  0 819
+  DRF
+  PLUS
+  STC  0
+  SBT
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SRF  0 818
+  DRF
+  DRF
+  DIV
+  ASG
+; --assignment s
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  1
+  PLUS
+  PLUS
+  STC  0
+  SBT
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  SRF  0 818
+  DRF
+  DRF
+  MOD
+  STC 10
+  TMS
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  1
+  PLUS
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  PLUS
+  ASG
+L21:
+; --assignment r
+  SRF  0 717
+  SRF  0 819
+  DRF
+  PLUS
+  STC  0
+  SBT
+  STC  0
+  ASG
+; --assignment s
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  1
+  PLUS
+  PLUS
+  STC  0
+  SBT
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  STC 10
+  TMS
+  SRF  0 616
+  SRF  0 819
+  DRF
+  STC  1
+  PLUS
+  STC  0
+  SBT
+  STC  1
+  TMS
+  PLUS
+  DRF
+  PLUS
+  ASG
+; --fin select
+; --assignment i
+  SRF  0 819
+  DRF
+  SRF  0 819
+  DRF
+  STC  1
+  PLUS
+  ASG
+L23:
+  SRF  0 819
+  DRF
+  SRF  1  5
+  DRF
+  LT
+  JMF L24
+  JMP L22
+L24:
+  CSF
+; --fin procedimiento dividir
+; --Comienzo del programa numero_pi_leibnitz
+L30:
+; --Comienzo escribir línea
+  STC 46
+  STC 46
+  STC 46
+  STC 32
+  STC 57
+  STC 47
+  STC 52
+  STC 32
+  STC 43
+  STC 32
+  STC 55
+  STC 47
+  STC 52
+  STC 32
+  STC 45
+  STC 32
+  STC 53
+  STC 47
+  STC 52
+  STC 32
+  STC 43
+  STC 32
+  STC 51
+  STC 47
+  STC 52
+  STC 32
+  STC 45
+  STC 32
+  STC 52
+  STC 32
+  STC 61
+  STC 32
+  STC 101
+  STC 32
+  STC 97
+  STC 116
+  STC 105
+  STC 110
+  STC 105
+  STC 102
+  STC 110
+  STC 105
+  STC 32
+  STC 101
+  STC 105
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 112
+  STC 111
+  STC 111
+  STC 108
+  STC 110
+  STC 97
+  STC 122
+  STC 105
+  STC 108
+  STC 105
+  STC 116
+  STC 117
+  STC 32
+  STC 105
+  STC 80
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC -70
+  STC -61
+  STC 110
+  STC 32
+  STC 108
+  STC 101
+  STC 100
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 99
+  STC 97
+  STC 109
+  STC 105
+  STC 120
+  STC 111
+  STC 114
+  STC 112
+  STC 65
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --call iniciar
+  SRF  0 107
+  OSF 310  0 L3
+; --call iniciar
+  SRF  0  6
+  OSF 310  0 L3
+; --assignment sumanloop
+  SRF  0 107
+  STC  0
+  PLUS
+  STC  0
+  SBT
+  STC  4
+  ASG
+; --assignment pi
+  SRF  0  6
+  STC  0
+  PLUS
+  STC  0
+  SBT
+  STC  4
+  ASG
+; --assignment n
+  SRF  0  3
+  STC  3
+  ASG
+; --assignment digitos
+  SRF  0  5
+  STC 50
+  ASG
+; --assignment limite_n
+  SRF  0  4
+  STC 100
+  ASG
+; --assignment sumo
+  SRF  0 309
+  STC  0
+  ASG
+  JMP L28
+L27:
+; --call dividir
+  SRF  0 107
+  DRF
+  SRF  0 208
+  SRF  0  3
+  OSF 310  0 L25
+; --inicio select
+  SRF  0 309
+  DRF
+  JMF L26
+; --call sumar
+  SRF  0  6
+  SRF  0 208
+  DRF
+  OSF 310  0 L14
+L26:
+; --call restar
+  SRF  0  6
+  SRF  0 208
+  DRF
+  OSF 310  0 L20
+; --fin select
+; --assignment sumo
+  SRF  0 309
+  SRF  0 309
+  DRF
+  NGB
+  ASG
+; --Comienzo escribir
+  STC 32
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 105
+  STC 80
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+  STC  2
+  DIV
+  WRT  1
+  STC 32
+  STC 58
+  STC 101
+  STC 105
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 115
+  STC 101
+  STC 116
+  STC 110
+  STC 101
+  STC 110
+  STC 111
+  STC 112
+  STC 109
+  STC 111
+  STC 99
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --Fin escribir
+; --call mostrar_numero
+  SRF  0  6
+  OSF 310  0 L8
+; --assignment n
+  SRF  0  3
+  SRF  0  3
+  DRF
+  STC  2
+  PLUS
+  ASG
+L28:
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  LT
+  JMF L29
+  JMP L27
+L29:
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 107
+  STC 47
+  STC 49
+  STC 32
+  STC 97
+  STC 32
+  STC 115
+  STC 101
+  STC 108
+  STC 97
+  STC 110
+  STC 111
+  STC 105
+  STC 99
+  STC 114
+  STC 112
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 110
+  STC 111
+  STC 115
+  STC 32
+  STC 97
+  STC 109
+  STC 117
+  STC 115
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 115
+  STC 111
+  STC 110
+  STC 105
+  STC 109
+  STC 114
+  STC -87
+  STC -61
+  STC 116
+  STC 32
+  STC 115
+  STC 111
+  STC 108
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 114
+  STC 111
+  STC 112
+  STC 32
+  STC 97
+  STC 116
+  STC 110
+  STC 101
+  STC 108
+  STC 32
+  STC 115
+  STC 101
+  STC 32
+  STC 97
+  STC 105
+  STC 99
+  STC 110
+  STC 101
+  STC 103
+  STC 114
+  STC 101
+  STC 118
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 76
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Fin del programa numero_pi_leibnitz
+  LVP
+
+***** P-Code generado *****
+
+====================================
+
+========== numero_pi_leibnitz.gcl ==========
+
+Return para continuar
