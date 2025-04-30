@@ -363,7 +363,7 @@ public class gcl {
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
-                if(simbolo_var.nivel > st.level)
+                if(simbolo_var.parClass == Symbol.ParameterClass.REF)
                     cb.addInst(PCodeInstruction.OpCode.DRF);
             }
 
