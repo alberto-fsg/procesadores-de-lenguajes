@@ -803,6 +803,7 @@ AtribExp primario() :
 
             prim = new AtribExp(s_array.baseType, false);
             prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
+            if(s.parClass == Symbol.ParameterClass.REF) prim.code.addInst(PCodeInstruction.OpCode.DRF);
             prim.code.addBlock(ae.code);
             prim.code.addInst(PCodeInstruction.OpCode.STC, s_array.minInd);
             prim.code.addInst(PCodeInstruction.OpCode.SBT);
