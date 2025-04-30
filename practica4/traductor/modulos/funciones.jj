@@ -42,8 +42,22 @@ CodeBlock declaracion_proc() :
         // Parámetros
         for (int i = parametros.size() - 1; i >= 0; --i) {
             Symbol param = parametros.get(i);
+
+            // General case: assign parameter value
             cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
             cres.addInst(OpCode.ASGI);
+
+            // Handle arrays passed by value
+            if (param instanceof SymbolArray) {
+                SymbolArray arrayParam = (SymbolArray) param;
+
+                // Only copy if passed by value
+                if (arrayParam.parClass == Symbol.ParameterClass.VAL) {
+                    // Generate code to copy array contents into the local arrayParam.offset
+                    CodeBlock copia = generarCopiaArray(arrayParam);
+                    cres.addBlock(copia);
+                }
+            }
         }
 
         // Cuerpo procedimiento

@@ -197,41 +197,43 @@ public class gcl {
         String etiqueta_inicio = array.name + "_copia_inicio";
         String etiqueta_final  = array.name + "_copia_final";
 
-        // Longitud del array = maxInd - minInd + 1
         SymbolArray symbol_array = (SymbolArray) array;
-        int longitud = symbol_array.maxInd - symbol_array.minInd + 1;
+        int minInd = symbol_array.minInd;
+        int maxInd = symbol_array.maxInd;
+        int longitud = maxInd - minInd + 1;
 
-        // Inicializar índice: idx = 0
-        cb.addInst(OpCode.STC, 0);
+        // Let's assume copy will be placed at copyOffset (in current frame)
+        int copyOffset = symbol_array.offset;
 
-        // Etiqueta de inicio de bucle
+        // idx = minInd
+        cb.addInst(OpCode.STC, minInd);
+
         cb.addLabel(etiqueta_inicio);
 
-        // Comparar: idx < longitud, si no se cumple saltar al final
-        cb.addInst(OpCode.DUP);                      // duplicar idx (LT lo destruye)
-        cb.addInst(OpCode.STC, longitud);            // cargar longitud
-        cb.addInst(OpCode.LT);                       // comparar idx < longitud
-        cb.addInst(OpCode.JMF, etiqueta_final);      // si no, saltar al final
+        // if idx >= maxInd + 1 jump to end
+        cb.addInst(OpCode.DUP);
+        cb.addInst(OpCode.STC, maxInd + 1);
+        cb.addInst(OpCode.LT);
+        cb.addInst(OpCode.JMF, etiqueta_final);
 
-        // Cargar elemento origen: DRF [base + idx]
-        int bloques_diferencia = st.level - array.nivel;
-        cb.addInst(OpCode.SRF, bloques_diferencia, array.offset); // dirección base origen
-        cb.addInst(OpCode.SWP);                                   // traer idx arriba
-        cb.addInst(OpCode.PLUS);                                  // base + idx
-        cb.addInst(OpCode.DRF);                                   // cargar valor
+        // --- Load from original array
+        cb.addInst(OpCode.SRF, st.level - array.nivel, array.offset);  // base of original
+        cb.addInst(OpCode.DUP);        // duplicate idx
+        cb.addInst(OpCode.SWP);        // idx on top
+        cb.addInst(OpCode.PLUS);       // address = base + idx
+        cb.addInst(OpCode.DRF);        // load value
 
-        // Guardar en destino: ASG [base + idx] = valor
-        cb.addInst(OpCode.SRF, bloques_diferencia, array.offset); // dirección base destino
-        cb.addInst(OpCode.SWP);                                   // traer idx arriba
-        cb.addInst(OpCode.PLUS);                                  // base + idx
-        cb.addInst(OpCode.ASG);                                   // guardar valor
+        // --- Store in local copy
+        cb.addInst(OpCode.SRF, 0, copyOffset);  // base of local copy (current frame)
+        cb.addInst(OpCode.SWP);        // bring idx up
+        cb.addInst(OpCode.PLUS);       // compute address
+        cb.addInst(OpCode.ASG);        // store value
 
-        // Incrementar idx y repetir
-        cb.addInst(OpCode.STC, 1);                // cargar 1
-        cb.addInst(OpCode.PLUS);                  // idx = idx + 1
-        cb.addInst(OpCode.JMP, etiqueta_inicio);  // saltar al inicio del bucle
+        // idx = idx + 1
+        cb.addInst(OpCode.STC, 1);
+        cb.addInst(OpCode.PLUS);
+        cb.addInst(OpCode.JMP, etiqueta_inicio);
 
-        // Fin del bucle
         cb.addLabel(etiqueta_final);
 
         return cb;
@@ -242,7 +244,7 @@ public class gcl {
         for(Symbol param : parametros) {
             try {
                 param.offset = CGUtils.memorySpaces[st.level];
-                if(param instanceof SymbolArray)
+                if(param instanceof SymbolArray && param.parClass != Symbol.ParameterClass.REF)
                     CGUtils.memorySpaces[st.level] += ((SymbolArray)param).maxInd - ((SymbolArray)param).minInd + 1; 
                 else CGUtils.memorySpaces[st.level]++;
                 st.insertSymbol(param);
