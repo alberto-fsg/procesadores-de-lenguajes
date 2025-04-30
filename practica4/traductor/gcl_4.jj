@@ -198,8 +198,8 @@ public class gcl {
     private static CodeBlock generarCopiaArray(Symbol array) {
         CodeBlock cb = new CodeBlock();
 
-        String etiqueta_inicio = array.name + "_copia_inicio";
-        String etiqueta_final  = array.name + "_copia_final";
+        String etiqueta_inicio = CGUtils.newLabel();//array.name + "_copia_inicio";
+        String etiqueta_final  = CGUtils.newLabel();//array.name + "_copia_final";
 
         SymbolArray symbol_array = (SymbolArray) array;
         int minInd = symbol_array.minInd;
@@ -387,7 +387,7 @@ public class gcl {
             }
     
             // Calculo de dirección de destino
-            int nivel_anidamiento = st.level - simbolo_var.nivel;;
+            int nivel_anidamiento = st.level - simbolo_var.nivel;
             cb.addComment("assignment " + nombre_variable);
             if (expresion_indice != null) {
                 // Caso array: base + índice
@@ -400,7 +400,7 @@ public class gcl {
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
-                if(nivel_anidamiento != st.level)
+                if(st.level <= 0)
                     cb.addInst(PCodeInstruction.OpCode.DRF);
             }
 
