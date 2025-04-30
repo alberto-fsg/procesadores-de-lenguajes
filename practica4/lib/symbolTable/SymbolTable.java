@@ -21,6 +21,7 @@ package lib.symbolTable;
 import java.util.*;
 import lib.symbolTable.exceptions.SymbolNotFoundException;
 import lib.symbolTable.exceptions.AlreadyDefinedSymbolException;
+import lib.tools.codeGeneration.CGUtils;
 
 public class SymbolTable {
 	private final int ST_SIZE = 16; //hasta 16 niveles
@@ -39,6 +40,7 @@ public class SymbolTable {
     public void insertBlock() {
         st.add(new HashMap<String, Symbol>(HASH_SIZE));
         level++;
+        CGUtils.memorySpaces[level] = 3;
     }
 
     //elimina el bloque más reciente

@@ -70,39 +70,6 @@ public class gcl {
 	   }
 	}
 
-    // inserta todos los símbolos de "lVars" de tipo "aT" y los marca como ref si "isRef",
-    // auxiliar para "parametros_declaraciones" (los parámetros de la declaración de una función/procedimiento)
-    private static void insertSymbols(AtribTipo aT, boolean isRef, ArrayList<String> lVars) {
-        for (String id : lVars) {
-            try {
-                Symbol sV = null;
-                if (aT.isArray) {
-                    sV = new SymbolArray(id, 0, aT.size-1, aT.type);
-                } else {
-                    switch(aT.type) {
-                        case INT:
-                            sV = new SymbolInt(id); break;
-                        case BOOL:
-                            sV = new SymbolBool(id); break;
-                        case CHAR:
-                            sV = new SymbolChar(id); break;
-                        default:
-                            System.out.println("Error: tipo no definido para variable \"" + id + "\".");
-                    }
-                }
-                if (sV != null) {
-                    sV.parClass = isRef ? Symbol.ParameterClass.REF : Symbol.ParameterClass.VAL;
-                    sV.offset = CGUtils.memorySpaces[st.level]++;
-                    st.insertSymbol(sV);
-                    printMessage("Tabla de símbolos",
-                        String.format("\"%s\" %d (offset %d).", sV.name, st.level, sV.offset));
-                }
-            } catch (AlreadyDefinedSymbolException e) {
-                System.out.println("Error: Identificador ya existe: \"" + id + "\"");
-            }
-        }
-    }
-
     private static boolean typeNotEqual(Symbol.Types esperado, Symbol.Types real, String error) {
         if(esperado == real) {
             if(error != null) printError(error);
