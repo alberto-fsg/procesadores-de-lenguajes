@@ -53,6 +53,7 @@ CodeBlock seleccion() :
     CodeBlock cres = new CodeBlock(), auxInst;
     ArrayList<AtribExp> condiciones = new ArrayList<AtribExp>();
     ArrayList<CodeBlock> cuerpos = new ArrayList<CodeBlock>();
+    boolean hayOtherwise = false;
 }
 {
     <tSELECTION>
@@ -64,25 +65,32 @@ CodeBlock seleccion() :
     )+
     [
         <tOTHERWISE> <tCOLON>
-        auxInst = instrSelect() { cuerpos.add(auxInst); }
+        auxInst = instrSelect() { cuerpos.add(auxInst); hayOtherwise = true; }
     ]
     <tEND_SELECTION>
 
     {
         // GENERACIÓN DE CÓDIGO
         cres.addComment("inicio select");
-        int i;
-        for(i = 0; i < condiciones.size(); ++i) {
-            String etiq = CGUtils.newLabel();
+        String etiqFin = CGUtils.newLabel();
+
+        for (int i = 0; i < condiciones.size(); ++i) {
+            String etiqSiguiente = CGUtils.newLabel();
             cres.addBlock(condiciones.get(i).code);
-            cres.addInst(OpCode.JMF, etiq);
+            cres.addInst(OpCode.JMF, etiqSiguiente);
             cres.addBlock(cuerpos.get(i));
-            cres.addLabel(etiq);
+            cres.addInst(OpCode.JMP, etiqFin);
+            cres.addLabel(etiqSiguiente);
         }
-        if(i == cuerpos.size() - 1) { // Hay Otherwise
-            cres.addBlock(cuerpos.get(i));
+
+        // Si hay bloque "otherwise", añadirlo al final
+        if (hayOtherwise) {
+            cres.addBlock(cuerpos.get(cuerpos.size() - 1));
         }
+
+        cres.addLabel(etiqFin);
         cres.addComment("fin select");
+
         return cres;
     }
 }

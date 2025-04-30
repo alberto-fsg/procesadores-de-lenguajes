@@ -152,65 +152,6 @@ public class gcl {
         return cb;
     }
 
-    /**
-     * Genera el código para copiar un array pasado por valor.
-     *
-     * @param array Array del que se genera la copia.
-     * @return Bloque de código que genera la copia del array.
-     */
-    private static CodeBlock generarCopiaArray(SymbolArray destArray, SymbolArray sourceArray, Symbol indexVar) {
-        CodeBlock cb = new CodeBlock();
-
-        String loopLabel = CGUtils.newLabel();
-
-        int minInd = destArray.minInd;
-        int maxInd = destArray.maxInd;
-
-        // STEP 1: Initialize index to minInd
-        cb.addInst(OpCode.STC, minInd);              // push minInd
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);  // push address of index
-        cb.addInst(OpCode.ASG);                      // index := minInd
-
-        // STEP 2: Begin loop
-        cb.addLabel(loopLabel);
-
-        // Load index
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);  // push address of index
-        cb.addInst(OpCode.DRF);                      // idx
-        cb.addInst(OpCode.DUP);                      // idx (duplicate for use in dest and src)
-
-        // --- Source array access: source[idx] ---
-        cb.addInst(OpCode.SRF, 0, sourceArray.offset); // push source base address
-        cb.addInst(OpCode.DRF);                        // deref -> base pointer
-        cb.addInst(OpCode.PLUS);                       // base + idx
-        cb.addInst(OpCode.DRF);                        // value = source[idx]
-
-        // --- Destination array access: dest[idx] ---
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // reload index
-        cb.addInst(OpCode.DRF);                        // idx
-        cb.addInst(OpCode.SRF, 0, destArray.offset);   // push dest base address
-        cb.addInst(OpCode.DRF);                        // deref -> base pointer
-        cb.addInst(OpCode.PLUS);                       // base + idx
-        cb.addInst(OpCode.ASG);                        // dest[idx] = source[idx]
-
-        // --- Increment index ---
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
-        cb.addInst(OpCode.DRF);                        // idx
-        cb.addInst(OpCode.STC, 1);                     // 1
-        cb.addInst(OpCode.PLUS);                       // idx + 1
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
-        cb.addInst(OpCode.ASG);                        // index := index + 1
-
-        // --- Compare with limit ---
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
-        cb.addInst(OpCode.DRF);                        // idx
-        cb.addInst(OpCode.STC, maxInd + 1);            // upper limit (exclusive)
-        cb.addInst(OpCode.LT);                         // idx < max + 1
-        cb.addInst(OpCode.JMT, loopLabel);             // if true, jump to loop start
-
-        return cb;
-    }
-
     private static void insertParameters(ArrayList<Symbol> parametros) {
         st.insertBlock();
         for(Symbol param : parametros) {
@@ -357,6 +298,7 @@ public class gcl {
             // Calculo de dirección de destino
             int nivel_anidamiento = st.level - simbolo_var.nivel;
             cb.addComment("assignment " + nombre_variable);
+
             if (expresion_indice != null) {
                 // Caso array: base + índice
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
@@ -365,6 +307,7 @@ public class gcl {
                 cb.addInst(PCodeInstruction.OpCode.PLUS);
                 cb.addInst(PCodeInstruction.OpCode.STC, 0);
                 cb.addInst(PCodeInstruction.OpCode.SBT);
+
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
@@ -393,77 +336,16 @@ public class gcl {
      * @return el código generado
      */
     private static CodeBlock bucleGenerarCodigo(AtribExp condicion, CodeBlock cuerpo) {
+        String etiqCond = CGUtils.newLabel();
+        String etiqBody = CGUtils.newLabel();
+        
         CodeBlock cb = new CodeBlock();
-
-        String etiqueta_inicio = CGUtils.newLabel();
-        String etiqueta_prueba = CGUtils.newLabel();
-        String etiqueta_final  = CGUtils.newLabel();
-
-        cb.addComment("inicio bucle");
-
-        // Salto inicial a la prueba invertida
-        cb.addInst(OpCode.JMP, etiqueta_prueba);
-
-        // Cuerpo
-        cb.addLabel(etiqueta_inicio);
+        cb.addInst(OpCode.JMP, etiqCond);
+        cb.addLabel(etiqBody);
         cb.addBlock(cuerpo);
-
-        // Prueba invertida
-        cb.addLabel(etiqueta_prueba);
+        cb.addLabel(etiqCond);
         cb.addBlock(condicion.code);
-        cb.addInst(OpCode.JMF, etiqueta_final);
-        cb.addInst(OpCode.JMP, etiqueta_inicio);
-        cb.addLabel(etiqueta_final);
-
-        return cb;
-    }
-
-    /** Genera bloque switch en P-Code
-     * 
-     * @param condiciones Lista de expresiones booleanas que determinan cada caso
-     * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
-     * @param otherwise   Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
-     * @return el código generado
-     */
-    private static CodeBlock seleccionGenerarCodigo(
-        java.util.List<AtribExp> condiciones,
-        java.util.List<CodeBlock> cuerpos,
-        CodeBlock otherwise
-    ) {
-        CodeBlock cb = new CodeBlock();
-
-        String etiqueta_final = CGUtils.newLabel();
-        java.util.List<String> etiquetas_salto = new java.util.ArrayList<String>();
-
-        // Asociar una etiqueta a cada condición
-        for (int i = 0; i < condiciones.size(); i++) {
-            etiquetas_salto.add(CGUtils.newLabel());
-        }
-
-        // Generar código para cada condición
-        for (int i = 0; i < condiciones.size(); i++) {
-            // Evaluar la i-ésima condición
-            cb.addBlock(condiciones.get(i).code);
-            
-            // Caso falso: continuar con la siguiente condición
-            cb.addInst(OpCode.JMF, etiquetas_salto.get(i));
-            
-            // Caso verdadero: ejecutar el bloque y saltar al final del switch
-            cb.addBlock(cuerpos.get(i));
-            cb.addInst(OpCode.JMP, etiqueta_final);
-
-            // Etiqueta para continuar con la siguiente condición si el caso es falso
-            cb.addLabel(etiquetas_salto.get(i));
-        }
-
-        // Manejar el bloque por defecto (si existe)
-        if (otherwise != null) {
-            cb.addBlock(otherwise);
-        }
-
-        // Etiqueta a la que se salta si alguna condición es verdadera
-        cb.addLabel(etiqueta_final);
-
+        cb.addInst(OpCode.JMT, etiqBody);
         return cb;
     }
 }

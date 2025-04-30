@@ -6,6 +6,7 @@ public class AtribExp {
     public Symbol.Types type;
     public Boolean isConst;
     public CodeBlock code;
+    public CodeBlock codeVal;
     public String image;
 
     public AtribExp() {
@@ -21,6 +22,7 @@ public class AtribExp {
             this.image = image;
             this.isConst = isConst;
             code = new CodeBlock();
+            codeVal = new CodeBlock();
     }
 
     public static AtribExp copy(AtribExp ae) {

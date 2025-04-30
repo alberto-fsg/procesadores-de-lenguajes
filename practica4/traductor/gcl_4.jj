@@ -156,65 +156,6 @@ public class gcl {
         return cb;
     }
 
-    /**
-     * Genera el código para copiar un array pasado por valor.
-     *
-     * @param array Array del que se genera la copia.
-     * @return Bloque de código que genera la copia del array.
-     */
-    private static CodeBlock generarCopiaArray(SymbolArray destArray, SymbolArray sourceArray, Symbol indexVar) {
-        CodeBlock cb = new CodeBlock();
-
-        String loopLabel = CGUtils.newLabel();
-
-        int minInd = destArray.minInd;
-        int maxInd = destArray.maxInd;
-
-        // STEP 1: Initialize index to minInd
-        cb.addInst(OpCode.STC, minInd);              // push minInd
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);  // push address of index
-        cb.addInst(OpCode.ASG);                      // index := minInd
-
-        // STEP 2: Begin loop
-        cb.addLabel(loopLabel);
-
-        // Load index
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);  // push address of index
-        cb.addInst(OpCode.DRF);                      // idx
-        cb.addInst(OpCode.DUP);                      // idx (duplicate for use in dest and src)
-
-        // --- Source array access: source[idx] ---
-        cb.addInst(OpCode.SRF, 0, sourceArray.offset); // push source base address
-        cb.addInst(OpCode.DRF);                        // deref -> base pointer
-        cb.addInst(OpCode.PLUS);                       // base + idx
-        cb.addInst(OpCode.DRF);                        // value = source[idx]
-
-        // --- Destination array access: dest[idx] ---
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // reload index
-        cb.addInst(OpCode.DRF);                        // idx
-        cb.addInst(OpCode.SRF, 0, destArray.offset);   // push dest base address
-        cb.addInst(OpCode.DRF);                        // deref -> base pointer
-        cb.addInst(OpCode.PLUS);                       // base + idx
-        cb.addInst(OpCode.ASG);                        // dest[idx] = source[idx]
-
-        // --- Increment index ---
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
-        cb.addInst(OpCode.DRF);                        // idx
-        cb.addInst(OpCode.STC, 1);                     // 1
-        cb.addInst(OpCode.PLUS);                       // idx + 1
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
-        cb.addInst(OpCode.ASG);                        // index := index + 1
-
-        // --- Compare with limit ---
-        cb.addInst(OpCode.SRF, 0, indexVar.offset);    // address of index
-        cb.addInst(OpCode.DRF);                        // idx
-        cb.addInst(OpCode.STC, maxInd + 1);            // upper limit (exclusive)
-        cb.addInst(OpCode.LT);                         // idx < max + 1
-        cb.addInst(OpCode.JMT, loopLabel);             // if true, jump to loop start
-
-        return cb;
-    }
-
     private static void insertParameters(ArrayList<Symbol> parametros) {
         st.insertBlock();
         for(Symbol param : parametros) {
@@ -361,6 +302,7 @@ public class gcl {
             // Calculo de dirección de destino
             int nivel_anidamiento = st.level - simbolo_var.nivel;
             cb.addComment("assignment " + nombre_variable);
+
             if (expresion_indice != null) {
                 // Caso array: base + índice
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
@@ -369,6 +311,7 @@ public class gcl {
                 cb.addInst(PCodeInstruction.OpCode.PLUS);
                 cb.addInst(PCodeInstruction.OpCode.STC, 0);
                 cb.addInst(PCodeInstruction.OpCode.SBT);
+
             } else {
                 // Caso variable simple
                 cb.addInst(PCodeInstruction.OpCode.SRF, nivel_anidamiento, offset);
@@ -397,77 +340,16 @@ public class gcl {
      * @return el código generado
      */
     private static CodeBlock bucleGenerarCodigo(AtribExp condicion, CodeBlock cuerpo) {
+        String etiqCond = CGUtils.newLabel();
+        String etiqBody = CGUtils.newLabel();
+        
         CodeBlock cb = new CodeBlock();
-
-        String etiqueta_inicio = CGUtils.newLabel();
-        String etiqueta_prueba = CGUtils.newLabel();
-        String etiqueta_final  = CGUtils.newLabel();
-
-        cb.addComment("inicio bucle");
-
-        // Salto inicial a la prueba invertida
-        cb.addInst(OpCode.JMP, etiqueta_prueba);
-
-        // Cuerpo
-        cb.addLabel(etiqueta_inicio);
+        cb.addInst(OpCode.JMP, etiqCond);
+        cb.addLabel(etiqBody);
         cb.addBlock(cuerpo);
-
-        // Prueba invertida
-        cb.addLabel(etiqueta_prueba);
+        cb.addLabel(etiqCond);
         cb.addBlock(condicion.code);
-        cb.addInst(OpCode.JMF, etiqueta_final);
-        cb.addInst(OpCode.JMP, etiqueta_inicio);
-        cb.addLabel(etiqueta_final);
-
-        return cb;
-    }
-
-    /** Genera bloque switch en P-Code
-     * 
-     * @param condiciones Lista de expresiones booleanas que determinan cada caso
-     * @param cuerpos     Lista de bloques de código a ejecutar para cada caso correspondiente
-     * @param otherwise   Bloque de código opcional que se ejecuta cuando ningún caso coincide (puede ser null)
-     * @return el código generado
-     */
-    private static CodeBlock seleccionGenerarCodigo(
-        java.util.List<AtribExp> condiciones,
-        java.util.List<CodeBlock> cuerpos,
-        CodeBlock otherwise
-    ) {
-        CodeBlock cb = new CodeBlock();
-
-        String etiqueta_final = CGUtils.newLabel();
-        java.util.List<String> etiquetas_salto = new java.util.ArrayList<String>();
-
-        // Asociar una etiqueta a cada condición
-        for (int i = 0; i < condiciones.size(); i++) {
-            etiquetas_salto.add(CGUtils.newLabel());
-        }
-
-        // Generar código para cada condición
-        for (int i = 0; i < condiciones.size(); i++) {
-            // Evaluar la i-ésima condición
-            cb.addBlock(condiciones.get(i).code);
-            
-            // Caso falso: continuar con la siguiente condición
-            cb.addInst(OpCode.JMF, etiquetas_salto.get(i));
-            
-            // Caso verdadero: ejecutar el bloque y saltar al final del switch
-            cb.addBlock(cuerpos.get(i));
-            cb.addInst(OpCode.JMP, etiqueta_final);
-
-            // Etiqueta para continuar con la siguiente condición si el caso es falso
-            cb.addLabel(etiquetas_salto.get(i));
-        }
-
-        // Manejar el bloque por defecto (si existe)
-        if (otherwise != null) {
-            cb.addBlock(otherwise);
-        }
-
-        // Etiqueta a la que se salta si alguna condición es verdadera
-        cb.addLabel(etiqueta_final);
-
+        cb.addInst(OpCode.JMT, etiqBody);
         return cb;
     }
 }
@@ -770,14 +652,13 @@ AtribExp primario() :
         ae = expresion()
         <tCLOSING_SQUARE_BRACKET>
         {
-            try {
+            /*try {
                 s = st.getSymbol(t.image);
             } catch (SymbolNotFoundException e) {
                 printError(String.format("Array \"%s\" no encontrada en tabla de símbolos.", t.image));
                 return new AtribExp();
             }
             SymbolArray s_array = (SymbolArray) s;
-
             prim = new AtribExp(s_array.baseType, false);
             prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
             if(s.parClass == Symbol.ParameterClass.REF) prim.code.addInst(PCodeInstruction.OpCode.DRF);
@@ -787,6 +668,23 @@ AtribExp primario() :
             prim.code.addInst(PCodeInstruction.OpCode.STC, 1);
             prim.code.addInst(PCodeInstruction.OpCode.TMS);
             prim.code.addInst(PCodeInstruction.OpCode.PLUS);
+            prim.code.addInst(PCodeInstruction.OpCode.DRF);
+            return prim;*/
+
+            try {
+                s = st.getSymbol(t.image);
+            } catch(SymbolNotFoundException e) {
+                printError(String.format("Array \"%s\" no encontrada en tabla de símbolos.", t.image));
+                return new AtribExp();
+            }
+            SymbolArray s_array = (SymbolArray) s;
+            prim = new AtribExp(s_array.baseType, false);
+            prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
+            if(s.parClass == Symbol.ParameterClass.REF) prim.code.addInst(PCodeInstruction.OpCode.DRF);
+            prim.code.addBlock(ae.code);
+            prim.code.addInst(PCodeInstruction.OpCode.PLUS);
+            prim.code.addInst(PCodeInstruction.OpCode.STC, s_array.minInd);
+            prim.code.addInst(PCodeInstruction.OpCode.SBT);
             prim.code.addInst(PCodeInstruction.OpCode.DRF);
             return prim;
         }
@@ -799,6 +697,15 @@ AtribExp primario() :
                 prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
                 prim.code.addInst(PCodeInstruction.OpCode.DRF);
                 if(s.parClass == Symbol.ParameterClass.REF) prim.code.addInst(PCodeInstruction.OpCode.DRF);
+                
+                if(s instanceof SymbolArray) {
+                    SymbolArray arr = (SymbolArray) s;
+                    for(int offset = s.offset; offset <= s.offset + arr.maxInd - arr.minInd; ++offset) {
+                        prim.codeVal.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, offset);
+                        prim.codeVal.addInst(PCodeInstruction.OpCode.DRF);
+                    }
+                }
+
                 return prim;
             } catch (SymbolNotFoundException e) {
                 printError(String.format("Identificador \"%s\" no encontrado en tabla de símbolos.", t.image));
@@ -1109,28 +1016,38 @@ CodeBlock declaracion_proc() :
     {
         // DECLARACIÓN DE CÓDGIO
         String etiqInicioProc = CGUtils.newLabel();
-        st.getSymbol(t.image).label = etiqInicioProc;
+        SymbolProcedure sProc = (SymbolProcedure) st.getSymbol(t.image);
+        sProc.label = etiqInicioProc;
         
         cres.addLabel(etiqInicioProc);
         
         // Parámetros
         for (int i = parametros.size() - 1; i >= 0; --i) {
             Symbol param = parametros.get(i);
+            cres.addComment("parameter " + param.name);
 
-            // General case: assign parameter value
-            cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
-            cres.addInst(OpCode.ASGI);
-
-            // Handle arrays passed by value
-            if (param instanceof SymbolArray) {
-                SymbolArray arrayParam = (SymbolArray) param;
-
-                // Only copy if passed by value
-                if (arrayParam.parClass == Symbol.ParameterClass.VAL) {
-                    // Generate code to copy array contents into the local arrayParam.offset
-                    CodeBlock copia = generarCopiaArray(arrayParam);
-                    cres.addBlock(copia);
-                }
+            if(param instanceof SymbolArray && param.parClass != Symbol.ParameterClass.REF) {
+                SymbolArray arr = (SymbolArray) param;
+                String etiq = CGUtils.newLabel();
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset + arr.maxInd - arr.minInd);
+                cres.addLabel(etiq);
+                cres.addInst(OpCode.DUP);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, CGUtils.memorySpaces[st.level]);
+                cres.addInst(OpCode.ASGI);
+                cres.addInst(OpCode.ASGI);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, CGUtils.memorySpaces[st.level]);
+                cres.addInst(OpCode.DRF);
+                cres.addInst(OpCode.STC, 1);
+                cres.addInst(OpCode.SBT);
+                cres.addInst(OpCode.DUP);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
+                cres.addInst(OpCode.GTE);
+                cres.addInst(OpCode.JMT, etiq);
+                cres.addInst(OpCode.POP);
+            } else {
+                // General case: assign parameter value
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
+                cres.addInst(OpCode.ASGI);
             }
         }
 
@@ -1204,18 +1121,28 @@ CodeBlock llamar_funcion() :
         if(fun instanceof SymbolFunction) {
             SymbolFunction f = (SymbolFunction) fun;
             for(int i = 0; i < lPar.size(); i++) {
-                if(f.parList.get(i).parClass == Symbol.ParameterClass.REF)
+                if(f.parList.get(i).parClass == Symbol.ParameterClass.REF) {
                     lPar.get(i).code.pop();
-                c.addBlock(lPar.get(i).code);
+                    c.addBlock(lPar.get(i).code);
+                } else if(f.parList.get(i).type == Symbol.Types.ARRAY) {
+                    c.addBlock(lPar.get(i).codeVal);
+                } else {
+                    c.addBlock(lPar.get(i).code);
+                }
             }
             c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
         }
         if(fun instanceof SymbolProcedure) {
             SymbolProcedure p = (SymbolProcedure) fun;
             for(int i = 0; i < lPar.size(); i++) {
-                if(p.parList.get(i).parClass == Symbol.ParameterClass.REF)
+                if(p.parList.get(i).parClass == Symbol.ParameterClass.REF) {
                     lPar.get(i).code.pop();
-                c.addBlock(lPar.get(i).code);
+                    c.addBlock(lPar.get(i).code);
+                } else if(p.parList.get(i).type == Symbol.Types.ARRAY) {
+                    c.addBlock(lPar.get(i).codeVal);
+                } else {
+                    c.addBlock(lPar.get(i).code);
+                }
             }
             c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
         }
@@ -1383,6 +1310,7 @@ CodeBlock seleccion() :
     CodeBlock cres = new CodeBlock(), auxInst;
     ArrayList<AtribExp> condiciones = new ArrayList<AtribExp>();
     ArrayList<CodeBlock> cuerpos = new ArrayList<CodeBlock>();
+    boolean hayOtherwise = false;
 }
 {
     <tSELECTION>
@@ -1394,25 +1322,32 @@ CodeBlock seleccion() :
     )+
     [
         <tOTHERWISE> <tCOLON>
-        auxInst = instrSelect() { cuerpos.add(auxInst); }
+        auxInst = instrSelect() { cuerpos.add(auxInst); hayOtherwise = true; }
     ]
     <tEND_SELECTION>
 
     {
         // GENERACIÓN DE CÓDIGO
         cres.addComment("inicio select");
-        int i;
-        for(i = 0; i < condiciones.size(); ++i) {
-            String etiq = CGUtils.newLabel();
+        String etiqFin = CGUtils.newLabel();
+
+        for (int i = 0; i < condiciones.size(); ++i) {
+            String etiqSiguiente = CGUtils.newLabel();
             cres.addBlock(condiciones.get(i).code);
-            cres.addInst(OpCode.JMF, etiq);
+            cres.addInst(OpCode.JMF, etiqSiguiente);
             cres.addBlock(cuerpos.get(i));
-            cres.addLabel(etiq);
+            cres.addInst(OpCode.JMP, etiqFin);
+            cres.addLabel(etiqSiguiente);
         }
-        if(i == cuerpos.size() - 1) { // Hay Otherwise
-            cres.addBlock(cuerpos.get(i));
+
+        // Si hay bloque "otherwise", añadirlo al final
+        if (hayOtherwise) {
+            cres.addBlock(cuerpos.get(cuerpos.size() - 1));
         }
+
+        cres.addLabel(etiqFin);
         cres.addComment("fin select");
+
         return cres;
     }
 }

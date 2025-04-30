@@ -35,28 +35,38 @@ CodeBlock declaracion_proc() :
     {
         // DECLARACIÓN DE CÓDGIO
         String etiqInicioProc = CGUtils.newLabel();
-        st.getSymbol(t.image).label = etiqInicioProc;
+        SymbolProcedure sProc = (SymbolProcedure) st.getSymbol(t.image);
+        sProc.label = etiqInicioProc;
         
         cres.addLabel(etiqInicioProc);
         
         // Parámetros
         for (int i = parametros.size() - 1; i >= 0; --i) {
             Symbol param = parametros.get(i);
+            cres.addComment("parameter " + param.name);
 
-            // General case: assign parameter value
-            cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
-            cres.addInst(OpCode.ASGI);
-
-            // Handle arrays passed by value
-            if (param instanceof SymbolArray) {
-                SymbolArray arrayParam = (SymbolArray) param;
-
-                // Only copy if passed by value
-                if (arrayParam.parClass == Symbol.ParameterClass.VAL) {
-                    // Generate code to copy array contents into the local arrayParam.offset
-                    CodeBlock copia = generarCopiaArray(arrayParam);
-                    cres.addBlock(copia);
-                }
+            if(param instanceof SymbolArray && param.parClass != Symbol.ParameterClass.REF) {
+                SymbolArray arr = (SymbolArray) param;
+                String etiq = CGUtils.newLabel();
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset + arr.maxInd - arr.minInd);
+                cres.addLabel(etiq);
+                cres.addInst(OpCode.DUP);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, CGUtils.memorySpaces[st.level]);
+                cres.addInst(OpCode.ASGI);
+                cres.addInst(OpCode.ASGI);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, CGUtils.memorySpaces[st.level]);
+                cres.addInst(OpCode.DRF);
+                cres.addInst(OpCode.STC, 1);
+                cres.addInst(OpCode.SBT);
+                cres.addInst(OpCode.DUP);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
+                cres.addInst(OpCode.GTE);
+                cres.addInst(OpCode.JMT, etiq);
+                cres.addInst(OpCode.POP);
+            } else {
+                // General case: assign parameter value
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
+                cres.addInst(OpCode.ASGI);
             }
         }
 
@@ -130,18 +140,28 @@ CodeBlock llamar_funcion() :
         if(fun instanceof SymbolFunction) {
             SymbolFunction f = (SymbolFunction) fun;
             for(int i = 0; i < lPar.size(); i++) {
-                if(f.parList.get(i).parClass == Symbol.ParameterClass.REF)
+                if(f.parList.get(i).parClass == Symbol.ParameterClass.REF) {
                     lPar.get(i).code.pop();
-                c.addBlock(lPar.get(i).code);
+                    c.addBlock(lPar.get(i).code);
+                } else if(f.parList.get(i).type == Symbol.Types.ARRAY) {
+                    c.addBlock(lPar.get(i).codeVal);
+                } else {
+                    c.addBlock(lPar.get(i).code);
+                }
             }
             c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
         }
         if(fun instanceof SymbolProcedure) {
             SymbolProcedure p = (SymbolProcedure) fun;
             for(int i = 0; i < lPar.size(); i++) {
-                if(p.parList.get(i).parClass == Symbol.ParameterClass.REF)
+                if(p.parList.get(i).parClass == Symbol.ParameterClass.REF) {
                     lPar.get(i).code.pop();
-                c.addBlock(lPar.get(i).code);
+                    c.addBlock(lPar.get(i).code);
+                } else if(p.parList.get(i).type == Symbol.Types.ARRAY) {
+                    c.addBlock(lPar.get(i).codeVal);
+                } else {
+                    c.addBlock(lPar.get(i).code);
+                }
             }
             c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
         }
