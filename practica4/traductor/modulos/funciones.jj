@@ -90,7 +90,8 @@ CodeBlock declaracion_func() :
     CodeBlock cres = new CodeBlock();
     CodeBlock cinst = new CodeBlock();
     CodeBlock aux = new CodeBlock();
-    SymbolProcedure sProc;
+    SymbolFunction sFunc;
+    AtribTipo aT;
 }
 {
     aT = tipoEscalar()
