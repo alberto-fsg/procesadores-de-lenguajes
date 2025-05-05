@@ -148,6 +148,8 @@ CodeBlock declaracion_func() :
         cres.addBlock(cinst);
 
         // Fin procedimiento
+        cres.addInst(OpCode.SRF, 0, sFunc.offset);
+        cres.addInst(OpCode.DRF);
         cres.addInst(OpCode.CSF);
         cres.addComment("fin procedimiento " + t.image);
 
@@ -195,7 +197,7 @@ CodeBlock llamar_funcion() :
                     c.addBlock(lPar.get(i).code);
                 }
             }
-            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
+            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel + 1, fun.label);
         }
         if(fun instanceof SymbolProcedure) {
             SymbolProcedure p = (SymbolProcedure) fun;

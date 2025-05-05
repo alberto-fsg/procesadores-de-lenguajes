@@ -1,0 +1,614 @@
+[0;33mCompilando el proyecto[0m
+
+Buildfile: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/build.xml
+
+init:
+
+jcc:
+   [javacc] Java Compiler Compiler Version 4.1d1 (Parser Generator)
+   [javacc] (type "javacc" with no arguments for help)
+   [javacc] Reading from file /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/traductor/gcl_4.jj . . .
+   [javacc] File "TokenMgrError.java" is being rebuilt.
+   [javacc] File "ParseException.java" is being rebuilt.
+   [javacc] File "Token.java" is being rebuilt.
+   [javacc] File "SimpleCharStream.java" is being rebuilt.
+   [javacc] Parser generated successfully.
+
+compile:
+    [javac] Compiling 27 source files to /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/build
+    [javac] warning: [options] bootstrap class path not set in conjunction with -source 8
+    [javac] Note: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/jcc_files/gcl.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 1 warning
+
+dist:
+      [jar] Building jar: /home/jorge/Escritorio/procesadores_lenguajes/procesadores-de-lenguajes/practica4/dist/gcl_4.jar
+
+BUILD SUCCESSFUL
+Total time: 3 seconds
+[0;33mEjecutando las pruebas[0m
+
+[32mTabla de símbolos:[0m "formato"  0 (offset 3).
+[32mTabla de símbolos:[0m "fils"  0 (offset 4).
+[32mTabla de símbolos:[0m "cols"  0 (offset 5).
+[32mTabla de símbolos:[0m "max_gris"  0 (offset 6).
+[32mTabla de símbolos:[0m "image"  0 (offset 7).
+[32mTabla de símbolos:[0m "fils" 1 (offset 3).
+[32mTabla de símbolos:[0m "cols" 1 (offset 4).
+[32mTabla de símbolos:[0m "i" 1 (offset 5).
+[32mTabla de símbolos:[0m "j" 1 (offset 6).
+[32mTabla de símbolos:[0m "formato" 1 (offset 3).
+[32mTabla de símbolos:[0m "fils" 1 (offset 4).
+[32mTabla de símbolos:[0m "cols" 1 (offset 5).
+[32mTabla de símbolos:[0m "prof" 1 (offset 6).
+[32mTabla de símbolos:[0m "imagen" 1 (offset 7).
+[32mTabla de símbolos:[0m "c"  1 (offset 8).
+[32mTabla de símbolos:[0m "i"  1 (offset 9).
+[32mTabla de símbolos:[0m "j"  1 (offset 10).
+[32mTabla de símbolos:[0m "formato" 1 (offset 3).
+[32mTabla de símbolos:[0m "fils" 1 (offset 4).
+[32mTabla de símbolos:[0m "cols" 1 (offset 5).
+[32mTabla de símbolos:[0m "prof" 1 (offset 6).
+[32mTabla de símbolos:[0m "imagen" 1 (offset 7).
+[32mTabla de símbolos:[0m "c"  1 (offset 8).
+[32mTabla de símbolos:[0m "i"  1 (offset 9).
+[32mTabla de símbolos:[0m "j"  1 (offset 10).
+[32mTabla de símbolos:[0m "formato" 1 (offset 3).
+[32mTabla de símbolos:[0m "fils" 1 (offset 4).
+[32mTabla de símbolos:[0m "cols" 1 (offset 5).
+[32mTabla de símbolos:[0m "prof" 1 (offset 6).
+[32mTabla de símbolos:[0m "imagen" 1 (offset 7).
+[32mTabla de símbolos:[0m "c"  1 (offset 8).
+[32mTabla de símbolos:[0m "i"  1 (offset 9).
+[32mTabla de símbolos:[0m "j"  1 (offset 10).
+[32mTabla de símbolos:[0m "idx"  1 (offset 11).
+***** Análisis terminado con éxito *****
+
+  ENP L20
+L0:
+; --parameter j
+  SRF  0  6
+  ASGI
+; --parameter i
+  SRF  0  5
+  ASGI
+; --parameter cols
+  SRF  0  4
+  ASGI
+; --parameter fils
+  SRF  0  3
+  ASGI
+; --inicio procedimiento indice
+; --assignment indice
+  SRF  0 500007
+  SRF  0  5
+  DRF
+  SRF  0  4
+  DRF
+  TMS
+  SRF  0  6
+  DRF
+  PLUS
+  ASG
+  SRF  0 500007
+  DRF
+  CSF
+; --fin procedimiento indice
+L1:
+; --parameter imagen
+  SRF  0  7
+  ASGI
+; --parameter prof
+  SRF  0  6
+  ASGI
+; --parameter cols
+  SRF  0  5
+  ASGI
+; --parameter fils
+  SRF  0  4
+  ASGI
+; --parameter formato
+  SRF  0  3
+  ASGI
+; --inicio procedimiento cargar_imagen
+; --Comienzo leer línea
+  SRF  0  8
+  DRF
+  RD  0
+; --Fin leer línea
+; --Comienzo leer línea
+  SRF  0  3
+  DRF
+  RD  1
+; --Fin leer línea
+; --Comienzo leer línea
+  SRF  0  4
+  DRF
+  RD  1
+; --Fin leer línea
+; --Comienzo leer línea
+  SRF  0  5
+  DRF
+  RD  1
+; --Fin leer línea
+; --Comienzo leer línea
+  SRF  1  6
+  DRF
+  RD  1
+; --Fin leer línea
+; --inicio select
+  SRF  0  4
+  DRF
+  DRF
+  SRF  0  5
+  DRF
+  DRF
+  TMS
+  STC 500000
+  GT
+  JMF L7
+; --Comienzo escribir línea
+  STC 40
+  STC 32
+  STC 115
+  STC 101
+  STC 110
+  STC 111
+  STC 105
+  STC 115
+  STC 110
+  STC 101
+  STC 109
+  STC 105
+  STC 100
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 110
+  STC 101
+  STC 103
+  STC 97
+  STC 109
+  STC 73
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  4
+  DRF
+  DRF
+  WRT  1
+  STC 32
+  STC 44
+  WRT  0
+  WRT  0
+  SRF  0  5
+  DRF
+  DRF
+  WRT  1
+  STC 33
+  STC 41
+  STC 115
+  STC 108
+  STC 101
+  STC 120
+  STC 105
+  STC 112
+  STC 32
+  STC 48
+  STC 48
+  STC 48
+  STC 48
+  STC 48
+  STC 53
+  STC 32
+  STC 120
+  STC 97
+  STC 109
+  STC 40
+  STC 32
+  STC 101
+  STC 100
+  STC 110
+  STC 97
+  STC 114
+  STC 103
+  STC 32
+  STC 111
+  STC 100
+  STC 97
+  STC 105
+  STC 115
+  STC 97
+  STC 109
+  STC 101
+  STC 100
+  STC 32
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment cargar_imagen
+  SRF  0 500008
+  STC  0
+  ASG
+  JMP L6
+L7:
+; --assignment i
+  SRF  0  9
+  STC  0
+  ASG
+  JMP L4
+L5:
+; --assignment j
+  SRF  0 10
+  STC  0
+  ASG
+  JMP L2
+L3:
+; --Comienzo leer línea
+  SRF  0  8
+  DRF
+  RD  0
+; --Fin leer línea
+; --assignment image
+  SRF  1  7
+; --call indice
+  SRF  0  4
+  DRF
+  DRF
+  SRF  0  5
+  DRF
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  OSF 11  1 L0
+  PLUS
+  STC  0
+  SBT
+  SRF  0  8
+  DRF
+  ASG
+; --assignment j
+  SRF  0 10
+  SRF  0 10
+  DRF
+  STC  1
+  PLUS
+  ASG
+L2:
+  SRF  0 10
+  DRF
+  SRF  0  5
+  DRF
+  DRF
+  LT
+  JMT L3
+; --assignment i
+  SRF  0  9
+  SRF  0  9
+  DRF
+  STC  1
+  PLUS
+  ASG
+L4:
+  SRF  0  9
+  DRF
+  SRF  0  4
+  DRF
+  DRF
+  LT
+  JMT L5
+; --assignment cargar_imagen
+  SRF  0 500008
+  STC  1
+  ASG
+L6:
+; --fin select
+  SRF  0 500008
+  DRF
+  CSF
+; --fin procedimiento cargar_imagen
+L8:
+; --parameter imagen
+  SRF  0  7
+  ASGI
+; --parameter prof
+  SRF  0  6
+  ASGI
+; --parameter cols
+  SRF  0  5
+  ASGI
+; --parameter fils
+  SRF  0  4
+  ASGI
+; --parameter formato
+  SRF  0  3
+  ASGI
+; --inicio procedimiento guardar_imagen
+; --Comienzo escribir línea
+  STC 80
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 32
+  WRT  0
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  SRF  0  6
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment i
+  SRF  0  9
+  STC  0
+  ASG
+  JMP L11
+L12:
+; --assignment j
+  SRF  0 10
+  STC  0
+  ASG
+  JMP L9
+L10:
+; --Comienzo escribir
+  SRF  1  7
+; --call indice
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  OSF 11  1 L0
+  PLUS
+  STC  0
+  SBT
+  DRF
+  WRT  0
+; --Fin escribir
+; --assignment j
+  SRF  0 10
+  SRF  0 10
+  DRF
+  STC  1
+  PLUS
+  ASG
+L9:
+  SRF  0 10
+  DRF
+  SRF  0  5
+  DRF
+  LT
+  JMT L10
+; --assignment i
+  SRF  0  9
+  SRF  0  9
+  DRF
+  STC  1
+  PLUS
+  ASG
+L11:
+  SRF  0  9
+  DRF
+  SRF  0  4
+  DRF
+  LT
+  JMT L12
+  CSF
+; --fin procedimiento guardar_imagen
+L13:
+; --parameter imagen
+  SRF  0  7
+  ASGI
+; --parameter prof
+  SRF  0  6
+  ASGI
+; --parameter cols
+  SRF  0  5
+  ASGI
+; --parameter fils
+  SRF  0  4
+  ASGI
+; --parameter formato
+  SRF  0  3
+  ASGI
+; --inicio procedimiento invertir_imagen
+; --assignment i
+  SRF  0  9
+  STC  0
+  ASG
+  JMP L16
+L17:
+; --assignment j
+  SRF  0 10
+  STC  0
+  ASG
+  JMP L14
+L15:
+; --assignment idx
+  SRF  0 11
+; --call indice
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  OSF 12  1 L0
+  ASG
+; --assignment image
+  SRF  1  7
+  SRF  0 11
+  DRF
+  PLUS
+  STC  0
+  SBT
+  SRF  1  6
+  DRF
+  SRF  1  7
+  SRF  0 11
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  SBT
+  ASG
+; --assignment j
+  SRF  0 10
+  SRF  0 10
+  DRF
+  STC  1
+  PLUS
+  ASG
+L14:
+  SRF  0 10
+  DRF
+  SRF  0  5
+  DRF
+  LT
+  JMT L15
+; --assignment i
+  SRF  0  9
+  SRF  0  9
+  DRF
+  STC  1
+  PLUS
+  ASG
+L16:
+  SRF  0  9
+  DRF
+  SRF  0  4
+  DRF
+  LT
+  JMT L17
+  CSF
+; --fin procedimiento invertir_imagen
+; --Comienzo del programa invertir_pgm
+L20:
+; --inicio select
+; --call cargar_imagen
+  SRF  0  3
+  SRF  0  4
+  SRF  0  5
+  SRF  0  6
+  SRF  0  7
+  OSF 500009  0 L1
+  JMF L19
+; --call invertir_imagen
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  SRF  0  7
+  OSF 500009  0 L13
+; --call guardar_imagen
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  SRF  0  7
+  OSF 500009  0 L8
+  JMP L18
+L19:
+L18:
+; --fin select
+; --Fin del programa invertir_pgm
+  LVP
+
+***** P-Code generado *****
+
+====================================
+
+========== invertir_pgm.gcl ==========
+
+Return para continuar

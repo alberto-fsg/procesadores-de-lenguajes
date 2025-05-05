@@ -30,8 +30,8 @@ AtribExp primario() :
                         lPar.get(i).code.pop();
                     prim.code.addBlock(lPar.get(i).code);
                 }
-                prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel, s.label);
-                prim.code.addInst(PCodeInstruction.OpCode.DRF);
+                prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel + 1, s.label);
+                //prim.code.addInst(PCodeInstruction.OpCode.DRF);
                 return prim;
             } catch(SymbolNotFoundException e) {
                 printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));

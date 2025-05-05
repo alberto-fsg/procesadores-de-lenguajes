@@ -149,15 +149,10 @@ public class gcl {
         try {
             SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             sFunc.label = etiqueta;
+            sFunc.offset = CGUtils.memorySpaces[st.level]++;
             st.insertSymbol(sFunc);
             insertParameters(parametros);
-            try {
-                sFunc.offset = CGUtils.memorySpaces[st.level]++;
-                st.insertSymbol(sFunc);
-                insertParameters(parametros);
-            } catch(AlreadyDefinedSymbolException e) {
-                printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
-            }
+            st.insertSymbol(sFunc);
             return sFunc;
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
@@ -329,6 +324,8 @@ public class gcl {
     
             // Calculo de dirección de destino
             int nivel_anidamiento = st.level - simbolo_var.nivel;
+            //cb.addComment(Integer.toString(st.level));
+            //cb.addComment(Integer.toString(simbolo_var.));
             cb.addComment("assignment " + nombre_variable);
 
             if (expresion_indice != null) {
@@ -666,8 +663,8 @@ AtribExp primario() :
                         lPar.get(i).code.pop();
                     prim.code.addBlock(lPar.get(i).code);
                 }
-                prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel, s.label);
-                prim.code.addInst(PCodeInstruction.OpCode.DRF);
+                prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel + 1, s.label);
+                //prim.code.addInst(PCodeInstruction.OpCode.DRF);
                 return prim;
             } catch(SymbolNotFoundException e) {
                 printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
@@ -1158,6 +1155,8 @@ CodeBlock declaracion_func() :
         cres.addBlock(cinst);
 
         // Fin procedimiento
+        cres.addInst(OpCode.SRF, 0, sFunc.offset);
+        cres.addInst(OpCode.DRF);
         cres.addInst(OpCode.CSF);
         cres.addComment("fin procedimiento " + t.image);
 
@@ -1205,7 +1204,7 @@ CodeBlock llamar_funcion() :
                     c.addBlock(lPar.get(i).code);
                 }
             }
-            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
+            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel + 1, fun.label);
         }
         if(fun instanceof SymbolProcedure) {
             SymbolProcedure p = (SymbolProcedure) fun;

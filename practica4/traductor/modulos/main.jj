@@ -145,15 +145,10 @@ public class gcl {
         try {
             SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             sFunc.label = etiqueta;
+            sFunc.offset = CGUtils.memorySpaces[st.level]++;
             st.insertSymbol(sFunc);
             insertParameters(parametros);
-            try {
-                sFunc.offset = CGUtils.memorySpaces[st.level]++;
-                st.insertSymbol(sFunc);
-                insertParameters(parametros);
-            } catch(AlreadyDefinedSymbolException e) {
-                printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
-            }
+            st.insertSymbol(sFunc);
             return sFunc;
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
@@ -325,6 +320,8 @@ public class gcl {
     
             // Calculo de dirección de destino
             int nivel_anidamiento = st.level - simbolo_var.nivel;
+            //cb.addComment(Integer.toString(st.level));
+            //cb.addComment(Integer.toString(simbolo_var.));
             cb.addComment("assignment " + nombre_variable);
 
             if (expresion_indice != null) {
