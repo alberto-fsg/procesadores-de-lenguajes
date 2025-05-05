@@ -128,14 +128,17 @@ public class gcl {
         return ok;
     }
 
-    private static void insertProcedure(Token identificador, ArrayList<Symbol> parametros) {
-        SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
+    private static SymbolProcedure insertProcedure(Token identificador, ArrayList<Symbol> parametros, String etiqueta) {
         try {
             // al procedure no hay que darle offset
+            SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
+            sProc.label = etiqueta;
             st.insertSymbol(sProc);
             insertParameters(parametros);
+            return sProc;
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+            return null;
         }
     }
 
@@ -999,6 +1002,7 @@ CodeBlock declaracion_proc() :
     CodeBlock cres = new CodeBlock();
     CodeBlock cinst = new CodeBlock();
     CodeBlock aux = new CodeBlock();
+    SymbolProcedure sProc;
 }
 {
     t = <tIDENTIFICADOR>
@@ -1006,7 +1010,8 @@ CodeBlock declaracion_proc() :
     ( parametros = parametros_declaraciones() )?
     <tCLOSING_PARENTHESIS>
     {
-        insertProcedure(t, parametros);
+        String etiqInicioProc = CGUtils.newLabel();
+        sProc = insertProcedure(t, parametros, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_proc() | declaracion_func() )*
@@ -1015,9 +1020,6 @@ CodeBlock declaracion_proc() :
     <tEND>
     {
         // DECLARACIÓN DE CÓDGIO
-        String etiqInicioProc = CGUtils.newLabel();
-        SymbolProcedure sProc = (SymbolProcedure) st.getSymbol(t.image);
-        sProc.label = etiqInicioProc;
         
         cres.addLabel(etiqInicioProc);
         
@@ -1468,6 +1470,7 @@ CodeBlock leer_linea() :
                     c.addComment("Comienzo leer");
                     c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                     int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                    c.addInst(OpCode.DRF);
                     c.addInst(OpCode.RD, tipo);
                     c.addComment("Fin leer");
                 } catch (SymbolNotFoundException e) {
@@ -1498,6 +1501,7 @@ CodeBlock leer() :
                 c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                c.addInst(OpCode.DRF);
                 c.addInst(OpCode.RD, tipo);
                 c.addComment("Fin leer línea");
             } catch (SymbolNotFoundException e) {

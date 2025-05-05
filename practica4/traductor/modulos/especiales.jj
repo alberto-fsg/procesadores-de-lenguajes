@@ -102,6 +102,7 @@ CodeBlock leer_linea() :
                     c.addComment("Comienzo leer");
                     c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                     int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                    c.addInst(OpCode.DRF);
                     c.addInst(OpCode.RD, tipo);
                     c.addComment("Fin leer");
                 } catch (SymbolNotFoundException e) {
@@ -132,6 +133,7 @@ CodeBlock leer() :
                 c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                c.addInst(OpCode.DRF);
                 c.addInst(OpCode.RD, tipo);
                 c.addComment("Fin leer línea");
             } catch (SymbolNotFoundException e) {

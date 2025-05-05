@@ -18,6 +18,7 @@ CodeBlock declaracion_proc() :
     CodeBlock cres = new CodeBlock();
     CodeBlock cinst = new CodeBlock();
     CodeBlock aux = new CodeBlock();
+    SymbolProcedure sProc;
 }
 {
     t = <tIDENTIFICADOR>
@@ -25,7 +26,8 @@ CodeBlock declaracion_proc() :
     ( parametros = parametros_declaraciones() )?
     <tCLOSING_PARENTHESIS>
     {
-        insertProcedure(t, parametros);
+        String etiqInicioProc = CGUtils.newLabel();
+        sProc = insertProcedure(t, parametros, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_proc() | declaracion_func() )*
@@ -34,9 +36,6 @@ CodeBlock declaracion_proc() :
     <tEND>
     {
         // DECLARACIÓN DE CÓDGIO
-        String etiqInicioProc = CGUtils.newLabel();
-        SymbolProcedure sProc = (SymbolProcedure) st.getSymbol(t.image);
-        sProc.label = etiqInicioProc;
         
         cres.addLabel(etiqInicioProc);
         

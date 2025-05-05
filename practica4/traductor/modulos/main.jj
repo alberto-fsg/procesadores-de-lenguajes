@@ -124,14 +124,17 @@ public class gcl {
         return ok;
     }
 
-    private static void insertProcedure(Token identificador, ArrayList<Symbol> parametros) {
-        SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
+    private static SymbolProcedure insertProcedure(Token identificador, ArrayList<Symbol> parametros, String etiqueta) {
         try {
             // al procedure no hay que darle offset
+            SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
+            sProc.label = etiqueta;
             st.insertSymbol(sProc);
             insertParameters(parametros);
+            return sProc;
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+            return null;
         }
     }
 
