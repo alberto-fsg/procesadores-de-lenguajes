@@ -1,0 +1,848 @@
+  ENP L0
+; --- variable i: @dir 3 level 0
+; --- variable n: @dir 4 level 0
+; --- variable fn: @dir 5 level 0
+; --- variable fnm1: @dir 6 level 0
+; --- variable fnm2: @dir 7 level 0
+; --- function pedir_dato
+L1:
+; --- parameter dato: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function pedir_dato start
+L2:
+; --- assignment dato
+  SRF  0  3
+  DRF
+  STC  0
+  ASG
+  JMP L4
+L3:
+; --- write
+  STC 32
+  STC 58
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 98
+  STC 105
+  STC 114
+  STC 99
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- read
+; --- access dato
+  SRF  0  3
+  DRF
+  RD  1
+L4:
+; --- access dato
+  SRF  0  3
+  DRF
+  DRF
+  STC  0
+  LTE
+  JMT L3
+  CSF
+; --- function dato
+L5:
+; --- parameter dato: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function dato start
+L6:
+; --- variable correcto: @dir 4 level 1
+; --- assignment dato
+  SRF  0  3
+  DRF
+  STC  0
+  ASG
+; --- assignment correcto
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L8
+L7:
+; --- call pedir_dato
+; --- access dato
+  SRF  0  3
+  DRF
+  OSF  5  1 L1
+; --- assignment correcto
+  SRF  0  4
+; --- access dato
+  SRF  0  3
+  DRF
+  DRF
+  STC  0
+  GT
+  ASG
+; --- if
+L9:
+; --- access correcto
+  SRF  0  4
+  DRF
+  NGB
+  JMF L10
+; --- write
+  STC 46
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 101
+  STC 98
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 108
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+L10:
+L8:
+; --- access correcto
+  SRF  0  4
+  DRF
+  NGB
+  JMT L7
+  CSF
+; --- main_block start
+L0:
+; --- write
+  STC 10
+  WRT  0
+; --- write
+  STC 41
+  STC 50
+  STC 45
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 43
+  STC 32
+  STC 41
+  STC 49
+  STC 45
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 97
+  STC 118
+  STC 105
+  STC 115
+  STC 114
+  STC 117
+  STC 99
+  STC 101
+  STC 114
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 109
+  STC 114
+  STC -77
+  STC -61
+  STC 102
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 41
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 99
+  STC 108
+  STC 97
+  STC 99
+  STC 32
+  STC 121
+  STC 32
+  STC 110
+  STC 32
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC -70
+  STC -61
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 100
+  STC 105
+  STC 112
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 46
+  STC 97
+  STC 118
+  STC 105
+  STC 116
+  STC 97
+  STC 114
+  STC 101
+  STC 116
+  STC 105
+  STC 32
+  STC 115
+  STC 101
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 99
+  STC 97
+  STC 116
+  STC 110
+  STC 101
+  STC 109
+  STC 101
+  STC 108
+  STC 112
+  STC 109
+  STC 105
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 114
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 100
+  STC 105
+  STC 112
+  STC -95
+  STC -61
+  STC 114
+  STC 32
+  STC 121
+  STC 117
+  STC 109
+  STC 32
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 46
+  STC 41
+  STC 115
+  STC 101
+  STC 116
+  STC 121
+  STC 98
+  STC 32
+  STC 52
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 110
+  STC 111
+  STC 115
+  STC 32
+  STC 112
+  STC 32
+  STC 97
+  STC 110
+  STC 105
+  STC 117
+  STC 113
+  STC -95
+  STC -61
+  STC 109
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 110
+  STC 101
+  STC 32
+  STC 115
+  STC 111
+  STC 114
+  STC 101
+  STC 116
+  STC 110
+  STC 101
+  STC 32
+  STC 115
+  STC 111
+  STC 108
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 114
+  STC 111
+  STC 112
+  STC 32
+  STC 41
+  STC 55
+  STC 52
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 110
+  STC 101
+  STC 32
+  STC 119
+  STC 111
+  STC 108
+  STC 102
+  STC 114
+  STC 101
+  STC 118
+  STC 111
+  STC 32
+  STC 72
+  STC 84
+  STC 65
+  STC 77
+  STC 32
+  STC -95
+  STC -61
+  STC 114
+  STC 98
+  STC 97
+  STC 72
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 10
+  WRT  0
+; --- call dato
+; --- access n
+  SRF  0  4
+  OSF  8  0 L5
+; --- write
+  STC 10
+  WRT  0
+; --- write
+  STC 49
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  STC 49
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 49
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  STC 50
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- assignment i
+  SRF  0  3
+  STC  3
+  ASG
+; --- assignment fnm1
+  SRF  0  6
+  STC  1
+  ASG
+; --- assignment fnm2
+  SRF  0  7
+  STC  1
+  ASG
+  JMP L12
+L11:
+; --- assignment fn
+  SRF  0  5
+; --- access fnm1
+  SRF  0  6
+  DRF
+; --- access fnm2
+  SRF  0  7
+  DRF
+  PLUS
+  ASG
+; --- write
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access i
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access fn
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment fnm2
+  SRF  0  7
+; --- access fnm1
+  SRF  0  6
+  DRF
+  ASG
+; --- assignment fnm1
+  SRF  0  6
+; --- access fn
+  SRF  0  5
+  DRF
+  ASG
+; --- assignment i
+  SRF  0  3
+; --- access i
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L12:
+; --- access i
+  SRF  0  3
+  DRF
+; --- access n
+  SRF  0  4
+  DRF
+  LTE
+  JMT L11
+; --- write
+  STC 10
+  WRT  0
+  LVP

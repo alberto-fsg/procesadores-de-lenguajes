@@ -1,0 +1,1488 @@
+  ENP L0
+; --- variable i1: @dir 3 level 0
+; --- variable i2: @dir 4 level 0
+; --- variable i3: @dir 5 level 0
+; --- variable i4: @dir 6 level 0
+; --- variable i5: @dir 7 level 0
+; --- variable b1: @dir 8 level 0
+; --- variable b2: @dir 9 level 0
+; --- variable b3: @dir 10 level 0
+; --- variable b4: @dir 11 level 0
+; --- variable b5: @dir 12 level 0
+; --- variable b6: @dir 13 level 0
+; --- variable numformulas: @dir 14 level 0
+; --- variable numtrues: @dir 15 level 0
+; --- function evalua
+L1:
+; --- parameter numtrues: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter numformulas: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter b: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function evalua start
+L2:
+; --- if
+L3:
+; --- access b
+  SRF  0  3
+  DRF
+  JMF L4
+; --- assignment numtrues
+  SRF  0  5
+  DRF
+; --- access numtrues
+  SRF  0  5
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+L4:
+; --- assignment numformulas
+  SRF  0  4
+  DRF
+; --- access numformulas
+  SRF  0  4
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+  CSF
+; --- main_block start
+L0:
+; --- write
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- assignment numformulas
+  SRF  0 14
+  STC  0
+  ASG
+; --- assignment numtrues
+  SRF  0 15
+  STC  0
+  ASG
+; --- assignment b1
+  SRF  0  8
+  STC  1
+  ASG
+; --- assignment b2
+  SRF  0  9
+  STC  1
+  ASG
+; --- assignment b3
+  SRF  0 10
+  STC  1
+  ASG
+; --- assignment b4
+  SRF  0 11
+  STC  1
+  ASG
+; --- assignment b5
+  SRF  0 12
+  STC  1
+  ASG
+; --- assignment b6
+  SRF  0 13
+  STC  1
+  ASG
+; --- assignment i1
+  SRF  0  3
+  STC  1
+  ASG
+; --- assignment i2
+  SRF  0  4
+  STC  2
+  ASG
+; --- assignment i3
+  SRF  0  5
+  STC  3
+  ASG
+; --- assignment i4
+  SRF  0  6
+  STC  4
+  ASG
+; --- assignment i5
+  SRF  0  7
+  STC  5
+  ASG
+; --- write
+  STC 115
+  STC 97
+  STC 116
+  STC 99
+  STC 101
+  STC 114
+  STC 114
+  STC 111
+  STC 99
+  STC 32
+  STC 115
+  STC 97
+  STC 110
+  STC 97
+  STC 101
+  STC 108
+  STC 111
+  STC 111
+  STC 98
+  STC 32
+  STC 115
+  STC 101
+  STC 110
+  STC 111
+  STC 105
+  STC 115
+  STC 101
+  STC 114
+  STC 112
+  STC 120
+  STC 101
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 116
+  STC 110
+  STC 117
+  STC 106
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 97
+  STC -70
+  STC -61
+  STC 108
+  STC 97
+  STC 118
+  STC 101
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- call evalua
+  STC  1
+  STC  1
+  AND
+  STC  1
+  NGB
+  AND
+  STC  3
+  STC  5
+  GT
+  AND
+  STC  6
+  STC  5
+  GT
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+; --- access b3
+  SRF  0 10
+  DRF
+  OR
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+  NGB
+; --- access b2
+  SRF  0  9
+  DRF
+  OR
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+  AND
+; --- access b5
+  SRF  0 12
+  DRF
+; --- access b6
+  SRF  0 13
+  DRF
+  AND
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+; --- access b5
+  SRF  0 12
+  DRF
+  NGB
+  AND
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  NGB
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+  NGB
+; --- access b2
+  SRF  0  9
+  DRF
+  NGB
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+  NGB
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  AND
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+  NGB
+  OR
+; --- access b4
+  SRF  0 11
+  DRF
+; --- access b5
+  SRF  0 12
+  DRF
+  AND
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+  NGB
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  NGB
+  AND
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+  EQ
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  OR
+; --- access b3
+  SRF  0 10
+  DRF
+  NGB
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  OR
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+  AND
+; --- access b5
+  SRF  0 12
+  DRF
+; --- access b6
+  SRF  0 13
+  DRF
+  OR
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+  EQ
+  NGB
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  OR
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+  OR
+; --- access b5
+  SRF  0 12
+  DRF
+; --- access b6
+  SRF  0 13
+  DRF
+  OR
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  AND
+  NGB
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  OR
+  NGB
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  AND
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  AND
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  AND
+  EQ
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  OR
+; --- access b3
+  SRF  0 10
+  DRF
+; --- access b4
+  SRF  0 11
+  DRF
+  OR
+  AND
+; --- access b5
+  SRF  0 12
+  DRF
+; --- access b6
+  SRF  0 13
+  DRF
+  OR
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access b1
+  SRF  0  8
+  DRF
+; --- access b2
+  SRF  0  9
+  DRF
+  OR
+; --- access b3
+  SRF  0 10
+  DRF
+  OR
+  NGB
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC 10
+  GT
+; --- access i2
+  SRF  0  4
+  DRF
+  STC  5
+  LTE
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  PLUS
+  STC  2
+  TMS
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  SBT
+  GTE
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC  0
+  GT
+; --- access i2
+  SRF  0  4
+  DRF
+  STC 100
+  LT
+  AND
+; --- access i3
+  SRF  0  5
+  DRF
+  STC 42
+  EQ
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  TMS
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  PLUS
+  EQ
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC 20
+  GTE
+; --- access i2
+  SRF  0  4
+  DRF
+  STC  5
+  LT
+; --- access i3
+  SRF  0  5
+  DRF
+  STC 10
+  GTE
+  OR
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC  3
+  MOD
+  STC  0
+  EQ
+; --- access i2
+  SRF  0  4
+  DRF
+  STC  2
+  MOD
+  STC  1
+  EQ
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC  2
+  DIV
+  STC 10
+  GT
+; --- access i3
+  SRF  0  5
+  DRF
+  STC  7
+  EQ
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  SBT
+  STC  5
+  GTE
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  PLUS
+  STC 100
+  LT
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC  5
+  DIV
+; --- access i2
+  SRF  0  4
+  DRF
+  STC  2
+  DIV
+  EQ
+; --- access i3
+  SRF  0  5
+  DRF
+  STC 10
+  GT
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  STC  3
+  TMS
+  PLUS
+; --- access i3
+  SRF  0  5
+  DRF
+  STC  2
+  DIV
+  GTE
+; --- access i4
+  SRF  0  6
+  DRF
+  STC  7
+  EQ
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC 10
+  DIV
+; --- access i2
+  SRF  0  4
+  DRF
+  STC  4
+  MOD
+  EQ
+; --- access i3
+  SRF  0  5
+  DRF
+  STC 20
+  GT
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+  STC 10
+; --- access i1
+  SRF  0  3
+  DRF
+  LTE
+; --- access i2
+  SRF  0  4
+  DRF
+  STC  5
+  LT
+; --- access i3
+  SRF  0  5
+  DRF
+  STC 15
+  GTE
+  OR
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  TMS
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  PLUS
+  GT
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC  0
+  GTE
+  NGB
+; --- access i2
+  SRF  0  4
+  DRF
+  STC 100
+  LT
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  EQ
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  EQ
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+  STC  2
+  DIV
+; --- access i2
+  SRF  0  4
+  DRF
+  NEQ
+; --- access i3
+  SRF  0  5
+  DRF
+  STC  5
+  GT
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  PLUS
+  STC  7
+  MOD
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  TMS
+  STC 10
+  MOD
+  EQ
+; --- access i5
+  SRF  0  7
+  DRF
+  STC  3
+  GTE
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  PLUS
+  STC 50
+  GT
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  PLUS
+  STC 100
+  LT
+  OR
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- call evalua
+; --- access i1
+  SRF  0  3
+  DRF
+; --- access i2
+  SRF  0  4
+  DRF
+  EQ
+; --- access i3
+  SRF  0  5
+  DRF
+; --- access i4
+  SRF  0  6
+  DRF
+  GT
+  AND
+; --- access numformulas
+  SRF  0 14
+; --- access numtrues
+  SRF  0 15
+  OSF 16  0 L1
+; --- write
+  STC 115
+  STC 111
+  STC 99
+  STC 105
+  STC 116
+  STC 99
+  STC -95
+  STC -61
+  STC 116
+  STC 110
+  STC 105
+  STC 115
+  STC 32
+  STC 111
+  STC 32
+  STC 115
+  STC 111
+  STC 99
+  STC 105
+  STC 120
+  STC -87
+  STC -61
+  STC 108
+  STC 32
+  STC 115
+  STC 97
+  STC 109
+  STC 101
+  STC 108
+  STC 98
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 110
+  STC 105
+  STC 115
+  STC 32
+  STC -83
+  STC -61
+  STC 117
+  STC 113
+  STC 97
+  STC 32
+  STC 111
+  STC 100
+  STC 97
+  STC 103
+  STC 101
+  STC 108
+  STC 108
+  STC 32
+  STC 114
+  STC 101
+  STC 98
+  STC 97
+  STC 104
+  STC 32
+  STC 97
+  STC -83
+  STC -61
+  STC 114
+  STC 101
+  STC 98
+  STC 101
+  STC 68
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 46
+  STC 83
+  STC 69
+  STC 85
+  STC 82
+  STC 84
+  STC 32
+  STC 57
+  STC 49
+  STC 32
+  STC 121
+  STC 32
+  STC 115
+  STC 97
+  STC 108
+  STC 117
+  STC 109
+  STC 114
+  STC -77
+  STC -61
+  STC 102
+  STC 32
+  STC 56
+  STC 51
+  STC 32
+  STC 114
+  STC 97
+  STC 100
+  STC 32
+  STC 121
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC  9
+  WRT  0
+  STC 32
+  STC 58
+  STC 115
+  STC 97
+  STC 108
+  STC 117
+  STC 109
+  STC 114
+  STC 111
+  STC 70
+  STC 109
+  STC 117
+  STC 110
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access numformulas
+  SRF  0 14
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- write
+  STC  9
+  WRT  0
+  STC 32
+  STC 32
+  STC 32
+  STC 58
+  STC 83
+  STC 69
+  STC 85
+  STC 82
+  STC 84
+  STC 32
+  STC 109
+  STC 117
+  STC 110
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access numtrues
+  SRF  0 15
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+  LVP

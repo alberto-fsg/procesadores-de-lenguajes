@@ -1,0 +1,878 @@
+  ENP L0
+; --- variable n: @dir 3 level 0
+; --- variable iteraciones: @dir 4 level 0
+; --- variable t: @dir 5 level 0 start 0 end 19
+; --- function inicializar
+L1:
+; --- parameter t: @dir 3 level 1 start 0 end 19
+  SRF  0  3
+  ASGI
+; --- function inicializar start
+L2:
+; --- variable i: @dir 4 level 1
+; --- assignment i
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L4
+L3:
+; --- assignment t
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- access n
+  SRF  1  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  SBT
+  ASG
+; --- assignment i
+  SRF  0  4
+; --- access i
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L4:
+; --- access i
+  SRF  0  4
+  DRF
+; --- access n
+  SRF  1  3
+  DRF
+  LT
+  JMT L3
+  CSF
+; --- function mostrar
+L5:
+; --- parameter t: @dir 3 level 1 start 0 end 19
+  SRF  0 22
+L6:
+  DUP
+  SRF  0 24
+  ASGI
+  ASGI
+  SRF  0 24
+  DRF
+  STC  1
+  SBT
+  DUP
+  SRF  0  3
+  GTE
+  JMT L6
+  POP
+; --- function mostrar start
+L7:
+; --- variable i: @dir 23 level 1
+; --- assignment i
+  SRF  0 23
+  STC  0
+  ASG
+  JMP L9
+L8:
+; --- write
+; --- access t
+  SRF  0  3
+; --- access i
+  SRF  0 23
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  WRT  1
+  STC 32
+  WRT  0
+; --- assignment i
+  SRF  0 23
+; --- access i
+  SRF  0 23
+  DRF
+  STC  1
+  PLUS
+  ASG
+L9:
+; --- access i
+  SRF  0 23
+  DRF
+; --- access n
+  SRF  1  3
+  DRF
+  LT
+  JMT L8
+; --- write
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  CSF
+; --- function intercambiar
+L10:
+; --- parameter j: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter i: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function intercambiar start
+L11:
+; --- variable k: @dir 5 level 1
+; --- assignment k
+  SRF  0  5
+; --- access i
+  SRF  0  3
+  DRF
+  DRF
+  ASG
+; --- assignment i
+  SRF  0  3
+  DRF
+; --- access j
+  SRF  0  4
+  DRF
+  DRF
+  ASG
+; --- assignment j
+  SRF  0  4
+  DRF
+; --- access k
+  SRF  0  5
+  DRF
+  ASG
+  CSF
+; --- function ordenar
+L12:
+; --- parameter j: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter i: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function ordenar start
+L13:
+; --- if
+L14:
+; --- access i
+  SRF  0  3
+  DRF
+  DRF
+; --- access j
+  SRF  0  4
+  DRF
+  DRF
+  GT
+  JMF L15
+; --- call intercambiar
+; --- access i
+  SRF  0  3
+  DRF
+; --- access j
+  SRF  0  4
+  DRF
+  OSF  5  1 L10
+L15:
+  CSF
+; --- function divide
+L16:
+; --- parameter me: @dir 6 level 1
+  SRF  0  6
+  ASGI
+; --- parameter der: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter izq: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter t: @dir 3 level 1 start 0 end 19
+  SRF  0  3
+  ASGI
+; --- function divide start
+L17:
+; --- variable p: @dir 7 level 1
+; --- variable k: @dir 8 level 1
+; --- assignment p
+  SRF  0  7
+; --- access t
+  SRF  0  3
+  DRF
+; --- access izq
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  ASG
+; --- assignment k
+  SRF  0  8
+; --- access izq
+  SRF  0  4
+  DRF
+  ASG
+; --- assignment me
+  SRF  0  6
+  DRF
+; --- access der
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+; --- assignment k
+  SRF  0  8
+; --- access k
+  SRF  0  8
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L19
+L18:
+; --- assignment k
+  SRF  0  8
+; --- access k
+  SRF  0  8
+  DRF
+  STC  1
+  PLUS
+  ASG
+L19:
+; --- access t
+  SRF  0  3
+  DRF
+; --- access k
+  SRF  0  8
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+; --- access p
+  SRF  0  7
+  DRF
+  LTE
+; --- access k
+  SRF  0  8
+  DRF
+; --- access der
+  SRF  0  5
+  DRF
+  LT
+  AND
+  JMT L18
+; --- assignment me
+  SRF  0  6
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  STC  1
+  SBT
+  ASG
+  JMP L21
+L20:
+; --- assignment me
+  SRF  0  6
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  STC  1
+  SBT
+  ASG
+L21:
+; --- access t
+  SRF  0  3
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+; --- access p
+  SRF  0  7
+  DRF
+  GT
+  JMT L20
+  JMP L23
+L22:
+; --- call intercambiar
+; --- access t
+  SRF  0  3
+  DRF
+; --- access k
+  SRF  0  8
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- access t
+  SRF  0  3
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  PLUS
+  STC  0
+  SBT
+  OSF  9  1 L10
+; --- assignment k
+  SRF  0  8
+; --- access k
+  SRF  0  8
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L25
+L24:
+; --- assignment k
+  SRF  0  8
+; --- access k
+  SRF  0  8
+  DRF
+  STC  1
+  PLUS
+  ASG
+L25:
+; --- access t
+  SRF  0  3
+  DRF
+; --- access k
+  SRF  0  8
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+; --- access p
+  SRF  0  7
+  DRF
+  LTE
+  JMT L24
+; --- assignment me
+  SRF  0  6
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  STC  1
+  SBT
+  ASG
+  JMP L27
+L26:
+; --- assignment me
+  SRF  0  6
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  STC  1
+  SBT
+  ASG
+L27:
+; --- access t
+  SRF  0  3
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+; --- access p
+  SRF  0  7
+  DRF
+  GT
+  JMT L26
+L23:
+; --- access k
+  SRF  0  8
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  LT
+  JMT L22
+; --- call intercambiar
+; --- access t
+  SRF  0  3
+  DRF
+; --- access izq
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- access t
+  SRF  0  3
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  DRF
+  PLUS
+  STC  0
+  SBT
+  OSF  9  1 L10
+  CSF
+; --- function quicksort
+L28:
+; --- parameter der: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter izq: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter t: @dir 3 level 1 start 0 end 19
+  SRF  0  3
+  ASGI
+; --- function quicksort start
+L29:
+; --- variable me: @dir 6 level 1
+; --- if
+L30:
+; --- access der
+  SRF  0  5
+  DRF
+; --- access izq
+  SRF  0  4
+  DRF
+  GT
+  JMF L31
+; --- call mostrar
+; --- access t
+  SRF  0  3
+  DRF
+  DUP
+  STC  0
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  1
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  2
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  3
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  4
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  5
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  6
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  7
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  8
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  9
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 10
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 11
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 12
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 13
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 14
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 15
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 16
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 17
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 18
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 19
+  PLUS
+  DRF
+  SWP
+  POP
+  OSF  7  1 L5
+; --- if
+L32:
+; --- access der
+  SRF  0  5
+  DRF
+; --- access izq
+  SRF  0  4
+  DRF
+  SBT
+  STC  1
+  EQ
+  JMF L33
+; --- call ordenar
+; --- access t
+  SRF  0  3
+  DRF
+; --- access izq
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- access t
+  SRF  0  3
+  DRF
+; --- access der
+  SRF  0  5
+  DRF
+  PLUS
+  STC  0
+  SBT
+  OSF  7  1 L12
+  JMP L34
+L33:
+; --- call divide
+; --- access t
+  SRF  0  3
+  DRF
+; --- access izq
+  SRF  0  4
+  DRF
+; --- access der
+  SRF  0  5
+  DRF
+; --- access me
+  SRF  0  6
+  OSF  7  1 L16
+; --- call quicksort
+; --- access t
+  SRF  0  3
+  DRF
+; --- access izq
+  SRF  0  4
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  STC  1
+  SBT
+  OSF  7  1 L28
+; --- call quicksort
+; --- access t
+  SRF  0  3
+  DRF
+; --- access me
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+; --- access der
+  SRF  0  5
+  DRF
+  OSF  7  1 L28
+; --- assignment iteraciones
+  SRF  1  4
+; --- access iteraciones
+  SRF  1  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L34:
+L31:
+  CSF
+; --- main_block start
+L0:
+; --- write
+  STC 46
+  STC 115
+  STC 111
+  STC 114
+  STC 101
+  STC 116
+  STC 110
+  STC 101
+  STC 32
+  STC 48
+  STC 50
+  STC 32
+  STC 114
+  STC 97
+  STC 110
+  STC 101
+  STC 100
+  STC 114
+  STC 111
+  STC 32
+  STC 97
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  STC 116
+  STC 114
+  STC 111
+  STC 115
+  STC 107
+  STC 99
+  STC 105
+  STC 117
+  STC 113
+  STC 32
+  STC 111
+  STC 109
+  STC 116
+  STC 105
+  STC 114
+  STC 111
+  STC 103
+  STC 108
+  STC 97
+  STC 32
+  STC 108
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 116
+  STC 110
+  STC 101
+  STC 105
+  STC 109
+  STC 97
+  STC 110
+  STC 111
+  STC 105
+  STC 99
+  STC 110
+  STC 117
+  STC 102
+  STC 32
+  STC 108
+  STC 101
+  STC 100
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 99
+  STC 97
+  STC 114
+  STC 116
+  STC 115
+  STC 117
+  STC 108
+  STC 73
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 10
+  WRT  0
+; --- assignment n
+  SRF  0  3
+  STC 20
+  ASG
+; --- assignment iteraciones
+  SRF  0  4
+  STC  0
+  ASG
+; --- call inicializar
+; --- access t
+  SRF  0  5
+  OSF 25  0 L1
+; --- call quicksort
+; --- access t
+  SRF  0  5
+  STC  0
+; --- access n
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+  OSF 25  0 L28
+; --- write
+  STC 10
+  WRT  0
+; --- write
+  STC 32
+  STC 58
+  STC 115
+  STC 101
+  STC 110
+  STC 111
+  STC 105
+  STC 99
+  STC 97
+  STC 114
+  STC 101
+  STC 116
+  STC 73
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access iteraciones
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+  LVP

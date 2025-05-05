@@ -1,0 +1,625 @@
+  ENP L0
+; --- variable formato: @dir 3 level 0
+; --- variable fils: @dir 4 level 0
+; --- variable cols: @dir 5 level 0
+; --- variable max_gris: @dir 6 level 0
+; --- variable image: @dir 7 level 0 start 0 end 499999
+; --- function indice
+L1:
+; --- parameter j: @dir 6 level 1
+  SRF  0  6
+  ASGI
+; --- parameter i: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter cols: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter fils: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function indice start
+L2:
+; --- variable indice: @dir 7 level 1
+; --- assignment indice
+  SRF  0  7
+; --- access i
+  SRF  0  5
+  DRF
+; --- access cols
+  SRF  0  4
+  DRF
+  TMS
+; --- access j
+  SRF  0  6
+  DRF
+  PLUS
+  ASG
+; --- return
+; --- access indice
+  SRF  0  7
+  DRF
+  CSF
+; --- function cargar_imagen
+L3:
+; --- parameter imagen: @dir 7 level 1 start 0 end 499999
+  SRF  0  7
+  ASGI
+; --- parameter prof: @dir 6 level 1
+  SRF  0  6
+  ASGI
+; --- parameter cols: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fils: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter formato: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function cargar_imagen start
+L4:
+; --- variable cargar_imagen: @dir 8 level 1
+; --- variable c: @dir 9 level 1
+; --- variable i: @dir 10 level 1
+; --- variable j: @dir 11 level 1
+; --- read
+; --- access c
+  SRF  0  9
+  RD  0
+; --- read
+; --- access formato
+  SRF  0  3
+  DRF
+  RD  1
+; --- read
+; --- access fils
+  SRF  0  4
+  DRF
+  RD  1
+; --- read
+; --- access cols
+  SRF  0  5
+  DRF
+  RD  1
+; --- read
+; --- access max_gris
+  SRF  1  6
+  RD  1
+; --- read
+L5:
+  SRF  0 12
+  RD  0
+  SRF  0 12
+  DRF
+  STC 10
+  NEQ
+  JMT L5
+; --- if
+L6:
+; --- access fils
+  SRF  0  4
+  DRF
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+  DRF
+  TMS
+  STC 500000
+  GT
+  JMF L7
+; --- write
+  STC 40
+  STC 32
+  STC 115
+  STC 101
+  STC 110
+  STC 111
+  STC 105
+  STC 115
+  STC 110
+  STC 101
+  STC 109
+  STC 105
+  STC 100
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 110
+  STC 101
+  STC 103
+  STC 97
+  STC 109
+  STC 73
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access fils
+  SRF  0  4
+  DRF
+  DRF
+  WRT  1
+  STC 32
+  STC 44
+  WRT  0
+  WRT  0
+; --- access cols
+  SRF  0  5
+  DRF
+  DRF
+  WRT  1
+  STC 33
+  STC 41
+  STC 115
+  STC 108
+  STC 101
+  STC 120
+  STC 105
+  STC 112
+  STC 32
+  STC 48
+  STC 48
+  STC 48
+  STC 48
+  STC 48
+  STC 53
+  STC 32
+  STC 120
+  STC 97
+  STC 109
+  STC 40
+  STC 32
+  STC 101
+  STC 100
+  STC 110
+  STC 97
+  STC 114
+  STC 103
+  STC 32
+  STC 111
+  STC 100
+  STC 97
+  STC 105
+  STC 115
+  STC 97
+  STC 109
+  STC 101
+  STC 100
+  STC 32
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- assignment cargar_imagen
+  SRF  0  8
+  STC  0
+  ASG
+  JMP L8
+L7:
+; --- assignment i
+  SRF  0 10
+  STC  0
+  ASG
+  JMP L10
+L9:
+; --- assignment j
+  SRF  0 11
+  STC  0
+  ASG
+  JMP L12
+L11:
+; --- read
+; --- access c
+  SRF  0  9
+  RD  0
+; --- assignment image
+  SRF  1  7
+; --- call indice
+; --- access fils
+  SRF  0  4
+  DRF
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+  DRF
+; --- access i
+  SRF  0 10
+  DRF
+; --- access j
+  SRF  0 11
+  DRF
+  OSF 12  1 L1
+  PLUS
+  STC  0
+  SBT
+; --- access c
+  SRF  0  9
+  DRF
+  ASG
+; --- assignment j
+  SRF  0 11
+; --- access j
+  SRF  0 11
+  DRF
+  STC  1
+  PLUS
+  ASG
+L12:
+; --- access j
+  SRF  0 11
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+  DRF
+  LT
+  JMT L11
+; --- assignment i
+  SRF  0 10
+; --- access i
+  SRF  0 10
+  DRF
+  STC  1
+  PLUS
+  ASG
+L10:
+; --- access i
+  SRF  0 10
+  DRF
+; --- access fils
+  SRF  0  4
+  DRF
+  DRF
+  LT
+  JMT L9
+; --- assignment cargar_imagen
+  SRF  0  8
+  STC  1
+  ASG
+L8:
+; --- return
+; --- access cargar_imagen
+  SRF  0  8
+  DRF
+  CSF
+; --- function guardar_imagen
+L13:
+; --- parameter imagen: @dir 7 level 1 start 0 end 499999
+  SRF  0  7
+  ASGI
+; --- parameter prof: @dir 6 level 1
+  SRF  0  6
+  ASGI
+; --- parameter cols: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fils: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter formato: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function guardar_imagen start
+L14:
+; --- variable c: @dir 8 level 1
+; --- variable i: @dir 9 level 1
+; --- variable j: @dir 10 level 1
+; --- write
+  STC 80
+  WRT  0
+; --- access formato
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- write
+; --- access fils
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 32
+  WRT  0
+; --- access cols
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- write
+; --- access prof
+  SRF  0  6
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment i
+  SRF  0  9
+  STC  0
+  ASG
+  JMP L16
+L15:
+; --- assignment j
+  SRF  0 10
+  STC  0
+  ASG
+  JMP L18
+L17:
+; --- write
+; --- access image
+  SRF  1  7
+; --- call indice
+; --- access fils
+  SRF  0  4
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+; --- access i
+  SRF  0  9
+  DRF
+; --- access j
+  SRF  0 10
+  DRF
+  OSF 11  1 L1
+  PLUS
+  STC  0
+  SBT
+  DRF
+  WRT  0
+; --- assignment j
+  SRF  0 10
+; --- access j
+  SRF  0 10
+  DRF
+  STC  1
+  PLUS
+  ASG
+L18:
+; --- access j
+  SRF  0 10
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+  LT
+  JMT L17
+; --- assignment i
+  SRF  0  9
+; --- access i
+  SRF  0  9
+  DRF
+  STC  1
+  PLUS
+  ASG
+L16:
+; --- access i
+  SRF  0  9
+  DRF
+; --- access fils
+  SRF  0  4
+  DRF
+  LT
+  JMT L15
+  CSF
+; --- function invertir_imagen
+L19:
+; --- parameter imagen: @dir 7 level 1 start 0 end 499999
+  SRF  0  7
+  ASGI
+; --- parameter prof: @dir 6 level 1
+  SRF  0  6
+  ASGI
+; --- parameter cols: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fils: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter formato: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function invertir_imagen start
+L20:
+; --- variable c: @dir 8 level 1
+; --- variable i: @dir 9 level 1
+; --- variable j: @dir 10 level 1
+; --- variable idx: @dir 11 level 1
+; --- assignment i
+  SRF  0  9
+  STC  0
+  ASG
+  JMP L22
+L21:
+; --- assignment j
+  SRF  0 10
+  STC  0
+  ASG
+  JMP L24
+L23:
+; --- assignment idx
+  SRF  0 11
+; --- call indice
+; --- access fils
+  SRF  0  4
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+; --- access i
+  SRF  0  9
+  DRF
+; --- access j
+  SRF  0 10
+  DRF
+  OSF 12  1 L1
+  ASG
+; --- assignment image
+  SRF  1  7
+; --- access idx
+  SRF  0 11
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- access max_gris
+  SRF  1  6
+  DRF
+; --- access image
+  SRF  1  7
+; --- access idx
+  SRF  0 11
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  SBT
+  ASG
+; --- assignment j
+  SRF  0 10
+; --- access j
+  SRF  0 10
+  DRF
+  STC  1
+  PLUS
+  ASG
+L24:
+; --- access j
+  SRF  0 10
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+  LT
+  JMT L23
+; --- assignment i
+  SRF  0  9
+; --- access i
+  SRF  0  9
+  DRF
+  STC  1
+  PLUS
+  ASG
+L22:
+; --- access i
+  SRF  0  9
+  DRF
+; --- access fils
+  SRF  0  4
+  DRF
+  LT
+  JMT L21
+  CSF
+; --- main_block start
+L0:
+; --- if
+L25:
+; --- call cargar_imagen
+; --- access formato
+  SRF  0  3
+; --- access fils
+  SRF  0  4
+; --- access cols
+  SRF  0  5
+; --- access max_gris
+  SRF  0  6
+; --- access image
+  SRF  0  7
+  OSF 500007  0 L3
+  JMF L26
+; --- call invertir_imagen
+; --- access formato
+  SRF  0  3
+  DRF
+; --- access fils
+  SRF  0  4
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+; --- access max_gris
+  SRF  0  6
+  DRF
+; --- access image
+  SRF  0  7
+  OSF 500007  0 L19
+; --- call guardar_imagen
+; --- access formato
+  SRF  0  3
+  DRF
+; --- access fils
+  SRF  0  4
+  DRF
+; --- access cols
+  SRF  0  5
+  DRF
+; --- access max_gris
+  SRF  0  6
+  DRF
+; --- access image
+  SRF  0  7
+  OSF 500007  0 L13
+L26:
+  LVP

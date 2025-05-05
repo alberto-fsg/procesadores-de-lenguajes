@@ -1,0 +1,521 @@
+  ENP L0
+; --- variable steps: @dir 3 level 0
+; --- variable n: @dir 4 level 0
+; --- function hanoi
+L1:
+; --- parameter spare: @dir 6 level 1
+  SRF  0  6
+  ASGI
+; --- parameter target: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter source: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter n: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function hanoi start
+L2:
+; --- if
+L3:
+; --- access n
+  SRF  0  3
+  DRF
+  STC  1
+  EQ
+  JMF L4
+; --- write
+  STC 32
+  STC 114
+  STC 101
+  STC 119
+  STC 111
+  STC 116
+  STC 32
+  STC 109
+  STC 111
+  STC 114
+  STC 102
+  STC 32
+  STC 107
+  STC 115
+  STC 105
+  STC 100
+  STC 32
+  STC 101
+  STC 118
+  STC 111
+  STC 77
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access source
+  SRF  0  4
+  DRF
+  WRT  0
+  STC 32
+  STC 114
+  STC 101
+  STC 119
+  STC 111
+  STC 116
+  STC 32
+  STC 111
+  STC 116
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access target
+  SRF  0  5
+  DRF
+  WRT  0
+  STC 32
+  STC 46
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- assignment steps
+  SRF  1  3
+; --- access steps
+  SRF  1  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L5
+L4:
+; --- call hanoi
+; --- access n
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+; --- access source
+  SRF  0  4
+  DRF
+; --- access spare
+  SRF  0  6
+  DRF
+; --- access target
+  SRF  0  5
+  DRF
+  OSF  7  1 L1
+; --- call hanoi
+  STC  1
+; --- access source
+  SRF  0  4
+  DRF
+; --- access target
+  SRF  0  5
+  DRF
+; --- access spare
+  SRF  0  6
+  DRF
+  OSF  7  1 L1
+; --- call hanoi
+; --- access n
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+; --- access spare
+  SRF  0  6
+  DRF
+; --- access target
+  SRF  0  5
+  DRF
+; --- access source
+  SRF  0  4
+  DRF
+  OSF  7  1 L1
+L5:
+  CSF
+; --- main_block start
+L0:
+; --- write
+  STC 10
+  WRT  0
+; --- write
+  STC 46
+  STC 109
+  STC 101
+  STC 108
+  STC 98
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 115
+  STC 114
+  STC 101
+  STC 119
+  STC 111
+  STC 84
+  STC 32
+  STC 105
+  STC 111
+  STC 110
+  STC 97
+  STC 72
+  STC 32
+  STC 101
+  STC 104
+  STC 116
+  STC 32
+  STC 101
+  STC 118
+  STC 108
+  STC 111
+  STC 115
+  STC 32
+  STC 111
+  STC 116
+  STC 32
+  STC 109
+  STC 104
+  STC 116
+  STC 105
+  STC 114
+  STC 111
+  STC 103
+  STC 108
+  STC 97
+  STC 32
+  STC 101
+  STC 118
+  STC 105
+  STC 115
+  STC 114
+  STC 117
+  STC 99
+  STC 101
+  STC 82
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 110
+  STC 111
+  STC 105
+  STC 116
+  STC 117
+  STC 108
+  STC 111
+  STC 115
+  STC 95
+  STC 101
+  STC 118
+  STC 105
+  STC 115
+  STC 114
+  STC 117
+  STC 99
+  STC 101
+  STC 82
+  STC 35
+  STC 105
+  STC 111
+  STC 110
+  STC 97
+  STC 72
+  STC 95
+  STC 102
+  STC 111
+  STC 95
+  STC 114
+  STC 101
+  STC 119
+  STC 111
+  STC 84
+  STC 47
+  STC 105
+  STC 107
+  STC 105
+  STC 119
+  STC 47
+  STC 103
+  STC 114
+  STC 111
+  STC 46
+  STC 97
+  STC 105
+  STC 100
+  STC 101
+  STC 112
+  STC 105
+  STC 107
+  STC 105
+  STC 119
+  STC 46
+  STC 110
+  STC 101
+  STC 47
+  STC 47
+  STC 58
+  STC 115
+  STC 112
+  STC 116
+  STC 116
+  STC 104
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 10
+  WRT  0
+; --- assignment steps
+  SRF  0  3
+  STC  0
+  ASG
+; --- assignment n
+  SRF  0  4
+  STC  3
+  ASG
+; --- write
+  STC 32
+  STC 114
+  STC 111
+  STC 102
+  STC 32
+  STC 103
+  STC 110
+  STC 105
+  STC 118
+  STC 108
+  STC 111
+  STC 83
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access n
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 46
+  STC 115
+  STC 107
+  STC 115
+  STC 105
+  STC 100
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 10
+  WRT  0
+; --- call hanoi
+; --- access n
+  SRF  0  4
+  DRF
+  STC 65
+  STC 67
+  STC 66
+  OSF  5  0 L1
+; --- write
+  STC 10
+  WRT  0
+; --- write
+  STC 32
+  STC 110
+  STC 105
+  STC 32
+  STC 100
+  STC 101
+  STC 104
+  STC 115
+  STC 105
+  STC 110
+  STC 105
+  STC 70
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access steps
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 46
+  STC 115
+  STC 112
+  STC 101
+  STC 116
+  STC 115
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+  LVP

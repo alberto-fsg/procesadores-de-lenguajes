@@ -1,0 +1,1139 @@
+  ENP L0
+; --- variable colonia: @dir 3 level 0 start 0 end 79
+; --- variable i: @dir 83 level 0
+; --- variable iteraciones: @dir 84 level 0
+; --- variable elementos: @dir 85 level 0
+; --- function inicializar
+L1:
+; --- parameter colonia: @dir 3 level 1 start 0 end 79
+  SRF  0  3
+  ASGI
+; --- function inicializar start
+L2:
+; --- variable i: @dir 4 level 1
+; --- assignment i
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L4
+L3:
+; --- assignment colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- access i
+  SRF  0  4
+  DRF
+  STC 20
+  MOD
+  STC  0
+  EQ
+  ASG
+; --- assignment i
+  SRF  0  4
+; --- access i
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L4:
+; --- access i
+  SRF  0  4
+  DRF
+; --- access elementos
+  SRF  1 85
+  DRF
+  LT
+  JMT L3
+  CSF
+; --- function asignar
+L5:
+; --- parameter siguiente: @dir 4 level 1 start 0 end 79
+  SRF  0 83
+L6:
+  DUP
+  SRF  0 85
+  ASGI
+  ASGI
+  SRF  0 85
+  DRF
+  STC  1
+  SBT
+  DUP
+  SRF  0  4
+  GTE
+  JMT L6
+  POP
+; --- parameter colonia: @dir 3 level 1 start 0 end 79
+  SRF  0  3
+  ASGI
+; --- function asignar start
+L7:
+; --- variable i: @dir 84 level 1
+; --- assignment i
+  SRF  0 84
+  STC  0
+  ASG
+  JMP L9
+L8:
+; --- assignment colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0 84
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- access siguiente
+  SRF  0  4
+; --- access i
+  SRF  0 84
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  ASG
+; --- assignment i
+  SRF  0 84
+; --- access i
+  SRF  0 84
+  DRF
+  STC  1
+  PLUS
+  ASG
+L9:
+; --- access i
+  SRF  0 84
+  DRF
+; --- access elementos
+  SRF  1 85
+  DRF
+  LT
+  JMT L8
+  CSF
+; --- function vivira
+L10:
+; --- parameter i: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter colonia: @dir 3 level 1 start 0 end 79
+  SRF  0  3
+  ASGI
+; --- function vivira start
+L11:
+; --- variable vivira: @dir 5 level 1
+; --- if
+L12:
+; --- access i
+  SRF  0  4
+  DRF
+  STC  0
+  EQ
+  JMF L13
+; --- assignment vivira
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L14
+L13:
+; --- if
+L15:
+; --- access i
+  SRF  0  4
+  DRF
+; --- access elementos
+  SRF  1 85
+  DRF
+  STC  1
+  SBT
+  EQ
+  JMF L16
+; --- assignment vivira
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L17
+L16:
+; --- assignment vivira
+  SRF  0  5
+; --- access colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  NGB
+; --- access colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  STC  1
+  SBT
+  PLUS
+  STC  0
+  SBT
+  DRF
+; --- access colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  PLUS
+  STC  0
+  SBT
+  DRF
+  NGB
+  AND
+; --- access colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  STC  1
+  SBT
+  PLUS
+  STC  0
+  SBT
+  DRF
+  NGB
+; --- access colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  PLUS
+  STC  0
+  SBT
+  DRF
+  AND
+  OR
+  AND
+  ASG
+L17:
+L14:
+; --- return
+; --- access vivira
+  SRF  0  5
+  DRF
+  CSF
+; --- function siguientegeneracion
+L18:
+; --- parameter colonia: @dir 3 level 1 start 0 end 79
+  SRF  0  3
+  ASGI
+; --- function siguientegeneracion start
+L19:
+; --- variable i: @dir 4 level 1
+; --- variable siguiente: @dir 5 level 1 start 0 end 79
+; --- assignment i
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L21
+L20:
+; --- assignment siguiente
+  SRF  0  5
+; --- access i
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+; --- call vivira
+; --- access colonia
+  SRF  0  3
+  DRF
+; --- access i
+  SRF  0  4
+  DRF
+  OSF 85  1 L10
+  ASG
+; --- assignment i
+  SRF  0  4
+; --- access i
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L21:
+; --- access i
+  SRF  0  4
+  DRF
+; --- access elementos
+  SRF  1 85
+  DRF
+  LT
+  JMT L20
+; --- call asignar
+; --- access colonia
+  SRF  0  3
+  DRF
+; --- access siguiente
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  SRF  0  7
+  DRF
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  SRF  0 14
+  DRF
+  SRF  0 15
+  DRF
+  SRF  0 16
+  DRF
+  SRF  0 17
+  DRF
+  SRF  0 18
+  DRF
+  SRF  0 19
+  DRF
+  SRF  0 20
+  DRF
+  SRF  0 21
+  DRF
+  SRF  0 22
+  DRF
+  SRF  0 23
+  DRF
+  SRF  0 24
+  DRF
+  SRF  0 25
+  DRF
+  SRF  0 26
+  DRF
+  SRF  0 27
+  DRF
+  SRF  0 28
+  DRF
+  SRF  0 29
+  DRF
+  SRF  0 30
+  DRF
+  SRF  0 31
+  DRF
+  SRF  0 32
+  DRF
+  SRF  0 33
+  DRF
+  SRF  0 34
+  DRF
+  SRF  0 35
+  DRF
+  SRF  0 36
+  DRF
+  SRF  0 37
+  DRF
+  SRF  0 38
+  DRF
+  SRF  0 39
+  DRF
+  SRF  0 40
+  DRF
+  SRF  0 41
+  DRF
+  SRF  0 42
+  DRF
+  SRF  0 43
+  DRF
+  SRF  0 44
+  DRF
+  SRF  0 45
+  DRF
+  SRF  0 46
+  DRF
+  SRF  0 47
+  DRF
+  SRF  0 48
+  DRF
+  SRF  0 49
+  DRF
+  SRF  0 50
+  DRF
+  SRF  0 51
+  DRF
+  SRF  0 52
+  DRF
+  SRF  0 53
+  DRF
+  SRF  0 54
+  DRF
+  SRF  0 55
+  DRF
+  SRF  0 56
+  DRF
+  SRF  0 57
+  DRF
+  SRF  0 58
+  DRF
+  SRF  0 59
+  DRF
+  SRF  0 60
+  DRF
+  SRF  0 61
+  DRF
+  SRF  0 62
+  DRF
+  SRF  0 63
+  DRF
+  SRF  0 64
+  DRF
+  SRF  0 65
+  DRF
+  SRF  0 66
+  DRF
+  SRF  0 67
+  DRF
+  SRF  0 68
+  DRF
+  SRF  0 69
+  DRF
+  SRF  0 70
+  DRF
+  SRF  0 71
+  DRF
+  SRF  0 72
+  DRF
+  SRF  0 73
+  DRF
+  SRF  0 74
+  DRF
+  SRF  0 75
+  DRF
+  SRF  0 76
+  DRF
+  SRF  0 77
+  DRF
+  SRF  0 78
+  DRF
+  SRF  0 79
+  DRF
+  SRF  0 80
+  DRF
+  SRF  0 81
+  DRF
+  SRF  0 82
+  DRF
+  SRF  0 83
+  DRF
+  SRF  0 84
+  DRF
+  OSF 85  1 L5
+  CSF
+; --- function mostrarcolonia
+L22:
+; --- parameter colonia: @dir 3 level 1 start 0 end 79
+  SRF  0 82
+L23:
+  DUP
+  SRF  0 84
+  ASGI
+  ASGI
+  SRF  0 84
+  DRF
+  STC  1
+  SBT
+  DUP
+  SRF  0  3
+  GTE
+  JMT L23
+  POP
+; --- function mostrarcolonia start
+L24:
+; --- variable i: @dir 83 level 1
+; --- assignment i
+  SRF  0 83
+  STC  0
+  ASG
+  JMP L26
+L25:
+; --- if
+L27:
+; --- access colonia
+  SRF  0  3
+; --- access i
+  SRF  0 83
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  JMF L28
+; --- write
+  STC 42
+  WRT  0
+  JMP L29
+L28:
+; --- write
+  STC 32
+  WRT  0
+L29:
+; --- assignment i
+  SRF  0 83
+; --- access i
+  SRF  0 83
+  DRF
+  STC  1
+  PLUS
+  ASG
+L26:
+; --- access i
+  SRF  0 83
+  DRF
+; --- access elementos
+  SRF  1 85
+  DRF
+  LT
+  JMT L25
+; --- write
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  CSF
+; --- main_block start
+L0:
+; --- write
+  STC 46
+  STC 121
+  STC 97
+  STC 119
+  STC 110
+  STC 111
+  STC 67
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 97
+  STC 100
+  STC 105
+  STC 86
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 103
+  STC 101
+  STC 117
+  STC 74
+  STC 32
+  STC 108
+  STC 101
+  STC 100
+  STC 32
+  STC 68
+  STC 49
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 115
+  STC 114
+  STC 101
+  STC 118
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 99
+  STC 97
+  STC 116
+  STC 110
+  STC 101
+  STC 109
+  STC 101
+  STC 108
+  STC 112
+  STC 109
+  STC 73
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 101
+  STC 108
+  STC 101
+  STC 83
+  STC 76
+  STC 95
+  STC 102
+  STC 111
+  STC 95
+  STC 101
+  STC 109
+  STC 97
+  STC 71
+  STC 95
+  STC 115
+  STC 55
+  STC 50
+  STC 37
+  STC 121
+  STC 97
+  STC 119
+  STC 110
+  STC 111
+  STC 67
+  STC 47
+  STC 105
+  STC 107
+  STC 105
+  STC 119
+  STC 47
+  STC 103
+  STC 124
+  STC 46
+  STC 97
+  STC 105
+  STC 100
+  STC 101
+  STC 112
+  STC 105
+  STC 107
+  STC 105
+  STC 119
+  STC 46
+  STC 110
+  STC 101
+  STC 47
+  STC 47
+  STC 58
+  STC 115
+  STC 112
+  STC 116
+  STC 116
+  STC 104
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 10
+  WRT  0
+; --- assignment elementos
+  SRF  0 85
+  STC 80
+  ASG
+; --- call inicializar
+; --- access colonia
+  SRF  0  3
+  OSF 86  0 L1
+; --- call mostrarcolonia
+; --- access colonia
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  SRF  0  7
+  DRF
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  SRF  0 14
+  DRF
+  SRF  0 15
+  DRF
+  SRF  0 16
+  DRF
+  SRF  0 17
+  DRF
+  SRF  0 18
+  DRF
+  SRF  0 19
+  DRF
+  SRF  0 20
+  DRF
+  SRF  0 21
+  DRF
+  SRF  0 22
+  DRF
+  SRF  0 23
+  DRF
+  SRF  0 24
+  DRF
+  SRF  0 25
+  DRF
+  SRF  0 26
+  DRF
+  SRF  0 27
+  DRF
+  SRF  0 28
+  DRF
+  SRF  0 29
+  DRF
+  SRF  0 30
+  DRF
+  SRF  0 31
+  DRF
+  SRF  0 32
+  DRF
+  SRF  0 33
+  DRF
+  SRF  0 34
+  DRF
+  SRF  0 35
+  DRF
+  SRF  0 36
+  DRF
+  SRF  0 37
+  DRF
+  SRF  0 38
+  DRF
+  SRF  0 39
+  DRF
+  SRF  0 40
+  DRF
+  SRF  0 41
+  DRF
+  SRF  0 42
+  DRF
+  SRF  0 43
+  DRF
+  SRF  0 44
+  DRF
+  SRF  0 45
+  DRF
+  SRF  0 46
+  DRF
+  SRF  0 47
+  DRF
+  SRF  0 48
+  DRF
+  SRF  0 49
+  DRF
+  SRF  0 50
+  DRF
+  SRF  0 51
+  DRF
+  SRF  0 52
+  DRF
+  SRF  0 53
+  DRF
+  SRF  0 54
+  DRF
+  SRF  0 55
+  DRF
+  SRF  0 56
+  DRF
+  SRF  0 57
+  DRF
+  SRF  0 58
+  DRF
+  SRF  0 59
+  DRF
+  SRF  0 60
+  DRF
+  SRF  0 61
+  DRF
+  SRF  0 62
+  DRF
+  SRF  0 63
+  DRF
+  SRF  0 64
+  DRF
+  SRF  0 65
+  DRF
+  SRF  0 66
+  DRF
+  SRF  0 67
+  DRF
+  SRF  0 68
+  DRF
+  SRF  0 69
+  DRF
+  SRF  0 70
+  DRF
+  SRF  0 71
+  DRF
+  SRF  0 72
+  DRF
+  SRF  0 73
+  DRF
+  SRF  0 74
+  DRF
+  SRF  0 75
+  DRF
+  SRF  0 76
+  DRF
+  SRF  0 77
+  DRF
+  SRF  0 78
+  DRF
+  SRF  0 79
+  DRF
+  SRF  0 80
+  DRF
+  SRF  0 81
+  DRF
+  SRF  0 82
+  DRF
+  OSF 86  0 L22
+; --- assignment i
+  SRF  0 83
+  STC  0
+  ASG
+; --- assignment iteraciones
+  SRF  0 84
+  STC 50
+  ASG
+  JMP L31
+L30:
+; --- call siguientegeneracion
+; --- access colonia
+  SRF  0  3
+  OSF 86  0 L18
+; --- call mostrarcolonia
+; --- access colonia
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  SRF  0  7
+  DRF
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  SRF  0 14
+  DRF
+  SRF  0 15
+  DRF
+  SRF  0 16
+  DRF
+  SRF  0 17
+  DRF
+  SRF  0 18
+  DRF
+  SRF  0 19
+  DRF
+  SRF  0 20
+  DRF
+  SRF  0 21
+  DRF
+  SRF  0 22
+  DRF
+  SRF  0 23
+  DRF
+  SRF  0 24
+  DRF
+  SRF  0 25
+  DRF
+  SRF  0 26
+  DRF
+  SRF  0 27
+  DRF
+  SRF  0 28
+  DRF
+  SRF  0 29
+  DRF
+  SRF  0 30
+  DRF
+  SRF  0 31
+  DRF
+  SRF  0 32
+  DRF
+  SRF  0 33
+  DRF
+  SRF  0 34
+  DRF
+  SRF  0 35
+  DRF
+  SRF  0 36
+  DRF
+  SRF  0 37
+  DRF
+  SRF  0 38
+  DRF
+  SRF  0 39
+  DRF
+  SRF  0 40
+  DRF
+  SRF  0 41
+  DRF
+  SRF  0 42
+  DRF
+  SRF  0 43
+  DRF
+  SRF  0 44
+  DRF
+  SRF  0 45
+  DRF
+  SRF  0 46
+  DRF
+  SRF  0 47
+  DRF
+  SRF  0 48
+  DRF
+  SRF  0 49
+  DRF
+  SRF  0 50
+  DRF
+  SRF  0 51
+  DRF
+  SRF  0 52
+  DRF
+  SRF  0 53
+  DRF
+  SRF  0 54
+  DRF
+  SRF  0 55
+  DRF
+  SRF  0 56
+  DRF
+  SRF  0 57
+  DRF
+  SRF  0 58
+  DRF
+  SRF  0 59
+  DRF
+  SRF  0 60
+  DRF
+  SRF  0 61
+  DRF
+  SRF  0 62
+  DRF
+  SRF  0 63
+  DRF
+  SRF  0 64
+  DRF
+  SRF  0 65
+  DRF
+  SRF  0 66
+  DRF
+  SRF  0 67
+  DRF
+  SRF  0 68
+  DRF
+  SRF  0 69
+  DRF
+  SRF  0 70
+  DRF
+  SRF  0 71
+  DRF
+  SRF  0 72
+  DRF
+  SRF  0 73
+  DRF
+  SRF  0 74
+  DRF
+  SRF  0 75
+  DRF
+  SRF  0 76
+  DRF
+  SRF  0 77
+  DRF
+  SRF  0 78
+  DRF
+  SRF  0 79
+  DRF
+  SRF  0 80
+  DRF
+  SRF  0 81
+  DRF
+  SRF  0 82
+  DRF
+  OSF 86  0 L22
+; --- assignment i
+  SRF  0 83
+; --- access i
+  SRF  0 83
+  DRF
+  STC  1
+  PLUS
+  ASG
+L31:
+; --- access i
+  SRF  0 83
+  DRF
+; --- access iteraciones
+  SRF  0 84
+  DRF
+  LTE
+  JMT L30
+  LVP

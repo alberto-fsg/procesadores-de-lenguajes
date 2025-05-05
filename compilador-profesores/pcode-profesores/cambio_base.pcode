@@ -1,0 +1,440 @@
+  ENP L0
+; --- variable num: @dir 3 level 0
+; --- variable base: @dir 4 level 0
+; --- variable enb: @dir 5 level 0
+; --- function b_dec
+L1:
+; --- parameter b: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter n: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function b_dec start
+L2:
+; --- variable b_dec: @dir 5 level 1
+; --- variable uc: @dir 6 level 1
+; --- variable valrec: @dir 7 level 1
+; --- if
+L3:
+; --- access n
+  SRF  0  3
+  DRF
+  STC  0
+  EQ
+  JMF L4
+; --- assignment b_dec
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L5
+L4:
+; --- assignment uc
+  SRF  0  6
+; --- access n
+  SRF  0  3
+  DRF
+  STC 10
+  MOD
+  ASG
+; --- assignment valrec
+  SRF  0  7
+; --- call b_dec
+; --- access n
+  SRF  0  3
+  DRF
+  STC 10
+  DIV
+; --- access b
+  SRF  0  4
+  DRF
+  OSF  8  1 L1
+  ASG
+; --- assignment b_dec
+  SRF  0  5
+; --- access valrec
+  SRF  0  7
+  DRF
+; --- access b
+  SRF  0  4
+  DRF
+  TMS
+; --- access uc
+  SRF  0  6
+  DRF
+  PLUS
+  ASG
+L5:
+; --- return
+; --- access b_dec
+  SRF  0  5
+  DRF
+  CSF
+; --- function dec_b
+L6:
+; --- parameter b: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter n: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function dec_b start
+L7:
+; --- variable dec_b: @dir 5 level 1
+; --- variable resto: @dir 6 level 1
+; --- variable valrec: @dir 7 level 1
+; --- if
+L8:
+; --- access n
+  SRF  0  3
+  DRF
+; --- access b
+  SRF  0  4
+  DRF
+  LT
+  JMF L9
+; --- assignment dec_b
+  SRF  0  5
+; --- access n
+  SRF  0  3
+  DRF
+  ASG
+  JMP L10
+L9:
+; --- assignment resto
+  SRF  0  6
+; --- access n
+  SRF  0  3
+  DRF
+; --- access b
+  SRF  0  4
+  DRF
+  MOD
+  ASG
+; --- assignment valrec
+  SRF  0  7
+; --- call dec_b
+; --- access n
+  SRF  0  3
+  DRF
+; --- access b
+  SRF  0  4
+  DRF
+  DIV
+; --- access b
+  SRF  0  4
+  DRF
+  OSF  8  1 L6
+  ASG
+; --- assignment dec_b
+  SRF  0  5
+; --- access valrec
+  SRF  0  7
+  DRF
+  STC 10
+  TMS
+; --- access resto
+  SRF  0  6
+  DRF
+  PLUS
+  ASG
+L10:
+; --- return
+; --- access dec_b
+  SRF  0  5
+  DRF
+  CSF
+; --- main_block start
+L0:
+; --- assignment num
+  SRF  0  3
+  STC  4
+  ASG
+; --- assignment base
+  SRF  0  4
+  STC  2
+  ASG
+; --- write
+  STC 61
+  STC 110
+  STC 32
+  STC 101
+  STC 116
+  STC 114
+  STC 101
+  STC 105
+  STC 118
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access num
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 61
+  STC 98
+  STC 32
+  STC 101
+  STC 115
+  STC 97
+  STC 98
+  STC 32
+  STC 97
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access base
+  SRF  0  4
+  DRF
+  WRT  1
+; --- write
+  STC 46
+  STC 97
+  STC 115
+  STC 114
+  STC 101
+  STC 118
+  STC 110
+  STC 105
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 115
+  STC 114
+  STC 101
+  STC 118
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 97
+  STC -70
+  STC -61
+  STC 116
+  STC 99
+  STC 101
+  STC 102
+  STC 101
+  STC 32
+  STC 111
+  STC 103
+  STC 101
+  STC 117
+  STC 108
+  STC 32
+  STC 121
+  STC 32
+  STC 44
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 10
+  WRT  0
+; --- write
+  STC 32
+  STC 58
+  STC 110
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access num
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- write
+  STC 32
+  STC 58
+  STC 98
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access base
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment enb
+  SRF  0  5
+; --- call dec_b
+; --- access num
+  SRF  0  3
+  DRF
+; --- access base
+  SRF  0  4
+  DRF
+  OSF  6  0 L6
+  ASG
+; --- write
+  STC 40
+  STC 98
+  STC 95
+  STC 99
+  STC 101
+  STC 100
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access num
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 44
+  WRT  0
+; --- access base
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 32
+  STC 58
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access enb
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- write
+  STC 40
+  STC 99
+  STC 101
+  STC 100
+  STC 95
+  STC 98
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access enb
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 44
+  WRT  0
+; --- access base
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 32
+  STC 58
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+; --- call b_dec
+; --- access enb
+  SRF  0  5
+  DRF
+; --- access base
+  SRF  0  4
+  DRF
+  OSF  6  0 L1
+  WRT  1
+  STC 10
+  WRT  0
+  LVP

@@ -1,0 +1,1328 @@
+  ENP L0
+; --- variable tamano_tablero: @dir 3 level 0
+; --- variable nreinas: @dir 4 level 0
+; --- variable fila: @dir 5 level 0
+; --- variable columna: @dir 6 level 0
+; --- variable f: @dir 7 level 0
+; --- variable c: @dir 8 level 0
+; --- variable tablero: @dir 9 level 0 start 0 end 999
+; --- variable reinas: @dir 1009 level 0 start 0 end 999
+; --- function min
+L1:
+; --- parameter y: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter x: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function min start
+L2:
+; --- variable min: @dir 5 level 1
+; --- if
+L3:
+; --- access x
+  SRF  0  3
+  DRF
+; --- access y
+  SRF  0  4
+  DRF
+  GT
+  JMF L4
+; --- assignment min
+  SRF  0  5
+; --- access y
+  SRF  0  4
+  DRF
+  ASG
+  JMP L5
+L4:
+; --- assignment min
+  SRF  0  5
+; --- access x
+  SRF  0  3
+  DRF
+  ASG
+L5:
+; --- return
+; --- access min
+  SRF  0  5
+  DRF
+  CSF
+; --- function max
+L6:
+; --- parameter y: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter x: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function max start
+L7:
+; --- variable max: @dir 5 level 1
+; --- if
+L8:
+; --- access x
+  SRF  0  3
+  DRF
+; --- access y
+  SRF  0  4
+  DRF
+  GT
+  JMF L9
+; --- assignment max
+  SRF  0  5
+; --- access x
+  SRF  0  3
+  DRF
+  ASG
+  JMP L10
+L9:
+; --- assignment max
+  SRF  0  5
+; --- access y
+  SRF  0  4
+  DRF
+  ASG
+L10:
+; --- return
+; --- access max
+  SRF  0  5
+  DRF
+  CSF
+; --- function sitio
+L11:
+; --- parameter columna: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter fila: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function sitio start
+L12:
+; --- variable sitio: @dir 5 level 1
+; --- assignment sitio
+  SRF  0  5
+; --- access fila
+  SRF  0  3
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  TMS
+; --- access columna
+  SRF  0  4
+  DRF
+  PLUS
+  ASG
+; --- return
+; --- access sitio
+  SRF  0  5
+  DRF
+  CSF
+; --- function componente
+L13:
+; --- parameter columna: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fila: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter tablero: @dir 3 level 1 start 0 end 999
+  SRF  0  3
+  ASGI
+; --- function componente start
+L14:
+; --- variable componente: @dir 6 level 1
+; --- assignment componente
+  SRF  0  6
+; --- access tablero
+  SRF  0  3
+  DRF
+; --- call sitio
+; --- access fila
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  5
+  DRF
+  OSF  7  1 L11
+  PLUS
+  STC  0
+  SBT
+  DRF
+  ASG
+; --- return
+; --- access componente
+  SRF  0  6
+  DRF
+  CSF
+; --- function ocupada
+L15:
+; --- parameter columna: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fila: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter tablero: @dir 3 level 1 start 0 end 999
+  SRF  0  3
+  ASGI
+; --- function ocupada start
+L16:
+; --- variable ocupada: @dir 6 level 1
+; --- assignment ocupada
+  SRF  0  6
+; --- access tablero
+  SRF  0  3
+  DRF
+; --- call sitio
+; --- access fila
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  5
+  DRF
+  OSF  7  1 L11
+  PLUS
+  STC  0
+  SBT
+  DRF
+  STC  0
+  GT
+  ASG
+; --- return
+; --- access ocupada
+  SRF  0  6
+  DRF
+  CSF
+; --- function asignar_componente
+L17:
+; --- parameter valor: @dir 6 level 1
+  SRF  0  6
+  ASGI
+; --- parameter columna: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fila: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter tablero: @dir 3 level 1 start 0 end 999
+  SRF  0  3
+  ASGI
+; --- function asignar_componente start
+L18:
+; --- assignment tablero
+  SRF  0  3
+  DRF
+; --- call sitio
+; --- access fila
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  5
+  DRF
+  OSF  7  1 L11
+  PLUS
+  STC  0
+  SBT
+; --- access valor
+  SRF  0  6
+  DRF
+  ASG
+  CSF
+; --- function marcar_componente
+L19:
+; --- parameter columna: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fila: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter tablero: @dir 3 level 1 start 0 end 999
+  SRF  0  3
+  ASGI
+; --- function marcar_componente start
+L20:
+; --- assignment tablero
+  SRF  0  3
+  DRF
+; --- call sitio
+; --- access fila
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  5
+  DRF
+  OSF  6  1 L11
+  PLUS
+  STC  0
+  SBT
+; --- access tablero
+  SRF  0  3
+  DRF
+; --- call sitio
+; --- access fila
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  5
+  DRF
+  OSF  6  1 L11
+  PLUS
+  STC  0
+  SBT
+  DRF
+  STC  1
+  PLUS
+  ASG
+  CSF
+; --- function desmarcar_componente
+L21:
+; --- parameter columna: @dir 5 level 1
+  SRF  0  5
+  ASGI
+; --- parameter fila: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter tablero: @dir 3 level 1 start 0 end 999
+  SRF  0  3
+  ASGI
+; --- function desmarcar_componente start
+L22:
+; --- assignment tablero
+  SRF  0  3
+  DRF
+; --- call sitio
+; --- access fila
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  5
+  DRF
+  OSF  6  1 L11
+  PLUS
+  STC  0
+  SBT
+; --- access tablero
+  SRF  0  3
+  DRF
+; --- call sitio
+; --- access fila
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  5
+  DRF
+  OSF  6  1 L11
+  PLUS
+  STC  0
+  SBT
+  DRF
+  STC  1
+  SBT
+  ASG
+  CSF
+; --- function colocar_reina
+L23:
+; --- parameter columna: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter fila: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function colocar_reina start
+L24:
+; --- variable f: @dir 5 level 1
+; --- variable c: @dir 6 level 1
+; --- call marcar_componente
+; --- access reinas
+  SRF  1 1009
+; --- access fila
+  SRF  0  3
+  DRF
+; --- access columna
+  SRF  0  4
+  DRF
+  OSF  7  1 L19
+; --- assignment f
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L26
+L25:
+; --- call marcar_componente
+; --- access tablero
+  SRF  1  9
+; --- access f
+  SRF  0  5
+  DRF
+; --- access columna
+  SRF  0  4
+  DRF
+  OSF  7  1 L19
+; --- assignment f
+  SRF  0  5
+; --- access f
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+L26:
+; --- access f
+  SRF  0  5
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  JMT L25
+; --- assignment c
+  SRF  0  6
+  STC  0
+  ASG
+  JMP L28
+L27:
+; --- call marcar_componente
+; --- access tablero
+  SRF  1  9
+; --- access fila
+  SRF  0  3
+  DRF
+; --- access c
+  SRF  0  6
+  DRF
+  OSF  7  1 L19
+; --- assignment c
+  SRF  0  6
+; --- access c
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L28:
+; --- access c
+  SRF  0  6
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  JMT L27
+; --- assignment f
+  SRF  0  5
+; --- access fila
+  SRF  0  3
+  DRF
+  ASG
+; --- assignment c
+  SRF  0  6
+; --- access columna
+  SRF  0  4
+  DRF
+  ASG
+  JMP L30
+L29:
+; --- assignment f
+  SRF  0  5
+; --- access f
+  SRF  0  5
+  DRF
+  STC  1
+  SBT
+  ASG
+; --- assignment c
+  SRF  0  6
+; --- access c
+  SRF  0  6
+  DRF
+  STC  1
+  SBT
+  ASG
+L30:
+; --- access f
+  SRF  0  5
+  DRF
+  STC  0
+  GT
+; --- access c
+  SRF  0  6
+  DRF
+  STC  0
+  GT
+  AND
+  JMT L29
+  JMP L32
+L31:
+; --- call marcar_componente
+; --- access tablero
+  SRF  1  9
+; --- access f
+  SRF  0  5
+  DRF
+; --- access c
+  SRF  0  6
+  DRF
+  OSF  7  1 L19
+; --- assignment f
+  SRF  0  5
+; --- access f
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+; --- assignment c
+  SRF  0  6
+; --- access c
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L32:
+; --- access f
+  SRF  0  5
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+; --- access c
+  SRF  0  6
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  AND
+  JMT L31
+; --- assignment f
+  SRF  0  5
+; --- access fila
+  SRF  0  3
+  DRF
+  ASG
+; --- assignment c
+  SRF  0  6
+; --- access columna
+  SRF  0  4
+  DRF
+  ASG
+  JMP L34
+L33:
+; --- assignment f
+  SRF  0  5
+; --- access f
+  SRF  0  5
+  DRF
+  STC  1
+  SBT
+  ASG
+; --- assignment c
+  SRF  0  6
+; --- access c
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L34:
+; --- access f
+  SRF  0  5
+  DRF
+  STC  0
+  GT
+; --- access c
+  SRF  0  6
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  AND
+  JMT L33
+  JMP L36
+L35:
+; --- call marcar_componente
+; --- access tablero
+  SRF  1  9
+; --- access f
+  SRF  0  5
+  DRF
+; --- access c
+  SRF  0  6
+  DRF
+  OSF  7  1 L19
+; --- assignment f
+  SRF  0  5
+; --- access f
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+; --- assignment c
+  SRF  0  6
+; --- access c
+  SRF  0  6
+  DRF
+  STC  1
+  SBT
+  ASG
+L36:
+; --- access f
+  SRF  0  5
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+; --- access c
+  SRF  0  6
+  DRF
+  STC  0
+  GTE
+  AND
+  JMT L35
+  CSF
+; --- function iniciar_tablero
+L37:
+; --- function iniciar_tablero start
+L38:
+; --- variable f: @dir 3 level 1
+; --- variable c: @dir 4 level 1
+; --- assignment f
+  SRF  0  3
+  STC  0
+  ASG
+  JMP L40
+L39:
+; --- assignment c
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L42
+L41:
+; --- call asignar_componente
+; --- access tablero
+  SRF  1  9
+; --- access f
+  SRF  0  3
+  DRF
+; --- access c
+  SRF  0  4
+  DRF
+  STC  0
+  OSF  5  1 L17
+; --- call asignar_componente
+; --- access reinas
+  SRF  1 1009
+; --- access f
+  SRF  0  3
+  DRF
+; --- access c
+  SRF  0  4
+  DRF
+  STC  0
+  OSF  5  1 L17
+; --- assignment c
+  SRF  0  4
+; --- access c
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L42:
+; --- access c
+  SRF  0  4
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  JMT L41
+; --- assignment f
+  SRF  0  3
+; --- access f
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L40:
+; --- access f
+  SRF  0  3
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  JMT L39
+  CSF
+; --- function mostrar_tablero
+L43:
+; --- parameter tablero: @dir 3 level 1 start 0 end 999
+  SRF  0  3
+  ASGI
+; --- function mostrar_tablero start
+L44:
+; --- variable f: @dir 4 level 1
+; --- variable c: @dir 5 level 1
+; --- write
+  STC 32
+  STC 58
+  STC 110
+  STC 32
+  STC 97
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 99
+  STC 117
+  STC 108
+  STC 111
+  STC 115
+  STC 32
+  STC 97
+  STC 110
+  STC 117
+  STC 32
+  STC 115
+  STC 101
+  STC 32
+  STC 97
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment f
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L46
+L45:
+; --- assignment c
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L48
+L47:
+; --- if
+L49:
+; --- call componente
+; --- access tablero
+  SRF  0  3
+  DRF
+; --- access f
+  SRF  0  4
+  DRF
+; --- access c
+  SRF  0  5
+  DRF
+  OSF  6  1 L13
+  STC  0
+  GT
+  JMF L50
+; --- write
+  STC 111
+  STC 32
+  WRT  0
+  WRT  0
+  JMP L51
+L50:
+; --- write
+  STC 46
+  STC 32
+  WRT  0
+  WRT  0
+L51:
+; --- assignment c
+  SRF  0  5
+; --- access c
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+L48:
+; --- access c
+  SRF  0  5
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  JMT L47
+; --- write
+  STC 10
+  WRT  0
+; --- assignment f
+  SRF  0  4
+; --- access f
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L46:
+; --- access f
+  SRF  0  4
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  JMT L45
+  CSF
+; --- function libre
+L52:
+; --- parameter columna: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter fila: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function libre start
+L53:
+; --- variable libre: @dir 5 level 1
+; --- variable endal: @dir 6 level 1
+; --- assignment fila
+  SRF  0  3
+  DRF
+  STC  0
+  ASG
+; --- assignment columna
+  SRF  0  4
+  DRF
+  STC  0
+  ASG
+; --- assignment endal
+  SRF  0  6
+  STC  0
+  ASG
+  JMP L55
+L54:
+; --- if
+L56:
+; --- access fila
+  SRF  0  3
+  DRF
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  GTE
+  JMF L57
+; --- assignment endal
+  SRF  0  6
+  STC  1
+  ASG
+  JMP L58
+L57:
+; --- if
+L59:
+; --- access columna
+  SRF  0  4
+  DRF
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  GTE
+  JMF L60
+; --- assignment columna
+  SRF  0  4
+  DRF
+  STC  0
+  ASG
+; --- assignment fila
+  SRF  0  3
+  DRF
+; --- access fila
+  SRF  0  3
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L61
+L60:
+; --- if
+L62:
+; --- call ocupada
+; --- access tablero
+  SRF  1  9
+; --- access fila
+  SRF  0  3
+  DRF
+  DRF
+; --- access columna
+  SRF  0  4
+  DRF
+  DRF
+  OSF  7  1 L15
+  JMF L63
+; --- assignment columna
+  SRF  0  4
+  DRF
+; --- access columna
+  SRF  0  4
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L64
+L63:
+; --- assignment endal
+  SRF  0  6
+  STC  1
+  ASG
+L64:
+L61:
+L58:
+L55:
+; --- access endal
+  SRF  0  6
+  DRF
+  NGB
+  JMT L54
+; --- assignment libre
+  SRF  0  5
+; --- access fila
+  SRF  0  3
+  DRF
+  DRF
+; --- access tamano_tablero
+  SRF  1  3
+  DRF
+  LT
+  ASG
+; --- return
+; --- access libre
+  SRF  0  5
+  DRF
+  CSF
+; --- main_block start
+L0:
+; --- assignment tamano_tablero
+  SRF  0  3
+  STC  4
+  ASG
+; --- write
+  STC 32
+  STC 114
+  STC 97
+  STC 99
+  STC 111
+  STC 108
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 116
+  STC 110
+  STC 101
+  STC 116
+  STC 110
+  STC 105
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 122
+  STC 101
+  STC 114
+  STC 100
+  STC 101
+  STC 106
+  STC 97
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 108
+  STC 98
+  STC 97
+  STC 116
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 110
+  STC 101
+  STC 32
+  STC 115
+  STC 97
+  STC 110
+  STC 105
+  STC 101
+  STC 114
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 42
+  WRT  0
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 46
+  STC 110
+  STC 101
+  STC 117
+  STC 113
+  STC 97
+  STC 116
+  STC 97
+  STC 32
+  STC 101
+  STC 115
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 32
+  STC 110
+  STC 105
+  STC 115
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+  JMP L66
+L65:
+; --- assignment fila
+  SRF  0  5
+  STC  0
+  ASG
+; --- assignment nreinas
+  SRF  0  4
+  STC  0
+  ASG
+; --- write
+  STC 32
+  STC 58
+  STC 110
+  STC 32
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 98
+  STC 101
+  STC 117
+  STC 114
+  STC 80
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+  JMP L68
+L67:
+; --- assignment columna
+  SRF  0  6
+  STC  0
+  ASG
+  JMP L70
+L69:
+; --- assignment nreinas
+  SRF  0  4
+  STC  1
+  ASG
+; --- call iniciar_tablero
+  OSF 2009  0 L37
+; --- call colocar_reina
+; --- access fila
+  SRF  0  5
+  DRF
+; --- access columna
+  SRF  0  6
+  DRF
+  OSF 2009  0 L23
+  JMP L72
+L71:
+; --- call colocar_reina
+; --- access f
+  SRF  0  7
+  DRF
+; --- access c
+  SRF  0  8
+  DRF
+  OSF 2009  0 L23
+; --- assignment nreinas
+  SRF  0  4
+; --- access nreinas
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L72:
+; --- access nreinas
+  SRF  0  4
+  DRF
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  LT
+; --- call libre
+; --- access f
+  SRF  0  7
+; --- access c
+  SRF  0  8
+  OSF 2009  0 L52
+  AND
+  JMT L71
+; --- if
+L73:
+; --- access nreinas
+  SRF  0  4
+  DRF
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  EQ
+  JMF L74
+; --- call mostrar_tablero
+; --- access reinas
+  SRF  0 1009
+  OSF 2009  0 L43
+L74:
+; --- assignment columna
+  SRF  0  6
+; --- access columna
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L70:
+; --- access columna
+  SRF  0  6
+  DRF
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  LT
+; --- access nreinas
+  SRF  0  4
+  DRF
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  LT
+  AND
+  JMT L69
+; --- assignment fila
+  SRF  0  5
+; --- access fila
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+L68:
+; --- access fila
+  SRF  0  5
+  DRF
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  LT
+; --- access nreinas
+  SRF  0  4
+  DRF
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  LT
+  AND
+  JMT L67
+; --- assignment tamano_tablero
+  SRF  0  3
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L66:
+; --- access tamano_tablero
+  SRF  0  3
+  DRF
+  STC 10
+  LTE
+  JMT L65
+; --- write
+  STC 10
+  WRT  0
+  LVP

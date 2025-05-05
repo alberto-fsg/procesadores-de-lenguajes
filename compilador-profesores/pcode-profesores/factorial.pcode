@@ -1,0 +1,302 @@
+  ENP L0
+; --- variable n: @dir 3 level 0
+; --- function fact
+L1:
+; --- parameter m: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function fact start
+L2:
+; --- variable fact: @dir 4 level 1
+; --- if
+L3:
+; --- access m
+  SRF  0  3
+  DRF
+  STC  1
+  EQ
+  JMF L4
+; --- assignment fact
+  SRF  0  4
+  STC  1
+  ASG
+  JMP L5
+L4:
+; --- assignment fact
+  SRF  0  4
+; --- access m
+  SRF  0  3
+  DRF
+; --- call fact
+; --- access m
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+  OSF  5  1 L1
+  TMS
+  ASG
+L5:
+; --- return
+; --- access fact
+  SRF  0  4
+  DRF
+  CSF
+; --- main_block start
+L0:
+; --- write
+  STC 46
+  STC 48
+  STC 50
+  STC 46
+  STC 46
+  STC 49
+  STC 61
+  STC 107
+  STC 32
+  STC 97
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  STC 33
+  STC 107
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 99
+  STC 108
+  STC 97
+  STC 67
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 32
+  STC 115
+  STC 111
+  STC 114
+  STC 101
+  STC 116
+  STC 110
+  STC 101
+  STC 32
+  STC 115
+  STC 111
+  STC 108
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 114
+  STC 111
+  STC 112
+  STC 32
+  STC 33
+  STC 51
+  STC 49
+  STC 32
+  STC 110
+  STC 101
+  STC 32
+  STC 119
+  STC 111
+  STC 108
+  STC 102
+  STC 114
+  STC 101
+  STC 118
+  STC 111
+  STC 32
+  STC 72
+  STC 84
+  STC 65
+  STC 77
+  STC 32
+  STC -95
+  STC -61
+  STC 114
+  STC 98
+  STC 97
+  STC 72
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- write
+  STC 46
+  STC 115
+  STC 101
+  STC 116
+  STC 121
+  STC 98
+  STC 32
+  STC 52
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 110
+  STC 111
+  STC 115
+  STC 32
+  STC 80
+  STC 32
+  STC 97
+  STC 110
+  STC 105
+  STC 117
+  STC 113
+  STC -95
+  STC -61
+  STC 109
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 110
+  STC 101
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- assignment n
+  SRF  0  3
+  STC  1
+  ASG
+  JMP L7
+L6:
+; --- write
+; --- access n
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 32
+  STC 61
+  STC 32
+  STC 33
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- call fact
+; --- access n
+  SRF  0  3
+  DRF
+  OSF  4  0 L1
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment n
+  SRF  0  3
+; --- access n
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L7:
+; --- access n
+  SRF  0  3
+  DRF
+  STC 20
+  LTE
+  JMT L6
+  LVP

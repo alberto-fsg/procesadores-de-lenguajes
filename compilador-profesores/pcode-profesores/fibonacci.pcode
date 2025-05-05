@@ -1,0 +1,704 @@
+  ENP L0
+; --- variable i: @dir 3 level 0
+; --- variable n: @dir 4 level 0
+; --- variable r: @dir 5 level 0
+; --- function cambiar_de_linea
+L1:
+; --- function cambiar_de_linea start
+L2:
+; --- write
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+  CSF
+; --- function dato
+L3:
+; --- parameter dato: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function dato start
+L4:
+; --- variable correcto: @dir 4 level 1
+; --- assignment dato
+  SRF  0  3
+  DRF
+  STC  0
+  ASG
+; --- assignment correcto
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L6
+L5:
+; --- write
+  STC 32
+  STC 58
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 98
+  STC 105
+  STC 114
+  STC 99
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- read
+; --- access dato
+  SRF  0  3
+  DRF
+  RD  1
+; --- assignment correcto
+  SRF  0  4
+; --- access dato
+  SRF  0  3
+  DRF
+  DRF
+  STC  0
+  GT
+  ASG
+; --- if
+L7:
+; --- access correcto
+  SRF  0  4
+  DRF
+  NGB
+  JMF L8
+; --- write
+  STC 46
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 101
+  STC 98
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC -70
+  STC -61
+  STC 110
+  STC 32
+  STC 108
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+L8:
+L6:
+; --- access correcto
+  SRF  0  4
+  DRF
+  NGB
+  JMT L5
+  CSF
+; --- function fib
+L9:
+; --- parameter r: @dir 4 level 1
+  SRF  0  4
+  ASGI
+; --- parameter n: @dir 3 level 1
+  SRF  0  3
+  ASGI
+; --- function fib start
+L10:
+; --- variable r1: @dir 5 level 1
+; --- variable r2: @dir 6 level 1
+; --- write
+  STC 32
+  STC 58
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 115
+  STC 101
+  STC 114
+  STC 111
+  STC 108
+  STC 97
+  STC 86
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access n
+  SRF  0  3
+  DRF
+  WRT  1
+; --- access r
+  SRF  0  4
+  DRF
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment r1
+  SRF  0  5
+  STC  0
+  ASG
+; --- assignment r2
+  SRF  0  6
+  STC  0
+  ASG
+; --- if
+L11:
+; --- access n
+  SRF  0  3
+  DRF
+  STC  1
+  GT
+  JMF L12
+; --- call fib
+; --- access n
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+; --- access r1
+  SRF  0  5
+  OSF  7  1 L9
+; --- call fib
+; --- access n
+  SRF  0  3
+  DRF
+  STC  2
+  SBT
+; --- access r2
+  SRF  0  6
+  OSF  7  1 L9
+; --- assignment r
+  SRF  0  4
+  DRF
+; --- access r1
+  SRF  0  5
+  DRF
+; --- access r2
+  SRF  0  6
+  DRF
+  PLUS
+  ASG
+  JMP L13
+L12:
+; --- assignment r
+  SRF  0  4
+  DRF
+; --- access n
+  SRF  0  3
+  DRF
+  ASG
+L13:
+  CSF
+; --- main_block start
+L0:
+; --- write
+  STC 41
+  STC 50
+  STC 45
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 43
+  STC 32
+  STC 41
+  STC 49
+  STC 45
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 97
+  STC 118
+  STC 105
+  STC 115
+  STC 114
+  STC 117
+  STC 99
+  STC 101
+  STC 114
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 109
+  STC 114
+  STC -77
+  STC -61
+  STC 102
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 41
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 99
+  STC 108
+  STC 97
+  STC 99
+  STC 32
+  STC 121
+  STC 32
+  STC 110
+  STC 32
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC -70
+  STC -61
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 100
+  STC 105
+  STC 112
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 46
+  STC 100
+  STC 97
+  STC 100
+  STC 105
+  STC 118
+  STC 105
+  STC 115
+  STC 114
+  STC 117
+  STC 99
+  STC 101
+  STC 114
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 114
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 116
+  STC 110
+  STC 101
+  STC 108
+  STC 32
+  STC 121
+  STC 117
+  STC 109
+  STC 32
+  STC -95
+  STC -61
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 48
+  STC 51
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 114
+  STC 105
+  STC 116
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  STC 65
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --- write
+  STC 10
+  WRT  0
+; --- call dato
+; --- access n
+  SRF  0  4
+  OSF  6  0 L3
+; --- write
+; --- access n
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment i
+  SRF  0  3
+  STC  1
+  ASG
+; --- assignment r
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L15
+L14:
+; --- call fib
+; --- access i
+  SRF  0  3
+  DRF
+; --- access r
+  SRF  0  5
+  OSF  6  0 L9
+; --- write
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access i
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --- access r
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --- assignment i
+  SRF  0  3
+; --- access i
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L15:
+; --- access i
+  SRF  0  3
+  DRF
+; --- access n
+  SRF  0  4
+  DRF
+  LTE
+  JMT L14
+; --- call cambiar_de_linea
+  OSF  6  0 L1
+  LVP
