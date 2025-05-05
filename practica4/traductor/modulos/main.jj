@@ -145,10 +145,11 @@ public class gcl {
         try {
             SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             sFunc.label = etiqueta;
+            st.insertBlock();
             sFunc.offset = CGUtils.memorySpaces[st.level]++;
             st.insertSymbol(sFunc);
             insertParameters(parametros);
-            st.insertSymbol(sFunc);
+            st.insertSymbol(sFunc); // 2 veces ??????????????????
             return sFunc;
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
