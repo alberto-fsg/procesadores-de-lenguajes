@@ -86,8 +86,11 @@ CodeBlock declaracion_func() :
 { 
 
     Token t;
-    AtribTipo aT;
     ArrayList<Symbol> parametros = new ArrayList<Symbol>();
+    CodeBlock cres = new CodeBlock();
+    CodeBlock cinst = new CodeBlock();
+    CodeBlock aux = new CodeBlock();
+    SymbolProcedure sProc;
 }
 {
     aT = tipoEscalar()
@@ -96,16 +99,60 @@ CodeBlock declaracion_func() :
     ( parametros = parametros_declaraciones() )?
     < tCLOSING_PARENTHESIS >
     {
-        insertFunction(t, aT, parametros);
+        String etiqInicioProc = CGUtils.newLabel();
+        sFunc = insertFunction(t, parametros,  aT, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
     ( declaracion_proc() | declaracion_func() )*
-    < tBEGGINING >
-    ( instruccion() )*
+    <tBEGGINING>
+    ( aux = instruccion() { cinst.addBlock(aux); } )*
+    <tEND>
     < tEND >
     {
+        // DECLARACIÓN DE CÓDGIO
+        
+        cres.addLabel(etiqInicioProc);
+        
+        // Parámetros
+        for (int i = parametros.size() - 1; i >= 0; --i) {
+            Symbol param = parametros.get(i);
+            cres.addComment("parameter " + param.name);
+
+            if(param instanceof SymbolArray && param.parClass != Symbol.ParameterClass.REF) {
+                SymbolArray arr = (SymbolArray) param;
+                String etiq = CGUtils.newLabel();
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset + arr.maxInd - arr.minInd);
+                cres.addLabel(etiq);
+                cres.addInst(OpCode.DUP);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, CGUtils.memorySpaces[st.level]);
+                cres.addInst(OpCode.ASGI);
+                cres.addInst(OpCode.ASGI);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, CGUtils.memorySpaces[st.level]);
+                cres.addInst(OpCode.DRF);
+                cres.addInst(OpCode.STC, 1);
+                cres.addInst(OpCode.SBT);
+                cres.addInst(OpCode.DUP);
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
+                cres.addInst(OpCode.GTE);
+                cres.addInst(OpCode.JMT, etiq);
+                cres.addInst(OpCode.POP);
+            } else {
+                // General case: assign parameter value
+                cres.addInst(OpCode.SRF, st.level - param.nivel, param.offset);
+                cres.addInst(OpCode.ASGI);
+            }
+        }
+
+        // Cuerpo procedimiento
+        cres.addComment("inicio procedimiento " + t.image);
+        cres.addBlock(cinst);
+
+        // Fin procedimiento
+        cres.addInst(OpCode.CSF);
+        cres.addComment("fin procedimiento " + t.image);
+
         st.removeBlock();
-        return null;
+        return cres;
     }
 }
 
