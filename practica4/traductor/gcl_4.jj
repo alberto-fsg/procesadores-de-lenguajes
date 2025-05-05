@@ -668,6 +668,7 @@ AtribExp primario() :
                 }
                 prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel, s.label);
                 prim.code.addInst(PCodeInstruction.OpCode.DRF);
+                return prim;
             } catch(SymbolNotFoundException e) {
                 printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
                 return new AtribExp();
@@ -1116,7 +1117,6 @@ CodeBlock declaracion_func() :
     ( declaracion_proc() | declaracion_func() )*
     <tBEGGINING>
     ( aux = instruccion() { cinst.addBlock(aux); } )*
-    <tEND>
     < tEND >
     {
         // DECLARACIÓN DE CÓDGIO

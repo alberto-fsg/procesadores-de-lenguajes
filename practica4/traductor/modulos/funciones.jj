@@ -107,7 +107,6 @@ CodeBlock declaracion_func() :
     ( declaracion_proc() | declaracion_func() )*
     <tBEGGINING>
     ( aux = instruccion() { cinst.addBlock(aux); } )*
-    <tEND>
     < tEND >
     {
         // DECLARACIÓN DE CÓDGIO
