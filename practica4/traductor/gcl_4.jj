@@ -142,6 +142,30 @@ public class gcl {
         }
     }
 
+    private static SymbolFunction insertFunction(Token identificador, ArrayList<Symbol> parametros, AtribTipo returnType, String etiqueta) {
+        if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
+            printError(String.format("Una función solo puede devolver valores de tipo INT, BOOL o CHAR. Tipo dado: %s.", returnType.type));
+        }
+        try {
+            SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
+            sFunc.label = etiqueta;
+            st.insertSymbol(sFunc);
+            insertParameters(parametros);
+            try {
+                sFunc.offset = CGUtils.memorySpaces[st.level]++;
+                st.insertSymbol(sFunc);
+                insertParameters(parametros);
+            } catch(AlreadyDefinedSymbolException e) {
+                printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+            }
+            return sFunc;
+        } catch(AlreadyDefinedSymbolException e) {
+            printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
+            return null;
+        }
+    }
+
+    /*
     private static CodeBlock insertFunction(Token identificador, AtribTipo returnType, ArrayList<Symbol> parametros) {
         CodeBlock cb = new CodeBlock();
         if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
@@ -158,6 +182,7 @@ public class gcl {
         }
         return cb;
     }
+    */
 
     private static void insertParameters(ArrayList<Symbol> parametros) {
         st.insertBlock();
