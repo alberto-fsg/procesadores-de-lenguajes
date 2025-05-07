@@ -1,0 +1,686 @@
+  ENP L11
+L0:
+; --inicio procedimiento cambiar_de_linea
+; --Comienzo escribir
+  STC 13
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir
+  CSF
+; --fin procedimiento cambiar_de_linea
+L1:
+; --parameter dato
+  SRF  0  3
+  ASGI
+; --inicio procedimiento dato
+; --assignment dato
+  SRF  0  3
+  DRF
+  STC  0
+  ASG
+; --assignment correcto
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L4
+L5:
+; --Comienzo escribir
+  STC 32
+  STC 58
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 98
+  STC 105
+  STC 114
+  STC 99
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --Fin escribir
+; --Comienzo leer línea
+  SRF  0  3
+  DRF
+  RD  1
+; --Fin leer línea
+; --assignment correcto
+  SRF  0  4
+  SRF  0  3
+  DRF
+  DRF
+  STC  0
+  GT
+  ASG
+; --inicio select
+  SRF  0  4
+  DRF
+  NGB
+  JMF L3
+; --Comienzo escribir línea
+  STC 46
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 101
+  STC 98
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC -70
+  STC -61
+  STC 110
+  STC 32
+  STC 108
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+  JMP L2
+L3:
+L2:
+; --fin select
+L4:
+  SRF  0  4
+  DRF
+  NGB
+  JMT L5
+  CSF
+; --fin procedimiento dato
+L6:
+; --parameter r
+  SRF  0  4
+  ASGI
+; --parameter n
+  SRF  0  3
+  ASGI
+; --inicio procedimiento fib
+; --Comienzo escribir línea
+  STC 32
+  STC 58
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 115
+  STC 101
+  STC 114
+  STC 111
+  STC 108
+  STC 97
+  STC 86
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  SRF  0  4
+  DRF
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment r1
+  SRF  0  5
+  STC  0
+  ASG
+; --assignment r2
+  SRF  0  6
+  STC  0
+  ASG
+; --inicio select
+  SRF  0  3
+  DRF
+  STC  1
+  GT
+  JMF L8
+; --call fib
+  SRF  0  3
+  DRF
+  STC  1
+  SBT
+  SRF  0  5
+  OSF  7  1 L6
+; --call fib
+  SRF  0  3
+  DRF
+  STC  2
+  SBT
+  SRF  0  6
+  OSF  7  1 L6
+; --assignment r
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  PLUS
+  ASG
+  JMP L7
+L8:
+; --otherwise
+; --assignment r
+  SRF  0  4
+  DRF
+  SRF  0  3
+  DRF
+  ASG
+L7:
+; --fin select
+  CSF
+; --fin procedimiento fib
+; --Comienzo del programa fibonacci
+L11:
+; --Comienzo escribir línea
+  STC 41
+  STC 50
+  STC 45
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 43
+  STC 32
+  STC 41
+  STC 49
+  STC 45
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 97
+  STC 118
+  STC 105
+  STC 115
+  STC 114
+  STC 117
+  STC 99
+  STC 101
+  STC 114
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 109
+  STC 114
+  STC -77
+  STC -61
+  STC 102
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 41
+  STC 110
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  STC 32
+  STC 97
+  STC 108
+  STC 117
+  STC 99
+  STC 108
+  STC 97
+  STC 99
+  STC 32
+  STC 121
+  STC 32
+  STC 110
+  STC 32
+  STC 111
+  STC 118
+  STC 105
+  STC 116
+  STC 105
+  STC 115
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC -70
+  STC -61
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 100
+  STC 105
+  STC 112
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 46
+  STC 100
+  STC 97
+  STC 100
+  STC 105
+  STC 118
+  STC 105
+  STC 115
+  STC 114
+  STC 117
+  STC 99
+  STC 101
+  STC 114
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 114
+  STC 111
+  STC 112
+  STC 32
+  STC 111
+  STC 116
+  STC 110
+  STC 101
+  STC 108
+  STC 32
+  STC 121
+  STC 117
+  STC 109
+  STC 32
+  STC -95
+  STC -61
+  STC 114
+  STC 101
+  STC 115
+  STC 32
+  STC 48
+  STC 51
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 114
+  STC 105
+  STC 116
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  STC 65
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --call dato
+  SRF  0  4
+  OSF  6  0 L1
+; --Comienzo escribir línea
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment i
+  SRF  0  3
+  STC  1
+  ASG
+; --assignment r
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L9
+L10:
+; --call fib
+  SRF  0  3
+  DRF
+  SRF  0  5
+  OSF  6  0 L6
+; --Comienzo escribir línea
+  STC 40
+  STC 98
+  STC 105
+  STC 102
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 32
+  STC 61
+  STC 32
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment i
+  SRF  0  3
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L9:
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  LTE
+  JMT L10
+; --call cambiar_de_linea
+  OSF  6  0 L0
+; --Fin del programa fibonacci
+  LVP

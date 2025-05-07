@@ -130,6 +130,7 @@ public class gcl {
             SymbolProcedure sProc = new SymbolProcedure(identificador.image, parametros);
             sProc.label = etiqueta;
             st.insertSymbol(sProc);
+            st.insertBlock();
             insertParameters(parametros);
             return sProc;
         } catch(AlreadyDefinedSymbolException e) {
@@ -138,46 +139,46 @@ public class gcl {
         }
     }
 
-    private static SymbolFunction insertFunction(Token identificador, ArrayList<Symbol> parametros, AtribTipo returnType, String etiqueta) {
+    /*private static SymbolFunction insertFunction(Token identificador, ArrayList<Symbol> parametros, AtribTipo returnType, String etiqueta) {
         if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
             printError(String.format("Una función solo puede devolver valores de tipo INT, BOOL o CHAR. Tipo dado: %s.", returnType.type));
         }
         try {
             SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             sFunc.label = etiqueta;
-            st.insertBlock();
-            sFunc.offset = CGUtils.memorySpaces[st.level]++;
             st.insertSymbol(sFunc);
+            st.insertBlock();
+            //sFunc.offset = CGUtils.memorySpaces[st.level]++;
             insertParameters(parametros);
-            st.insertSymbol(sFunc); // 2 veces ??????????????????
+            //st.insertSymbol(sFunc);
             return sFunc;
         } catch(AlreadyDefinedSymbolException e) {
             printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
             return null;
         }
-    }
+    }*/
 
-    /*
-    private static CodeBlock insertFunction(Token identificador, AtribTipo returnType, ArrayList<Symbol> parametros) {
+    private static SymbolFunction insertFunction(Token identificador, ArrayList<Symbol> parametros, AtribTipo returnType, String etiqueta) {
         CodeBlock cb = new CodeBlock();
         if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
             printError(String.format("Una función solo puede devolver valores de tipo INT, BOOL o CHAR. Tipo dado: %s.", returnType.type));
         } else {
             SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             try {
-                sFunc.offset = CGUtils.memorySpaces[st.level]++;
+                SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
+                sFunc.label = etiqueta;
                 st.insertSymbol(sFunc);
+                st.insertBlock();
                 insertParameters(parametros);
+                return sFunc;
             } catch(AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
             }
         }
-        return cb;
+        return null;
     }
-    */
 
     private static void insertParameters(ArrayList<Symbol> parametros) {
-        st.insertBlock();
         for(Symbol param : parametros) {
             try {
                 param.offset = CGUtils.memorySpaces[st.level];

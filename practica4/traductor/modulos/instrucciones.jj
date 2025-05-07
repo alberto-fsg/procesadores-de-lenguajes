@@ -85,6 +85,7 @@ CodeBlock seleccion() :
 
         // Si hay bloque "otherwise", añadirlo al final
         if (hayOtherwise) {
+            cres.addComment("otherwise");
             cres.addBlock(cuerpos.get(cuerpos.size() - 1));
         }
 

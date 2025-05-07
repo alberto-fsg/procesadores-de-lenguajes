@@ -101,6 +101,7 @@ CodeBlock declaracion_func() :
     < tCLOSING_PARENTHESIS >
     {
         String etiqInicioProc = CGUtils.newLabel();
+        cres.addComment("AAAAAAAAA");
         sFunc = insertFunction(t, parametros,  aT, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*

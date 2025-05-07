@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.10.15
+Created-By: 24.0.1 (Arch Linux)
+Main-Class: traductor/gcl
+Class-Path: traductor/gcl_4.jar
+

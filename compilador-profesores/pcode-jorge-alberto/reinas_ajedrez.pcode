@@ -1,0 +1,1154 @@
+  ENP L54
+L0:
+; --parameter y
+  SRF  0  4
+  ASGI
+; --parameter x
+  SRF  0  3
+  ASGI
+; --inicio procedimiento min
+; --inicio select
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  GT
+  JMF L2
+; --assignment min
+  SRF  1 2009
+  SRF  0  4
+  DRF
+  ASG
+  JMP L1
+L2:
+; --otherwise
+; --assignment min
+  SRF  1 2009
+  SRF  0  3
+  DRF
+  ASG
+L1:
+; --fin select
+  SRF  0 2009
+  DRF
+  CSF
+; --fin procedimiento min
+L3:
+; --parameter y
+  SRF  0  4
+  ASGI
+; --parameter x
+  SRF  0  3
+  ASGI
+; --inicio procedimiento max
+; --inicio select
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  GT
+  JMF L5
+; --assignment max
+  SRF  1 2010
+  SRF  0  3
+  DRF
+  ASG
+  JMP L4
+L5:
+; --otherwise
+; --assignment max
+  SRF  1 2010
+  SRF  0  4
+  DRF
+  ASG
+L4:
+; --fin select
+  SRF  0 2010
+  DRF
+  CSF
+; --fin procedimiento max
+L6:
+; --parameter columna
+  SRF  0  4
+  ASGI
+; --parameter fila
+  SRF  0  3
+  ASGI
+; --inicio procedimiento sitio
+; --assignment sitio
+  SRF  1 2011
+  SRF  0  3
+  DRF
+  SRF  1  3
+  DRF
+  TMS
+  SRF  0  4
+  DRF
+  PLUS
+  ASG
+  SRF  0 2011
+  DRF
+  CSF
+; --fin procedimiento sitio
+L7:
+; --parameter columna
+  SRF  0  5
+  ASGI
+; --parameter fila
+  SRF  0  4
+  ASGI
+; --parameter tablero
+  SRF  0  3
+  ASGI
+; --inicio procedimiento componente
+; --assignment componente
+  SRF  1 2012
+  SRF -1  3
+  DRF
+; --call sitio
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  6  2 L6
+  PLUS
+  STC  0
+  SBT
+  DRF
+  ASG
+  SRF  0 2012
+  DRF
+  CSF
+; --fin procedimiento componente
+L8:
+; --parameter columna
+  SRF  0  5
+  ASGI
+; --parameter fila
+  SRF  0  4
+  ASGI
+; --parameter tablero
+  SRF  0  3
+  ASGI
+; --inicio procedimiento ocupada
+; --assignment ocupada
+  SRF  1 2013
+  SRF -1  3
+  DRF
+; --call sitio
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  6  2 L6
+  PLUS
+  STC  0
+  SBT
+  DRF
+  STC  0
+  GT
+  ASG
+  SRF  0 2013
+  DRF
+  CSF
+; --fin procedimiento ocupada
+L9:
+; --parameter valor
+  SRF  0  6
+  ASGI
+; --parameter columna
+  SRF  0  5
+  ASGI
+; --parameter fila
+  SRF  0  4
+  ASGI
+; --parameter tablero
+  SRF  0  3
+  ASGI
+; --inicio procedimiento asignar_componente
+; --assignment tablero
+  SRF  0  3
+  DRF
+; --call sitio
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  7  2 L6
+  PLUS
+  STC  0
+  SBT
+  SRF  0  6
+  DRF
+  ASG
+  CSF
+; --fin procedimiento asignar_componente
+L10:
+; --parameter columna
+  SRF  0  5
+  ASGI
+; --parameter fila
+  SRF  0  4
+  ASGI
+; --parameter tablero
+  SRF  0  3
+  ASGI
+; --inicio procedimiento marcar_componente
+; --assignment tablero
+  SRF  0  3
+  DRF
+; --call sitio
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  6  2 L6
+  PLUS
+  STC  0
+  SBT
+  SRF -1  3
+  DRF
+; --call sitio
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  6  2 L6
+  PLUS
+  STC  0
+  SBT
+  DRF
+  STC  1
+  PLUS
+  ASG
+  CSF
+; --fin procedimiento marcar_componente
+L11:
+; --parameter columna
+  SRF  0  5
+  ASGI
+; --parameter fila
+  SRF  0  4
+  ASGI
+; --parameter tablero
+  SRF  0  3
+  ASGI
+; --inicio procedimiento desmarcar_componente
+; --assignment tablero
+  SRF  0  3
+  DRF
+; --call sitio
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  6  2 L6
+  PLUS
+  STC  0
+  SBT
+  SRF -1  3
+  DRF
+; --call sitio
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  6  2 L6
+  PLUS
+  STC  0
+  SBT
+  DRF
+  STC  1
+  SBT
+  ASG
+  CSF
+; --fin procedimiento desmarcar_componente
+L12:
+; --parameter columna
+  SRF  0  4
+  ASGI
+; --parameter fila
+  SRF  0  3
+  ASGI
+; --inicio procedimiento colocar_reina
+; --call marcar_componente
+  SRF  1 1009
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  OSF  7  1 L10
+; --assignment f
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L13
+L14:
+; --call marcar_componente
+  SRF  1  9
+  SRF  0  5
+  DRF
+  SRF  0  4
+  DRF
+  OSF  7  1 L10
+; --assignment f
+  SRF  0  5
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+L13:
+  SRF  0  5
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  JMT L14
+; --assignment c
+  SRF  0  6
+  STC  0
+  ASG
+  JMP L15
+L16:
+; --call marcar_componente
+  SRF  1  9
+  SRF  0  3
+  DRF
+  SRF  0  6
+  DRF
+  OSF  7  1 L10
+; --assignment c
+  SRF  0  6
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L15:
+  SRF  0  6
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  JMT L16
+; --assignment f
+  SRF  0  5
+  SRF  0  3
+  DRF
+  ASG
+; --assignment c
+  SRF  0  6
+  SRF  0  4
+  DRF
+  ASG
+  JMP L17
+L18:
+; --assignment f
+  SRF  0  5
+  SRF  0  5
+  DRF
+  STC  1
+  SBT
+  ASG
+; --assignment c
+  SRF  0  6
+  SRF  0  6
+  DRF
+  STC  1
+  SBT
+  ASG
+L17:
+  SRF  0  5
+  DRF
+  STC  0
+  GT
+  SRF  0  6
+  DRF
+  STC  0
+  GT
+  AND
+  JMT L18
+  JMP L19
+L20:
+; --call marcar_componente
+  SRF  1  9
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  OSF  7  1 L10
+; --assignment f
+  SRF  0  5
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+; --assignment c
+  SRF  0  6
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L19:
+  SRF  0  5
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  SRF  0  6
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  AND
+  JMT L20
+; --assignment f
+  SRF  0  5
+  SRF  0  3
+  DRF
+  ASG
+; --assignment c
+  SRF  0  6
+  SRF  0  4
+  DRF
+  ASG
+  JMP L21
+L22:
+; --assignment f
+  SRF  0  5
+  SRF  0  5
+  DRF
+  STC  1
+  SBT
+  ASG
+; --assignment c
+  SRF  0  6
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L21:
+  SRF  0  5
+  DRF
+  STC  0
+  GT
+  SRF  0  6
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  AND
+  JMT L22
+  JMP L23
+L24:
+; --call marcar_componente
+  SRF  1  9
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  OSF  7  1 L10
+; --assignment f
+  SRF  0  5
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+; --assignment c
+  SRF  0  6
+  SRF  0  6
+  DRF
+  STC  1
+  SBT
+  ASG
+L23:
+  SRF  0  5
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  SRF  0  6
+  DRF
+  STC  0
+  GTE
+  AND
+  JMT L24
+  CSF
+; --fin procedimiento colocar_reina
+L25:
+; --inicio procedimiento iniciar_tablero
+; --assignment f
+  SRF  0  3
+  STC  0
+  ASG
+  JMP L28
+L29:
+; --assignment c
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L26
+L27:
+; --call asignar_componente
+  SRF  1  9
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  STC  0
+  OSF  5  1 L9
+; --call asignar_componente
+  SRF  1 1009
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  STC  0
+  OSF  5  1 L9
+; --assignment c
+  SRF  0  4
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L26:
+  SRF  0  4
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  JMT L27
+; --assignment f
+  SRF  0  3
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L28:
+  SRF  0  3
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  JMT L29
+  CSF
+; --fin procedimiento iniciar_tablero
+L30:
+; --parameter tablero
+  SRF  0  3
+  ASGI
+; --inicio procedimiento mostrar_tablero
+; --Comienzo escribir línea
+  STC 32
+  STC 58
+  STC 110
+  STC 32
+  STC 97
+  STC 114
+  STC 97
+  STC 112
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 99
+  STC 117
+  STC 108
+  STC 111
+  STC 115
+  STC 32
+  STC 97
+  STC 110
+  STC 117
+  STC 32
+  STC 115
+  STC 101
+  STC 32
+  STC 97
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  1  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment f
+  SRF  0  4
+  STC  0
+  ASG
+  JMP L35
+L36:
+; --assignment c
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L33
+L34:
+; --inicio select
+; --call componente
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  OSF  6  2 L7
+  STC  0
+  GT
+  JMF L32
+; --Comienzo escribir
+  STC 111
+  STC 32
+  WRT  0
+  WRT  0
+; --Fin escribir
+  JMP L31
+L32:
+; --otherwise
+; --Comienzo escribir
+  STC 46
+  STC 32
+  WRT  0
+  WRT  0
+; --Fin escribir
+L31:
+; --fin select
+; --assignment c
+  SRF  0  5
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+L33:
+  SRF  0  5
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  JMT L34
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment f
+  SRF  0  4
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L35:
+  SRF  0  4
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  JMT L36
+  CSF
+; --fin procedimiento mostrar_tablero
+L37:
+; --parameter columna
+  SRF  0  4
+  ASGI
+; --parameter fila
+  SRF  0  3
+  ASGI
+; --inicio procedimiento libre
+; --assignment fila
+  SRF  0  3
+  DRF
+  STC  0
+  ASG
+; --assignment columna
+  SRF  0  4
+  DRF
+  STC  0
+  ASG
+; --assignment endal
+  SRF  0  5
+  STC  0
+  ASG
+  JMP L42
+L43:
+; --inicio select
+  SRF  0  3
+  DRF
+  DRF
+  SRF  1  3
+  DRF
+  GTE
+  JMF L39
+; --assignment endal
+  SRF  0  5
+  STC  1
+  ASG
+  JMP L38
+L39:
+  SRF  0  4
+  DRF
+  DRF
+  SRF  1  3
+  DRF
+  GTE
+  JMF L40
+; --assignment columna
+  SRF  0  4
+  DRF
+  STC  0
+  ASG
+; --assignment fila
+  SRF  0  3
+  DRF
+  SRF  0  3
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L38
+L40:
+; --call ocupada
+  SRF  1  9
+  SRF  0  3
+  DRF
+  DRF
+  SRF  0  4
+  DRF
+  DRF
+  OSF  6  2 L8
+  JMF L41
+; --assignment columna
+  SRF  0  4
+  DRF
+  SRF  0  4
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L38
+L41:
+; --otherwise
+; --assignment endal
+  SRF  0  5
+  STC  1
+  ASG
+L38:
+; --fin select
+L42:
+  SRF  0  5
+  DRF
+  NGB
+  JMT L43
+; --assignment libre
+  SRF  1 2014
+  SRF  0  3
+  DRF
+  DRF
+  SRF  1  3
+  DRF
+  LT
+  ASG
+  SRF  0 2014
+  DRF
+  CSF
+; --fin procedimiento libre
+; --Comienzo del programa ajedrez
+L54:
+; --assignment tamano_tablero
+  SRF  0  3
+  STC  4
+  ASG
+; --Comienzo escribir línea
+  STC 32
+  STC 114
+  STC 97
+  STC 99
+  STC 111
+  STC 108
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 116
+  STC 110
+  STC 101
+  STC 116
+  STC 110
+  STC 105
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 122
+  STC 101
+  STC 114
+  STC 100
+  STC 101
+  STC 106
+  STC 97
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 108
+  STC 98
+  STC 97
+  STC 116
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 110
+  STC 101
+  STC 32
+  STC 115
+  STC 97
+  STC 110
+  STC 105
+  STC 101
+  STC 114
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 42
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 46
+  STC 110
+  STC 101
+  STC 117
+  STC 113
+  STC 97
+  STC 116
+  STC 97
+  STC 32
+  STC 101
+  STC 115
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 32
+  STC 110
+  STC 105
+  STC 115
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+  JMP L52
+L53:
+; --assignment fila
+  SRF  0  5
+  STC  0
+  ASG
+; --assignment nreinas
+  SRF  0  4
+  STC  0
+  ASG
+; --Comienzo escribir línea
+  STC 32
+  STC 58
+  STC 110
+  STC 32
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 98
+  STC 101
+  STC 117
+  STC 114
+  STC 80
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+  JMP L50
+L51:
+; --assignment columna
+  SRF  0  6
+  STC  0
+  ASG
+  JMP L48
+L49:
+; --assignment nreinas
+  SRF  0  4
+  STC  1
+  ASG
+; --call iniciar_tablero
+  OSF 2015  0 L25
+; --call colocar_reina
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  OSF 2015  0 L12
+  JMP L44
+L45:
+; --call colocar_reina
+  SRF  0  7
+  DRF
+  SRF  0  8
+  DRF
+  OSF 2015  0 L12
+; --assignment nreinas
+  SRF  0  4
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L44:
+  SRF  0  4
+  DRF
+  SRF  0  3
+  DRF
+  LT
+; --call libre
+  SRF  0  7
+  SRF  0  8
+  OSF 2015  1 L37
+  AND
+  JMT L45
+; --inicio select
+  SRF  0  4
+  DRF
+  SRF  0  3
+  DRF
+  EQ
+  JMF L47
+; --call mostrar_tablero
+  SRF  0 1009
+  OSF 2015  0 L30
+  JMP L46
+L47:
+L46:
+; --fin select
+; --assignment columna
+  SRF  0  6
+  SRF  0  6
+  DRF
+  STC  1
+  PLUS
+  ASG
+L48:
+  SRF  0  6
+  DRF
+  SRF  0  3
+  DRF
+  LT
+  SRF  0  4
+  DRF
+  SRF  0  3
+  DRF
+  LT
+  AND
+  JMT L49
+; --assignment fila
+  SRF  0  5
+  SRF  0  5
+  DRF
+  STC  1
+  PLUS
+  ASG
+L50:
+  SRF  0  5
+  DRF
+  SRF  0  3
+  DRF
+  LT
+  SRF  0  4
+  DRF
+  SRF  0  3
+  DRF
+  LT
+  AND
+  JMT L51
+; --assignment tamano_tablero
+  SRF  0  3
+  SRF  0  3
+  DRF
+  STC  1
+  PLUS
+  ASG
+L52:
+  SRF  0  3
+  DRF
+  STC 10
+  LTE
+  JMT L53
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Fin del programa ajedrez
+  LVP

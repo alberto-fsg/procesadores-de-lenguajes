@@ -1,0 +1,779 @@
+  ENP L22
+L0:
+; --inicio procedimiento pedir_entero
+; --assignment n
+  SRF  0  3
+  STC  0
+  ASG
+  JMP L1
+L2:
+; --Comienzo escribir
+  STC 32
+  STC 58
+  STC 48
+  STC 48
+  STC 49
+  STC 32
+  STC 121
+  STC 32
+  STC 49
+  STC 32
+  STC 101
+  STC 114
+  STC 116
+  STC 110
+  STC 101
+  STC 32
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 101
+  STC 109
+  STC 97
+  STC 68
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --Fin escribir
+; --Comienzo leer línea
+  SRF  0  3
+  DRF
+  RD  1
+; --Fin leer línea
+L1:
+  SRF  0  3
+  DRF
+  STC  1
+  LT
+  SRF  0  3
+  DRF
+  STC 100
+  GT
+  OR
+  JMT L2
+; --assignment pedir_entero
+  SRF  1 105
+  SRF  0  3
+  DRF
+  ASG
+  SRF  0 105
+  DRF
+  CSF
+; --fin procedimiento pedir_entero
+L3:
+; --parameter v
+  SRF  0 103
+L10:
+  DUP
+  SRF  0 107
+  ASGI
+  ASGI
+  SRF  0 107
+  DRF
+  STC  1
+  SBT
+  DUP
+  SRF  0  3
+  GTE
+  JMT L10
+  POP
+; --inicio procedimiento escrib_vect
+; --assignment i
+  SRF  0 105
+  STC  2
+  ASG
+; --assignment m
+  SRF  0 104
+  STC  0
+  ASG
+; --assignment salir
+  SRF  0 106
+  STC  0
+  ASG
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 32
+  STC 97
+  STC 116
+  STC 115
+  STC 97
+  STC 104
+  STC 32
+  STC 115
+  STC 111
+  STC 109
+  STC 105
+  STC 114
+  STC 112
+  STC 32
+  STC 115
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC 117
+  STC 78
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  1  3
+  DRF
+  WRT  1
+  STC 32
+  STC 58
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+  JMP L8
+L9:
+; --inicio select
+  SRF  0 105
+  DRF
+  SRF  1  3
+  DRF
+  GT
+  JMF L7
+; --assignment salir
+  SRF  0 106
+  STC  1
+  ASG
+  JMP L6
+L7:
+; --otherwise
+; --inicio select
+  SRF -1  3
+  SRF  0 105
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  JMF L5
+; --Comienzo escribir línea
+  SRF  0 105
+  DRF
+  WRT  1
+  STC 46
+  STC 111
+  STC 109
+  STC 105
+  STC 114
+  STC 112
+  STC 32
+  STC 115
+  STC 101
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment m
+  SRF  0 104
+  SRF  0 104
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L4
+L5:
+L4:
+; --fin select
+; --assignment i
+  SRF  0 105
+  SRF  0 105
+  DRF
+  STC  1
+  PLUS
+  ASG
+L6:
+; --fin select
+L8:
+  SRF  0 106
+  DRF
+  NGB
+  JMT L9
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 32
+  STC 97
+  STC 116
+  STC 115
+  STC 97
+  STC 72
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  1  3
+  DRF
+  WRT  1
+  STC 32
+  STC 121
+  STC 97
+  STC 104
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0 104
+  DRF
+  WRT  1
+  STC 46
+  STC 115
+  STC 111
+  STC 109
+  STC 105
+  STC 114
+  STC 112
+  STC 32
+  STC 115
+  STC 111
+  STC 114
+  STC 101
+  STC 109
+  STC -70
+  STC -61
+  STC 110
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+  CSF
+; --fin procedimiento escrib_vect
+L11:
+; --parameter v
+  SRF  0  3
+  ASGI
+; --inicio procedimiento inicializar
+; --assignment i
+  SRF  0  4
+  STC  1
+  ASG
+  JMP L12
+L13:
+; --assignment v
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+  STC  1
+  ASG
+; --assignment i
+  SRF  0  4
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L12:
+  SRF  0  4
+  DRF
+  SRF  1  3
+  DRF
+  LTE
+  JMT L13
+  CSF
+; --fin procedimiento inicializar
+L14:
+; --parameter v
+  SRF  0  3
+  ASGI
+; --inicio procedimiento eliminar_no_primos
+; --assignment i
+  SRF  0  4
+  STC  2
+  ASG
+  JMP L19
+L20:
+; --inicio select
+  SRF -1  3
+  DRF
+  SRF  0  4
+  DRF
+  PLUS
+  STC  0
+  SBT
+  DRF
+  JMF L18
+; --assignment j
+  SRF  0  5
+  STC  2
+  SRF  0  4
+  DRF
+  TMS
+  ASG
+  JMP L15
+L16:
+; --assignment v
+  SRF  0  3
+  DRF
+  SRF  0  5
+  DRF
+  PLUS
+  STC  0
+  SBT
+  STC  0
+  ASG
+; --assignment j
+  SRF  0  5
+  SRF  0  5
+  DRF
+  SRF  0  4
+  DRF
+  PLUS
+  ASG
+L15:
+  SRF  0  5
+  DRF
+  SRF  1  3
+  DRF
+  LTE
+  JMT L16
+  JMP L17
+L18:
+L17:
+; --fin select
+; --assignment i
+  SRF  0  4
+  SRF  0  4
+  DRF
+  STC  1
+  PLUS
+  ASG
+L19:
+  SRF  0  4
+  DRF
+  SRF  1  3
+  DRF
+  STC  2
+  DIV
+  LTE
+  JMT L20
+  CSF
+; --fin procedimiento eliminar_no_primos
+L21:
+; --parameter v
+  SRF  0  3
+  ASGI
+; --inicio procedimiento procesar
+; --call inicializar
+  SRF  0  3
+  DRF
+  OSF  4  1 L11
+; --call eliminar_no_primos
+  SRF  0  3
+  DRF
+  OSF  4  1 L14
+; --call escrib_vect
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  SRF  0  7
+  DRF
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  SRF  0 14
+  DRF
+  SRF  0 15
+  DRF
+  SRF  0 16
+  DRF
+  SRF  0 17
+  DRF
+  SRF  0 18
+  DRF
+  SRF  0 19
+  DRF
+  SRF  0 20
+  DRF
+  SRF  0 21
+  DRF
+  SRF  0 22
+  DRF
+  SRF  0 23
+  DRF
+  SRF  0 24
+  DRF
+  SRF  0 25
+  DRF
+  SRF  0 26
+  DRF
+  SRF  0 27
+  DRF
+  SRF  0 28
+  DRF
+  SRF  0 29
+  DRF
+  SRF  0 30
+  DRF
+  SRF  0 31
+  DRF
+  SRF  0 32
+  DRF
+  SRF  0 33
+  DRF
+  SRF  0 34
+  DRF
+  SRF  0 35
+  DRF
+  SRF  0 36
+  DRF
+  SRF  0 37
+  DRF
+  SRF  0 38
+  DRF
+  SRF  0 39
+  DRF
+  SRF  0 40
+  DRF
+  SRF  0 41
+  DRF
+  SRF  0 42
+  DRF
+  SRF  0 43
+  DRF
+  SRF  0 44
+  DRF
+  SRF  0 45
+  DRF
+  SRF  0 46
+  DRF
+  SRF  0 47
+  DRF
+  SRF  0 48
+  DRF
+  SRF  0 49
+  DRF
+  SRF  0 50
+  DRF
+  SRF  0 51
+  DRF
+  SRF  0 52
+  DRF
+  SRF  0 53
+  DRF
+  SRF  0 54
+  DRF
+  SRF  0 55
+  DRF
+  SRF  0 56
+  DRF
+  SRF  0 57
+  DRF
+  SRF  0 58
+  DRF
+  SRF  0 59
+  DRF
+  SRF  0 60
+  DRF
+  SRF  0 61
+  DRF
+  SRF  0 62
+  DRF
+  SRF  0 63
+  DRF
+  SRF  0 64
+  DRF
+  SRF  0 65
+  DRF
+  SRF  0 66
+  DRF
+  SRF  0 67
+  DRF
+  SRF  0 68
+  DRF
+  SRF  0 69
+  DRF
+  SRF  0 70
+  DRF
+  SRF  0 71
+  DRF
+  SRF  0 72
+  DRF
+  SRF  0 73
+  DRF
+  SRF  0 74
+  DRF
+  SRF  0 75
+  DRF
+  SRF  0 76
+  DRF
+  SRF  0 77
+  DRF
+  SRF  0 78
+  DRF
+  SRF  0 79
+  DRF
+  SRF  0 80
+  DRF
+  SRF  0 81
+  DRF
+  SRF  0 82
+  DRF
+  SRF  0 83
+  DRF
+  SRF  0 84
+  DRF
+  SRF  0 85
+  DRF
+  SRF  0 86
+  DRF
+  SRF  0 87
+  DRF
+  SRF  0 88
+  DRF
+  SRF  0 89
+  DRF
+  SRF  0 90
+  DRF
+  SRF  0 91
+  DRF
+  SRF  0 92
+  DRF
+  SRF  0 93
+  DRF
+  SRF  0 94
+  DRF
+  SRF  0 95
+  DRF
+  SRF  0 96
+  DRF
+  SRF  0 97
+  DRF
+  SRF  0 98
+  DRF
+  SRF  0 99
+  DRF
+  SRF  0 100
+  DRF
+  SRF  0 101
+  DRF
+  SRF  0 102
+  DRF
+  SRF  0 103
+  DRF
+  OSF  4  1 L3
+  CSF
+; --fin procedimiento procesar
+; --Comienzo del programa eratostenes
+L22:
+; --Comienzo escribir línea
+  STC 111
+  STC 100
+  STC 97
+  STC 100
+  STC 32
+  STC 110
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 97
+  STC 116
+  STC 115
+  STC 97
+  STC 104
+  STC 32
+  STC 115
+  STC 111
+  STC 109
+  STC 105
+  STC 114
+  STC 112
+  STC 32
+  STC 58
+  STC 115
+  STC 101
+  STC 110
+  STC 101
+  STC 116
+  STC 115
+  STC -77
+  STC -61
+  STC 116
+  STC 97
+  STC 114
+  STC 69
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 97
+  STC 98
+  STC 105
+  STC 114
+  STC 67
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment n
+  SRF  0  3
+; --call pedir_entero
+  OSF 106  1 L0
+  ASG
+; --call procesar
+  SRF  0  4
+  OSF 106  0 L21
+; --Fin del programa eratostenes
+  LVP

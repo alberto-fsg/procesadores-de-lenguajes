@@ -1,0 +1,1261 @@
+  ENP L3
+L0:
+; --parameter numTrues
+  SRF  0  5
+  ASGI
+; --parameter numFormulas
+  SRF  0  4
+  ASGI
+; --parameter b
+  SRF  0  3
+  ASGI
+; --inicio procedimiento evalua
+; --inicio select
+  SRF  0  3
+  DRF
+  JMF L2
+; --assignment numTrues
+  SRF  0  5
+  DRF
+  SRF  0  5
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+  JMP L1
+L2:
+L1:
+; --fin select
+; --assignment numFormulas
+  SRF  0  4
+  DRF
+  SRF  0  4
+  DRF
+  DRF
+  STC  1
+  PLUS
+  ASG
+  CSF
+; --fin procedimiento evalua
+; --Comienzo del programa cambio_base
+L3:
+; --Comienzo escribir línea
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  STC 45
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment numFormulas
+  SRF  0 14
+  STC  0
+  ASG
+; --assignment numTrues
+  SRF  0 15
+  STC  0
+  ASG
+; --assignment b1
+  SRF  0  8
+  STC  1
+  ASG
+; --assignment b2
+  SRF  0  9
+  STC  1
+  ASG
+; --assignment b3
+  SRF  0 10
+  STC  1
+  ASG
+; --assignment b4
+  SRF  0 11
+  STC  1
+  ASG
+; --assignment b5
+  SRF  0 12
+  STC  1
+  ASG
+; --assignment b6
+  SRF  0 13
+  STC  1
+  ASG
+; --assignment i1
+  SRF  0  3
+  STC  1
+  ASG
+; --assignment i2
+  SRF  0  4
+  STC  2
+  ASG
+; --assignment i3
+  SRF  0  5
+  STC  3
+  ASG
+; --assignment i4
+  SRF  0  6
+  STC  4
+  ASG
+; --assignment i5
+  SRF  0  7
+  STC  5
+  ASG
+; --Comienzo escribir línea
+  STC 115
+  STC 97
+  STC 116
+  STC 99
+  STC 101
+  STC 114
+  STC 114
+  STC 111
+  STC 99
+  STC 32
+  STC 115
+  STC 97
+  STC 110
+  STC 97
+  STC 101
+  STC 108
+  STC 111
+  STC 111
+  STC 98
+  STC 32
+  STC 115
+  STC 101
+  STC 110
+  STC 111
+  STC 105
+  STC 115
+  STC 101
+  STC 114
+  STC 112
+  STC 120
+  STC 101
+  STC 32
+  STC 101
+  STC 100
+  STC 32
+  STC 111
+  STC 116
+  STC 110
+  STC 117
+  STC 106
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 110
+  STC 117
+  STC 32
+  STC 97
+  STC -70
+  STC -61
+  STC 108
+  STC 97
+  STC 118
+  STC 101
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --call evalua
+  STC  1
+  STC  1
+  AND
+  STC  1
+  NGB
+  AND
+  STC  3
+  STC  5
+  GT
+  AND
+  STC  6
+  STC  5
+  GT
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  SRF  0 10
+  DRF
+  OR
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  NGB
+  SRF  0  9
+  DRF
+  OR
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  AND
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  AND
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  SRF  0 12
+  DRF
+  NGB
+  AND
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  NGB
+  AND
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  NGB
+  SRF  0  9
+  DRF
+  NGB
+  AND
+  SRF  0 10
+  DRF
+  NGB
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  AND
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  SRF  0 10
+  DRF
+  NGB
+  OR
+  SRF  0 11
+  DRF
+  SRF  0 12
+  DRF
+  AND
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  NGB
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  NGB
+  AND
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  EQ
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  OR
+  SRF  0 10
+  DRF
+  NGB
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  OR
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  AND
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  OR
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  EQ
+  NGB
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  OR
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  OR
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  OR
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  AND
+  NGB
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  OR
+  NGB
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  AND
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  AND
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  AND
+  EQ
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  OR
+  SRF  0 10
+  DRF
+  SRF  0 11
+  DRF
+  OR
+  AND
+  SRF  0 12
+  DRF
+  SRF  0 13
+  DRF
+  OR
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  8
+  DRF
+  SRF  0  9
+  DRF
+  OR
+  SRF  0 10
+  DRF
+  OR
+  NGB
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC 10
+  GT
+  SRF  0  4
+  DRF
+  STC  5
+  LTE
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  PLUS
+  STC  2
+  TMS
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  SBT
+  GTE
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC  0
+  GT
+  SRF  0  4
+  DRF
+  STC 100
+  LT
+  AND
+  SRF  0  5
+  DRF
+  STC 42
+  EQ
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  TMS
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  PLUS
+  EQ
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC 20
+  GTE
+  SRF  0  4
+  DRF
+  STC  5
+  LT
+  SRF  0  5
+  DRF
+  STC 10
+  GTE
+  OR
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC  3
+  MOD
+  STC  0
+  EQ
+  SRF  0  4
+  DRF
+  STC  2
+  MOD
+  STC  1
+  EQ
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC  2
+  DIV
+  STC 10
+  GT
+  SRF  0  5
+  DRF
+  STC  7
+  EQ
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  SBT
+  STC  5
+  GTE
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  PLUS
+  STC 100
+  LT
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC  5
+  DIV
+  SRF  0  4
+  DRF
+  STC  2
+  DIV
+  EQ
+  SRF  0  5
+  DRF
+  STC 10
+  GT
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  STC  3
+  TMS
+  PLUS
+  SRF  0  5
+  DRF
+  STC  2
+  DIV
+  GTE
+  SRF  0  6
+  DRF
+  STC  7
+  EQ
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC 10
+  DIV
+  SRF  0  4
+  DRF
+  STC  4
+  MOD
+  EQ
+  SRF  0  5
+  DRF
+  STC 20
+  GT
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  STC 10
+  SRF  0  3
+  DRF
+  LTE
+  SRF  0  4
+  DRF
+  STC  5
+  LT
+  SRF  0  5
+  DRF
+  STC 15
+  GTE
+  OR
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  TMS
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  PLUS
+  GT
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC  0
+  GTE
+  NGB
+  SRF  0  4
+  DRF
+  STC 100
+  LT
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  EQ
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  EQ
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  STC  2
+  DIV
+  SRF  0  4
+  DRF
+  NEQ
+  SRF  0  5
+  DRF
+  STC  5
+  GT
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  PLUS
+  STC  7
+  MOD
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  TMS
+  STC 10
+  MOD
+  EQ
+  SRF  0  7
+  DRF
+  STC  3
+  GTE
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  PLUS
+  STC 50
+  GT
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  PLUS
+  STC 100
+  LT
+  OR
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --call evalua
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  EQ
+  SRF  0  5
+  DRF
+  SRF  0  6
+  DRF
+  GT
+  AND
+  SRF  0 14
+  SRF  0 15
+  OSF 16  0 L0
+; --Comienzo escribir línea
+  STC 115
+  STC 111
+  STC 99
+  STC 105
+  STC 116
+  STC 99
+  STC -95
+  STC -61
+  STC 116
+  STC 110
+  STC 105
+  STC 115
+  STC 32
+  STC 111
+  STC 32
+  STC 115
+  STC 111
+  STC 99
+  STC 105
+  STC 120
+  STC -87
+  STC -61
+  STC 108
+  STC 32
+  STC 115
+  STC 97
+  STC 109
+  STC 101
+  STC 108
+  STC 98
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 110
+  STC 105
+  STC 115
+  STC 32
+  STC -83
+  STC -61
+  STC 117
+  STC 113
+  STC 97
+  STC 32
+  STC 111
+  STC 100
+  STC 97
+  STC 103
+  STC 101
+  STC 108
+  STC 108
+  STC 32
+  STC 114
+  STC 101
+  STC 98
+  STC 97
+  STC 104
+  STC 32
+  STC 97
+  STC -83
+  STC -61
+  STC 114
+  STC 101
+  STC 98
+  STC 101
+  STC 68
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 46
+  STC 83
+  STC 69
+  STC 85
+  STC 82
+  STC 84
+  STC 32
+  STC 57
+  STC 49
+  STC 32
+  STC 121
+  STC 32
+  STC 115
+  STC 97
+  STC 108
+  STC 117
+  STC 109
+  STC 114
+  STC -77
+  STC -61
+  STC 102
+  STC 32
+  STC 56
+  STC 51
+  STC 32
+  STC 114
+  STC 97
+  STC 100
+  STC 32
+  STC 121
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC  9
+  WRT  0
+  STC 32
+  STC 58
+  STC 115
+  STC 97
+  STC 108
+  STC 117
+  STC 109
+  STC 114
+  STC 111
+  STC 70
+  STC 109
+  STC 117
+  STC 110
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0 14
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC  9
+  WRT  0
+  STC 32
+  STC 32
+  STC 32
+  STC 58
+  STC 83
+  STC 69
+  STC 85
+  STC 82
+  STC 84
+  STC 32
+  STC 109
+  STC 117
+  STC 110
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0 15
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Fin del programa cambio_base
+  LVP

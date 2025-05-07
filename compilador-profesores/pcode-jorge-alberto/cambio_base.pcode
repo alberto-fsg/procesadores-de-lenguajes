@@ -1,0 +1,405 @@
+  ENP L6
+L0:
+; --parameter b
+  SRF  0  4
+  ASGI
+; --parameter n
+  SRF  0  3
+  ASGI
+; --inicio procedimiento b_dec
+; --inicio select
+  SRF  0  3
+  DRF
+  STC  0
+  EQ
+  JMF L2
+; --assignment b_dec
+  SRF  1  6
+  STC  0
+  ASG
+  JMP L1
+L2:
+; --otherwise
+; --assignment uc
+  SRF  0  5
+  SRF  0  3
+  DRF
+  STC 10
+  MOD
+  ASG
+; --assignment valRec
+  SRF  0  6
+; --call b_dec
+  SRF  0  3
+  DRF
+  STC 10
+  DIV
+  SRF  0  4
+  DRF
+  OSF  7  2 L0
+  ASG
+; --assignment b_dec
+  SRF  1  6
+  SRF  0  6
+  DRF
+  SRF  0  4
+  DRF
+  TMS
+  SRF  0  5
+  DRF
+  PLUS
+  ASG
+L1:
+; --fin select
+  SRF  0  6
+  DRF
+  CSF
+; --fin procedimiento b_dec
+L3:
+; --parameter b
+  SRF  0  4
+  ASGI
+; --parameter n
+  SRF  0  3
+  ASGI
+; --inicio procedimiento dec_b
+; --inicio select
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  LT
+  JMF L5
+; --assignment dec_b
+  SRF  1  7
+  SRF  0  3
+  DRF
+  ASG
+  JMP L4
+L5:
+; --otherwise
+; --assignment resto
+  SRF  0  5
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  MOD
+  ASG
+; --assignment valRec
+  SRF  0  6
+; --call dec_b
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  DIV
+  SRF  0  4
+  DRF
+  OSF  7  2 L3
+  ASG
+; --assignment dec_b
+  SRF  1  7
+  SRF  0  6
+  DRF
+  STC 10
+  TMS
+  SRF  0  5
+  DRF
+  PLUS
+  ASG
+L4:
+; --fin select
+  SRF  0  7
+  DRF
+  CSF
+; --fin procedimiento dec_b
+; --Comienzo del programa cambio_base
+L6:
+; --assignment num
+  SRF  0  3
+  STC  4
+  ASG
+; --assignment Base
+  SRF  0  4
+  STC  2
+  ASG
+; --Comienzo escribir
+  STC 61
+  STC 110
+  STC 32
+  STC 101
+  STC 116
+  STC 114
+  STC 101
+  STC 105
+  STC 118
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 109
+  STC 97
+  STC 114
+  STC 103
+  STC 111
+  STC 114
+  STC 112
+  STC 32
+  STC 101
+  STC 116
+  STC 115
+  STC 69
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 61
+  STC 98
+  STC 32
+  STC 101
+  STC 115
+  STC 97
+  STC 98
+  STC 32
+  STC 97
+  STC 32
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  4
+  DRF
+  WRT  1
+; --Fin escribir
+; --Comienzo escribir línea
+  STC 46
+  STC 97
+  STC 115
+  STC 114
+  STC 101
+  STC 118
+  STC 110
+  STC 105
+  STC 32
+  STC 110
+  STC -77
+  STC -61
+  STC 105
+  STC 115
+  STC 114
+  STC 101
+  STC 118
+  STC 110
+  STC 111
+  STC 99
+  STC 32
+  STC 97
+  STC 108
+  STC 32
+  STC 97
+  STC -70
+  STC -61
+  STC 116
+  STC 99
+  STC 101
+  STC 102
+  STC 101
+  STC 32
+  STC 111
+  STC 103
+  STC 101
+  STC 117
+  STC 108
+  STC 32
+  STC 121
+  STC 32
+  STC 44
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 32
+  STC 58
+  STC 110
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 32
+  STC 58
+  STC 98
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --assignment enB
+  SRF  0  5
+; --call dec_b
+  SRF  0  3
+  DRF
+  SRF  0  4
+  DRF
+  OSF  8  1 L3
+  ASG
+; --Comienzo escribir línea
+  STC 40
+  STC 98
+  STC 95
+  STC 99
+  STC 101
+  STC 100
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  3
+  DRF
+  WRT  1
+  STC 44
+  WRT  0
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 32
+  STC 58
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Comienzo escribir línea
+  STC 40
+  STC 99
+  STC 101
+  STC 100
+  STC 95
+  STC 98
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  SRF  0  5
+  DRF
+  WRT  1
+  STC 44
+  WRT  0
+  SRF  0  4
+  DRF
+  WRT  1
+  STC 32
+  STC 58
+  STC 41
+  WRT  0
+  WRT  0
+  WRT  0
+; --call b_dec
+  SRF  0  5
+  DRF
+  SRF  0  4
+  DRF
+  OSF  8  1 L0
+  WRT  1
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Fin del programa cambio_base
+  LVP

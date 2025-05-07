@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Compilar el proyecto
-echo -e "\033[0;33mCompilando el proyecto\033[0m\n"
+echo -e "\033[0;32mCompilando el proyecto\033[0m\n"
 ./build.sh
 
 if [ $? -ne 0 ]; then
@@ -10,9 +10,9 @@ if [ $? -ne 0 ]; then
 fi
 
 # Ejecutar las pruebas
-echo -e "\033[0;33mEjecutando las pruebas\033[0m\n"
+echo -e "\033[0;32mEjecutando las pruebas\033[0m\n"
 ./tests.sh
 
 # Limpiar el proyecto
-echo -e "\033[0;33mLimpiando el proyecto\033[0m\n"
+echo -e "\033[0;32mLimpiando el proyecto\033[0m\n"
 ./clean.sh
