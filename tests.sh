@@ -28,7 +28,11 @@ done
 for binary_file in "$BINARY_OUTPUT_DIR"/*.x; do
     echo -e "\033[0;32m---------------------------------------------------\033[0m\n"
     object_input="${binary_file%.x}"
-    "$MAQUINA_P" "$object_input"
-    echo "\033[0;32m$(basename ${object_input}) executed\033[0m\n"
-    read -p "Press Enter to continue..."  # Wait for user input to continue
+    if [[ "$(basename ${object_input})" == "einstein" ]]; then
+        "$MAQUINA_P" "$object_input" < "$SOURCE_DIR"/einstein.pgm > "$SOURCE_DIR"/resultado.pgm
+    else
+        "$MAQUINA_P" "$object_input"
+        echo -e "\033[0;32m$(basename ${object_input}) executed\033[0m\n"
+        read -p "Press Enter to continue..."  # Wait for user input to continue
+    fi
 done

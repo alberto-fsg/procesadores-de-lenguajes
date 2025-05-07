@@ -15,7 +15,7 @@ L0:
   GT
   JMF L2
 ; --assignment min
-  SRF  1 2009
+  SRF  0  5
   SRF  0  4
   DRF
   ASG
@@ -23,13 +23,13 @@ L0:
 L2:
 ; --otherwise
 ; --assignment min
-  SRF  1 2009
+  SRF  0  5
   SRF  0  3
   DRF
   ASG
 L1:
 ; --fin select
-  SRF  0 2009
+  SRF  0  5
   DRF
   CSF
 ; --fin procedimiento min
@@ -49,7 +49,7 @@ L3:
   GT
   JMF L5
 ; --assignment max
-  SRF  1 2010
+  SRF  0  5
   SRF  0  3
   DRF
   ASG
@@ -57,13 +57,13 @@ L3:
 L5:
 ; --otherwise
 ; --assignment max
-  SRF  1 2010
+  SRF  0  5
   SRF  0  4
   DRF
   ASG
 L4:
 ; --fin select
-  SRF  0 2010
+  SRF  0  5
   DRF
   CSF
 ; --fin procedimiento max
@@ -76,7 +76,7 @@ L6:
   ASGI
 ; --inicio procedimiento sitio
 ; --assignment sitio
-  SRF  1 2011
+  SRF  0  5
   SRF  0  3
   DRF
   SRF  1  3
@@ -86,7 +86,7 @@ L6:
   DRF
   PLUS
   ASG
-  SRF  0 2011
+  SRF  0  5
   DRF
   CSF
 ; --fin procedimiento sitio
@@ -102,21 +102,21 @@ L7:
   ASGI
 ; --inicio procedimiento componente
 ; --assignment componente
-  SRF  1 2012
-  SRF -1  3
+  SRF  0  6
+  SRF  0  3
   DRF
 ; --call sitio
   SRF  0  4
   DRF
   SRF  0  5
   DRF
-  OSF  6  2 L6
+  OSF  7  1 L6
   PLUS
   STC  0
   SBT
   DRF
   ASG
-  SRF  0 2012
+  SRF  0  6
   DRF
   CSF
 ; --fin procedimiento componente
@@ -132,15 +132,15 @@ L8:
   ASGI
 ; --inicio procedimiento ocupada
 ; --assignment ocupada
-  SRF  1 2013
-  SRF -1  3
+  SRF  0  6
+  SRF  0  3
   DRF
 ; --call sitio
   SRF  0  4
   DRF
   SRF  0  5
   DRF
-  OSF  6  2 L6
+  OSF  7  1 L6
   PLUS
   STC  0
   SBT
@@ -148,7 +148,7 @@ L8:
   STC  0
   GT
   ASG
-  SRF  0 2013
+  SRF  0  6
   DRF
   CSF
 ; --fin procedimiento ocupada
@@ -174,7 +174,7 @@ L9:
   DRF
   SRF  0  5
   DRF
-  OSF  7  2 L6
+  OSF  7  1 L6
   PLUS
   STC  0
   SBT
@@ -202,18 +202,18 @@ L10:
   DRF
   SRF  0  5
   DRF
-  OSF  6  2 L6
+  OSF  6  1 L6
   PLUS
   STC  0
   SBT
-  SRF -1  3
+  SRF  0  3
   DRF
 ; --call sitio
   SRF  0  4
   DRF
   SRF  0  5
   DRF
-  OSF  6  2 L6
+  OSF  6  1 L6
   PLUS
   STC  0
   SBT
@@ -242,18 +242,18 @@ L11:
   DRF
   SRF  0  5
   DRF
-  OSF  6  2 L6
+  OSF  6  1 L6
   PLUS
   STC  0
   SBT
-  SRF -1  3
+  SRF  0  3
   DRF
 ; --call sitio
   SRF  0  4
   DRF
   SRF  0  5
   DRF
-  OSF  6  2 L6
+  OSF  6  1 L6
   PLUS
   STC  0
   SBT
@@ -632,7 +632,7 @@ L34:
   DRF
   SRF  0  5
   DRF
-  OSF  6  2 L7
+  OSF  6  1 L7
   STC  0
   GT
   JMF L32
@@ -706,7 +706,7 @@ L37:
   STC  0
   ASG
 ; --assignment endal
-  SRF  0  5
+  SRF  0  6
   STC  0
   ASG
   JMP L42
@@ -720,7 +720,7 @@ L43:
   GTE
   JMF L39
 ; --assignment endal
-  SRF  0  5
+  SRF  0  6
   STC  1
   ASG
   JMP L38
@@ -756,7 +756,7 @@ L40:
   SRF  0  4
   DRF
   DRF
-  OSF  6  2 L8
+  OSF  7  1 L8
   JMF L41
 ; --assignment columna
   SRF  0  4
@@ -771,18 +771,18 @@ L40:
 L41:
 ; --otherwise
 ; --assignment endal
-  SRF  0  5
+  SRF  0  6
   STC  1
   ASG
 L38:
 ; --fin select
 L42:
-  SRF  0  5
+  SRF  0  6
   DRF
   NGB
   JMT L43
 ; --assignment libre
-  SRF  1 2014
+  SRF  0  5
   SRF  0  3
   DRF
   DRF
@@ -790,7 +790,7 @@ L42:
   DRF
   LT
   ASG
-  SRF  0 2014
+  SRF  0  6
   DRF
   CSF
 ; --fin procedimiento libre
@@ -1045,13 +1045,13 @@ L49:
   STC  1
   ASG
 ; --call iniciar_tablero
-  OSF 2015  0 L25
+  OSF 2009  0 L25
 ; --call colocar_reina
   SRF  0  5
   DRF
   SRF  0  6
   DRF
-  OSF 2015  0 L12
+  OSF 2009  0 L12
   JMP L44
 L45:
 ; --call colocar_reina
@@ -1059,7 +1059,7 @@ L45:
   DRF
   SRF  0  8
   DRF
-  OSF 2015  0 L12
+  OSF 2009  0 L12
 ; --assignment nreinas
   SRF  0  4
   SRF  0  4
@@ -1076,7 +1076,7 @@ L44:
 ; --call libre
   SRF  0  7
   SRF  0  8
-  OSF 2015  1 L37
+  OSF 2009  0 L37
   AND
   JMT L45
 ; --inicio select
@@ -1088,7 +1088,7 @@ L44:
   JMF L47
 ; --call mostrar_tablero
   SRF  0 1009
-  OSF 2015  0 L30
+  OSF 2009  0 L30
   JMP L46
 L47:
 L46:

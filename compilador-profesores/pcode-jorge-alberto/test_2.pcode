@@ -1,0 +1,241 @@
+  ENP L8
+L0:
+; --parameter codigo
+  SRF  0  3
+  ASGI
+; --inicio procedimiento procesarCar
+; --inicio select
+  SRF  0  3
+  DRF
+  STC  2
+  MOD
+  STC  0
+  EQ
+  JMF L2
+; --assignment procesarCar
+  SRF  0  4
+  SRF  0  3
+  DRF
+  ASG
+  JMP L1
+L2:
+; --otherwise
+; --assignment procesarCar
+  SRF  0  4
+  STC 63
+  ASG
+L1:
+; --fin select
+  SRF  0  4
+  DRF
+  CSF
+; --fin procedimiento procesarCar
+; --Comienzo del programa Test2
+L8:
+; --assignment i
+  SRF  0 17
+  STC  5
+  STC  3
+  SRF  0  8
+  STC  1
+  STC  3
+  TMS
+  STC  0
+  PLUS
+  PLUS
+  STC  0
+  SBT
+  DRF
+  PLUS
+  TMS
+; --call procesarCar
+  STC 65
+  OSF 23  0 L0
+  STC 10
+  SBT
+  MOD
+  ASG
+; --assignment b1
+  SRF  0 20
+  SRF  0 17
+  DRF
+  STC 10
+  GT
+; --call procesarCar
+  STC 66
+  OSF 23  0 L0
+  STC 66
+  EQ
+  AND
+  SRF  0 18
+  DRF
+  STC  5
+  LT
+  NGB
+  OR
+  ASG
+; --assignment flags
+  SRF  0  3
+  SRF  0 17
+  DRF
+  SRF  0 18
+  DRF
+  PLUS
+  STC  5
+  MOD
+  PLUS
+  STC  0
+  SBT
+  SRF  0 20
+  DRF
+  SRF  0 21
+  DRF
+  SRF  0 17
+  DRF
+  SRF  0 18
+  DRF
+  NEQ
+  OR
+  AND
+  ASG
+  JMP L6
+L7:
+; --inicio select
+  SRF  0 17
+  DRF
+  STC  0
+  EQ
+  JMF L4
+; --Comienzo escribir línea
+  STC 111
+  STC 114
+  STC 101
+  STC 67
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+  JMP L3
+L4:
+  SRF  0 17
+  DRF
+  STC  5
+  GT
+  JMF L5
+; --Comienzo escribir
+  STC 53
+  STC 32
+  STC 101
+  STC 117
+  STC 113
+  STC 32
+  STC 114
+  STC 111
+  STC 121
+  STC 97
+  STC 77
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+; --Fin escribir
+; --Comienzo leer línea
+  SRF  0 19
+  RD  1
+; --Fin leer línea
+  JMP L3
+L5:
+; --otherwise
+; --assignment j
+  SRF  0 18
+  SRF  0 18
+  DRF
+; --call procesarCar
+  SRF  0 17
+  DRF
+  STC 65
+  PLUS
+  OSF 23  0 L0
+  PLUS
+  ASG
+L3:
+; --fin select
+; --assignment i
+  SRF  0 17
+  SRF  0 17
+  DRF
+  STC  1
+  PLUS
+  ASG
+L6:
+  SRF  0 17
+  DRF
+  STC 10
+  LT
+  JMT L7
+; --Comienzo escribir línea
+  STC 32
+  STC 58
+  STC 34
+  STC 34
+  STC 101
+  STC 116
+  STC 110
+  STC 97
+  STC 116
+  STC 114
+  STC 111
+  STC 112
+  STC 109
+  STC 105
+  STC 34
+  STC 34
+  STC 32
+  STC 101
+  STC 106
+  STC 97
+  STC 115
+  STC 110
+  STC 101
+  STC 77
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  WRT  0
+  STC 65
+  WRT  0
+  STC 10
+  WRT  0
+; --Fin escribir línea
+; --Fin del programa Test2
+  LVP

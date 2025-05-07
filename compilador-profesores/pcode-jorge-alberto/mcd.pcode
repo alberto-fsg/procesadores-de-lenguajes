@@ -61,11 +61,11 @@ L4:
   WRT  0
   WRT  0
 ; --Fin escribir
-; --Comienzo leer línea
+; --Comienzo leer
   SRF  0  3
   DRF
   RD  1
-; --Fin leer línea
+; --Fin leer
 ; --inicio select
   SRF  0  3
   DRF
@@ -145,17 +145,17 @@ L5:
   ASGI
 ; --inicio procedimiento mcd
 ; --assignment j
-  SRF  0  6
+  SRF  0  7
   SRF  0  3
   DRF
   ASG
 ; --assignment k
-  SRF  0  7
+  SRF  0  8
   SRF  0  4
   DRF
   ASG
 ; --assignment i
-  SRF  0  5
+  SRF  0  6
   SRF  0  3
   DRF
   SRF  0  4
@@ -165,35 +165,35 @@ L5:
   JMP L6
 L7:
 ; --assignment j
-  SRF  0  6
   SRF  0  7
+  SRF  0  8
   DRF
   ASG
 ; --assignment k
-  SRF  0  7
-  SRF  0  5
+  SRF  0  8
+  SRF  0  6
   DRF
   ASG
 ; --assignment i
-  SRF  0  5
   SRF  0  6
-  DRF
   SRF  0  7
+  DRF
+  SRF  0  8
   DRF
   MOD
   ASG
 L6:
-  SRF  0  5
+  SRF  0  6
   DRF
   STC  0
   NEQ
   JMT L7
 ; --assignment mcd
-  SRF  1  5
-  SRF  0  7
+  SRF  0  5
+  SRF  0  8
   DRF
   ASG
-  SRF  0  5
+  SRF  0  8
   DRF
   CSF
 ; --fin procedimiento mcd
@@ -361,10 +361,10 @@ L8:
 ; --Fin escribir línea
 ; --call dato
   SRF  0  3
-  OSF  6  0 L0
+  OSF  5  0 L0
 ; --call dato
   SRF  0  4
-  OSF  6  0 L0
+  OSF  5  0 L0
 ; --Comienzo escribir línea
   STC 10
   WRT  0
@@ -401,7 +401,7 @@ L8:
   DRF
   SRF  0  4
   DRF
-  OSF  6  1 L5
+  OSF  5  0 L5
   WRT  1
   STC 10
   WRT  0

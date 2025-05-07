@@ -429,13 +429,13 @@ L3:
   SRF  0 19
   OSF 20  0 L0
 ; --call evalua
-  SRF -1  8
+  SRF  0  8
   STC  1
   PLUS
   STC  0
   SBT
   DRF
-  SRF -1  8
+  SRF  0  8
   STC  2
   PLUS
   STC  0
@@ -447,14 +447,14 @@ L3:
   SRF  0 19
   OSF 20  0 L0
 ; --call evalua
-  SRF -1  8
+  SRF  0  8
   SRF  0  6
   DRF
   PLUS
   STC  0
   SBT
   DRF
-  SRF -1  8
+  SRF  0  8
   SRF  0  5
   DRF
   PLUS
@@ -467,7 +467,7 @@ L3:
   SRF  0 19
   OSF 20  0 L0
 ; --call evalua
-  SRF -1  8
+  SRF  0  8
   SRF  0  4
   DRF
   SRF  0  3
@@ -477,7 +477,7 @@ L3:
   STC  0
   SBT
   DRF
-  SRF -1  8
+  SRF  0  8
   SRF  0  6
   DRF
   STC  2
@@ -492,8 +492,8 @@ L3:
   SRF  0 19
   OSF 20  0 L0
 ; --call evalua
-  SRF -1  8
-  SRF -1  8
+  SRF  0  8
+  SRF  0  8
   STC  4
   PLUS
   STC  0
@@ -503,8 +503,8 @@ L3:
   STC  0
   SBT
   DRF
-  SRF -1  8
-  SRF -1  8
+  SRF  0  8
+  SRF  0  8
   STC  1
   PLUS
   STC  0
@@ -522,8 +522,8 @@ L3:
   SRF  0 19
   OSF 20  0 L0
 ; --call evalua
-  SRF -1  8
-  SRF -1  8
+  SRF  0  8
+  SRF  0  8
   STC  2
   PLUS
   STC  0
@@ -533,8 +533,8 @@ L3:
   STC  0
   SBT
   DRF
-  SRF -1  8
-  SRF -1  8
+  SRF  0  8
+  SRF  0  8
   STC  2
   PLUS
   STC  0
@@ -545,8 +545,8 @@ L3:
   SBT
   DRF
   TMS
-  SRF -1  8
-  SRF -1  8
+  SRF  0  8
+  SRF  0  8
   STC  2
   PLUS
   STC  0

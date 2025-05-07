@@ -14,21 +14,21 @@ L0:
   EQ
   JMF L2
 ; --assignment b_dec
-  SRF  1  6
+  SRF  0  5
   STC  0
   ASG
   JMP L1
 L2:
 ; --otherwise
 ; --assignment uc
-  SRF  0  5
+  SRF  0  6
   SRF  0  3
   DRF
   STC 10
   MOD
   ASG
 ; --assignment valRec
-  SRF  0  6
+  SRF  0  7
 ; --call b_dec
   SRF  0  3
   DRF
@@ -36,22 +36,22 @@ L2:
   DIV
   SRF  0  4
   DRF
-  OSF  7  2 L0
+  OSF  8  1 L0
   ASG
 ; --assignment b_dec
-  SRF  1  6
-  SRF  0  6
+  SRF  0  5
+  SRF  0  7
   DRF
   SRF  0  4
   DRF
   TMS
-  SRF  0  5
+  SRF  0  6
   DRF
   PLUS
   ASG
 L1:
 ; --fin select
-  SRF  0  6
+  SRF  0  7
   DRF
   CSF
 ; --fin procedimiento b_dec
@@ -71,7 +71,7 @@ L3:
   LT
   JMF L5
 ; --assignment dec_b
-  SRF  1  7
+  SRF  0  5
   SRF  0  3
   DRF
   ASG
@@ -79,7 +79,7 @@ L3:
 L5:
 ; --otherwise
 ; --assignment resto
-  SRF  0  5
+  SRF  0  6
   SRF  0  3
   DRF
   SRF  0  4
@@ -87,7 +87,7 @@ L5:
   MOD
   ASG
 ; --assignment valRec
-  SRF  0  6
+  SRF  0  7
 ; --call dec_b
   SRF  0  3
   DRF
@@ -96,15 +96,15 @@ L5:
   DIV
   SRF  0  4
   DRF
-  OSF  7  2 L3
+  OSF  8  1 L3
   ASG
 ; --assignment dec_b
-  SRF  1  7
-  SRF  0  6
+  SRF  0  5
+  SRF  0  7
   DRF
   STC 10
   TMS
-  SRF  0  5
+  SRF  0  6
   DRF
   PLUS
   ASG
@@ -329,7 +329,7 @@ L6:
   DRF
   SRF  0  4
   DRF
-  OSF  8  1 L3
+  OSF  6  0 L3
   ASG
 ; --Comienzo escribir línea
   STC 40
@@ -396,7 +396,7 @@ L6:
   DRF
   SRF  0  4
   DRF
-  OSF  8  1 L0
+  OSF  6  0 L0
   WRT  1
   STC 10
   WRT  0

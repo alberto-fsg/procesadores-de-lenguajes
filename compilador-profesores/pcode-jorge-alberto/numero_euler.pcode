@@ -42,7 +42,7 @@ L3:
   ASGI
 ; --inicio procedimiento mostrar_numero
 ; --Comienzo escribir
-  SRF -1  3
+  SRF  0  3
   DRF
   STC  0
   PLUS
@@ -78,7 +78,7 @@ L5:
 L4:
 ; --fin select
 ; --Comienzo escribir
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  4
   DRF
@@ -125,7 +125,7 @@ L8:
 L12:
 ; --assignment n
   SRF  0  6
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  5
   DRF
@@ -133,7 +133,7 @@ L12:
   STC  0
   SBT
   DRF
-  SRF -1  4
+  SRF  0  4
   DRF
   SRF  0  5
   DRF
@@ -172,7 +172,7 @@ L12:
   PLUS
   STC  0
   SBT
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  5
   DRF
@@ -237,7 +237,7 @@ L13:
   JMP L16
 L17:
 ; --inicio select
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  6
   DRF
@@ -259,7 +259,7 @@ L17:
   PLUS
   STC  0
   SBT
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  6
   DRF
@@ -281,7 +281,7 @@ L17:
   PLUS
   STC  0
   SBT
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  6
   DRF
@@ -294,7 +294,7 @@ L17:
   MOD
   STC 10
   TMS
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  6
   DRF
@@ -329,7 +329,7 @@ L15:
   PLUS
   STC  0
   SBT
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  6
   DRF
@@ -339,7 +339,7 @@ L15:
   DRF
   STC 10
   TMS
-  SRF -1  3
+  SRF  0  3
   DRF
   SRF  0  6
   DRF
@@ -391,7 +391,7 @@ L20:
   PLUS
   STC  0
   SBT
-  SRF -1  4
+  SRF  0  4
   DRF
   SRF  0  5
   DRF

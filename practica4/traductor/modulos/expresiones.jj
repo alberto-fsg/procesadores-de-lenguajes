@@ -16,12 +16,12 @@ AtribExp primario() :
         <tOPENING_PARENTHESIS>
         lPar = parametros_llamada_funcion()
         {
-            checkParameters(t, lPar);
+            checkParametersFunction(t, lPar);
         }
         <tCLOSING_PARENTHESIS>
         {
             try {
-                s = st.getSymbol(t.image);
+                s = st.getSubprogram(t.image);
                 SymbolFunction f = (SymbolFunction) s;
                 prim = new AtribExp(f.returnType, false);
                 prim.code.addComment("call " + t.image);
@@ -30,7 +30,7 @@ AtribExp primario() :
                         lPar.get(i).code.pop();
                     prim.code.addBlock(lPar.get(i).code);
                 }
-                prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel + 1, s.label);
+                prim.code.addOSFInst(CGUtils.memorySpaces[st.level], st.level - s.nivel, s.label);
                 //prim.code.addInst(PCodeInstruction.OpCode.DRF);
                 return prim;
             } catch(SymbolNotFoundException e) {

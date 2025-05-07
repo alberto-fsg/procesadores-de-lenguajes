@@ -107,4 +107,25 @@ public class SymbolTable {
         builder.append(linea); 
         return builder.toString();
     }
+
+    private Symbol findSubprogram(String name) {
+        String key = name.toLowerCase();
+        for (int i = st.size() - 1; i >= 0; i--) {
+            Symbol s = st.get(i).get(key);
+            if (s != null &&
+               (s.type == Symbol.Types.FUNCTION ||
+                s.type == Symbol.Types.PROCEDURE)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public Symbol getSubprogram(String name) throws SymbolNotFoundException {
+        Symbol sp = findSubprogram(name);
+        if (sp == null) {
+            throw new SymbolNotFoundException();
+        }
+        return sp;
+    }
 }

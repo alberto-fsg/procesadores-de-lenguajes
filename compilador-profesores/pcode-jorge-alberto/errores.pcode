@@ -113,7 +113,7 @@ L15:
   LT
   JMF L17
 ; --assignment min
-  SRF  1 15
+  SRF  0  5
   SRF  0  3
   DRF
   ASG
@@ -121,13 +121,13 @@ L15:
 L17:
 ; --otherwise
 ; --assignment min
-  SRF  1 15
+  SRF  0  5
   SRF  0  4
   DRF
   ASG
 L16:
 ; --fin select
-  SRF  0 15
+  SRF  0  5
   DRF
   CSF
 ; --fin procedimiento min
@@ -171,38 +171,38 @@ L19:
 ; --Comienzo del programa errores
 L21:
 ; --call prueba_varNoInicializada
-  OSF 16  0 L0
+  OSF 15  0 L0
 ; --call prueba_tiposIncompatibles
-  OSF 16  0 L1
+  OSF 15  0 L1
 ; --call prueba_arrayMalDefinida
-  OSF 16  0 L14
+  OSF 15  0 L14
 ; --assignment valor
   SRF  0  3
 ; --call min
-  OSF 16  1 L15
+  OSF 15  0 L15
   ASG
 ; --assignment valor
   SRF  0  3
 ; --call min
   STC  1
-  OSF 16  1 L15
+  OSF 15  0 L15
   ASG
 ; --call max
   STC  1
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --assignment valor
   SRF  0  3
 ; --call min
   STC  1
   STC  1
-  OSF 16  1 L15
+  OSF 15  0 L15
   ASG
 ; --assignment valor
   SRF  0  3
 ; --call min
   STC 97
   STC  1
-  OSF 16  1 L15
+  OSF 15  0 L15
   ASG
 ; --assignment valor
   SRF  0  3
@@ -219,49 +219,49 @@ L21:
   STC 108
   STC 111
   STC 104
-  OSF 16  1 L15
+  OSF 15  0 L15
   ASG
 ; --call max
   STC  1
   SRF  0  4
   DRF
   SRF  0  3
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --call max
   STC  1
   STC  0
   SRF  0  3
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --call max
   STC  1
   STC  2
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --call max
   STC  1
   STC  2
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --call max
   STC  1
   STC  2
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --call max
   STC  1
   STC  2
   SRF  0 14
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --call max
   STC  1
   STC  2
   SRF  0  3
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --call max
   STC  1
   STC  2
-  SRF -1  4
+  SRF  0  4
   STC  1
   PLUS
   STC  0
   SBT
-  OSF 16  0 L18
+  OSF 15  0 L18
 ; --Fin del programa errores
   LVP

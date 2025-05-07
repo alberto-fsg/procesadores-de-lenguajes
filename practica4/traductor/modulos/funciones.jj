@@ -101,7 +101,6 @@ CodeBlock declaracion_func() :
     < tCLOSING_PARENTHESIS >
     {
         String etiqInicioProc = CGUtils.newLabel();
-        cres.addComment("AAAAAAAAA");
         sFunc = insertFunction(t, parametros,  aT, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
@@ -149,7 +148,7 @@ CodeBlock declaracion_func() :
         cres.addBlock(cinst);
 
         // Fin procedimiento
-        cres.addInst(OpCode.SRF, 0, sFunc.offset);
+        cres.addInst(OpCode.SRF, 0, CGUtils.memorySpaces[st.level] - 1);
         cres.addInst(OpCode.DRF);
         cres.addInst(OpCode.CSF);
         cres.addComment("fin procedimiento " + t.image);
@@ -167,19 +166,21 @@ CodeBlock llamar_funcion() :
     CodeBlock c = new CodeBlock();
 }
 {
+            { System.out.println("LLAMAR FUNCION"); }
     t = < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >
     lPar = parametros_llamada_funcion()
     {
-        checkParameters(t, lPar);
+        checkParametersFunction(t, lPar);
     }
     < tCLOSING_PARENTHESIS >
     < tSEMICOLON >
 
     {
+        System.out.println("LLAMAR FUNCION");
         // GENERACIÓN DE CÓDIGO
         try {
-            fun = st.getSymbol(t.image);
+            fun = st.getSubprogram(t.image);
         } catch (SymbolNotFoundException e) {
             printError(String.format("Función \"%s\" no encontrada en la tabla de símbolos.", t.image));
             return new CodeBlock();
@@ -198,7 +199,7 @@ CodeBlock llamar_funcion() :
                     c.addBlock(lPar.get(i).code);
                 }
             }
-            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel + 1, fun.label);
+            c.addOSFInst(CGUtils.memorySpaces[st.level], st.level - fun.nivel, fun.label);
         }
         if(fun instanceof SymbolProcedure) {
             SymbolProcedure p = (SymbolProcedure) fun;

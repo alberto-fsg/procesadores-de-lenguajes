@@ -69,11 +69,11 @@ L2:
   WRT  0
   WRT  0
 ; --Fin escribir
-; --Comienzo leer línea
+; --Comienzo leer
   SRF  0  3
   DRF
   RD  1
-; --Fin leer línea
+; --Fin leer
 L1:
   SRF  0  3
   DRF

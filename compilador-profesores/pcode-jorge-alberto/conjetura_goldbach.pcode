@@ -2,7 +2,7 @@
 L0:
 ; --inicio procedimiento pedir_entero
 ; --assignment n
-  SRF  0  3
+  SRF  0  4
   STC  0
   ASG
   JMP L1
@@ -73,17 +73,16 @@ L2:
   WRT  0
   WRT  0
 ; --Fin escribir
-; --Comienzo leer línea
-  SRF  0  3
-  DRF
+; --Comienzo leer
+  SRF  0  4
   RD  1
-; --Fin leer línea
+; --Fin leer
 L1:
-  SRF  0  3
+  SRF  0  4
   DRF
   STC  2
   LTE
-  SRF  0  3
+  SRF  0  4
   DRF
   STC  2
   MOD
@@ -92,11 +91,11 @@ L1:
   OR
   JMT L2
 ; --assignment pedir_entero
-  SRF  1  5
   SRF  0  3
+  SRF  0  4
   DRF
   ASG
-  SRF  0  5
+  SRF  0  4
   DRF
   CSF
 ; --fin procedimiento pedir_entero
@@ -106,47 +105,47 @@ L3:
   ASGI
 ; --inicio procedimiento es_primo
 ; --assignment i
-  SRF  0  4
+  SRF  0  5
   STC  2
   ASG
 ; --assignment primo
-  SRF  0  5
+  SRF  0  6
   STC  1
   ASG
   JMP L4
 L5:
 ; --assignment primo
-  SRF  0  5
+  SRF  0  6
   SRF  0  3
   DRF
-  SRF  0  4
+  SRF  0  5
   DRF
   MOD
   STC  0
   NEQ
   ASG
 ; --assignment i
-  SRF  0  4
-  SRF  0  4
+  SRF  0  5
+  SRF  0  5
   DRF
   STC  1
   PLUS
   ASG
 L4:
-  SRF  0  4
+  SRF  0  5
   DRF
   SRF  0  3
   DRF
   STC  2
   DIV
   LTE
-  SRF  0  5
+  SRF  0  6
   DRF
   AND
   JMT L5
 ; --assignment es_primo
-  SRF  1  6
-  SRF  0  5
+  SRF  0  4
+  SRF  0  6
   DRF
   ASG
   SRF  0  6
@@ -159,15 +158,15 @@ L6:
   ASGI
 ; --inicio procedimiento hay_un_par
 ; --assignment a
-  SRF  0  6
-  STC  2
-  ASG
-; --assignment b
   SRF  0  7
   STC  2
   ASG
+; --assignment b
+  SRF  0  8
+  STC  2
+  ASG
 ; --assignment n
-  SRF  0  5
+  SRF  0  6
   STC  0
   ASG
 ; --Comienzo escribir
@@ -211,17 +210,17 @@ L6:
 L12:
 ; --inicio select
 ; --call es_primo
-  SRF  0  6
+  SRF  0  7
   DRF
-  OSF  8  2 L3
+  OSF  9  1 L3
 ; --call es_primo
-  SRF  0  7
+  SRF  0  8
   DRF
-  OSF  8  2 L3
+  OSF  9  1 L3
   AND
-  SRF  0  6
-  DRF
   SRF  0  7
+  DRF
+  SRF  0  8
   DRF
   PLUS
   SRF  0  3
@@ -230,12 +229,12 @@ L12:
   AND
   JMF L8
 ; --Comienzo escribir
-  SRF  0  6
+  SRF  0  7
   DRF
   WRT  1
   STC 43
   WRT  0
-  SRF  0  7
+  SRF  0  8
   DRF
   WRT  1
   STC 32
@@ -244,8 +243,8 @@ L12:
   WRT  0
 ; --Fin escribir
 ; --assignment n
-  SRF  0  5
-  SRF  0  5
+  SRF  0  6
+  SRF  0  6
   DRF
   STC  1
   PLUS
@@ -255,29 +254,29 @@ L8:
 L7:
 ; --fin select
 ; --assignment a
-  SRF  0  6
-  SRF  0  6
+  SRF  0  7
+  SRF  0  7
   DRF
   STC  1
   PLUS
   ASG
 ; --inicio select
-  SRF  0  6
+  SRF  0  7
   DRF
   SRF  0  3
   DRF
   EQ
   JMF L10
 ; --assignment b
-  SRF  0  7
-  SRF  0  7
+  SRF  0  8
+  SRF  0  8
   DRF
   STC  1
   PLUS
   ASG
 ; --assignment a
-  SRF  0  6
   SRF  0  7
+  SRF  0  8
   DRF
   ASG
   JMP L9
@@ -285,12 +284,12 @@ L10:
 L9:
 ; --fin select
 L11:
-  SRF  0  6
+  SRF  0  7
   DRF
   SRF  0  3
   DRF
   LT
-  SRF  0  7
+  SRF  0  8
   DRF
   SRF  0  3
   DRF
@@ -298,7 +297,7 @@ L11:
   AND
   JMT L12
 ; --Comienzo escribir línea
-  SRF  0  5
+  SRF  0  6
   DRF
   WRT  1
   STC 46
@@ -361,13 +360,13 @@ L11:
   WRT  0
 ; --Fin escribir línea
 ; --assignment hay_un_par
-  SRF  1  7
-  SRF  0  5
+  SRF  0  4
+  SRF  0  6
   DRF
   STC  0
   GT
   ASG
-  SRF  0  7
+  SRF  0  8
   DRF
   CSF
 ; --fin procedimiento hay_un_par
@@ -728,7 +727,7 @@ L17:
 ; --assignment n
   SRF  0  3
 ; --call pedir_entero
-  OSF  8  1 L0
+  OSF  5  0 L0
   ASG
 ; --assignment i
   SRF  0  4
@@ -740,7 +739,7 @@ L16:
 ; --call hay_un_par
   SRF  0  4
   DRF
-  OSF  8  1 L6
+  OSF  5  0 L6
   NGB
   JMF L14
 ; --Comienzo escribir línea

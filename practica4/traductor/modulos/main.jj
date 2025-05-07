@@ -163,13 +163,15 @@ public class gcl {
         if(returnType.type != Symbol.Types.INT && returnType.type != Symbol.Types.BOOL && returnType.type != Symbol.Types.CHAR) {
             printError(String.format("Una función solo puede devolver valores de tipo INT, BOOL o CHAR. Tipo dado: %s.", returnType.type));
         } else {
-            SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
             try {
                 SymbolFunction sFunc = new SymbolFunction(identificador.image, parametros, returnType.type);
                 sFunc.label = etiqueta;
                 st.insertSymbol(sFunc);
+                System.out.println("Insertando funcion");
                 st.insertBlock();
-                insertParameters(parametros);
+                                insertParameters(parametros);
+                declararVariablesGenerarCodigo(returnType, new ArrayList<String>(Arrays.asList(identificador.image)));
+
                 return sFunc;
             } catch(AlreadyDefinedSymbolException e) {
                 printError(String.format("Ya definido valor de identificador \"%s\".", identificador.image));
@@ -194,9 +196,53 @@ public class gcl {
         }
     }
 
-    private static void checkParameters(Token identificador, ArrayList<AtribExp> parametros) {
+    private static void checkParametersFunction(Token identificador, ArrayList<AtribExp> parametros) {
         try {
-            Symbol funOproc = st.getSymbol(identificador.image);
+            System.out.println("checkParametersFunction");
+            Symbol funOproc = st.getSubprogram(identificador.image);
+            System.out.println((funOproc.type).toString());
+            ArrayList<Symbol> params;
+            if(funOproc.type == Symbol.Types.FUNCTION || funOproc.type == Symbol.Types.PROCEDURE) {
+                if(funOproc.type == Symbol.Types.FUNCTION)
+                    params = ((SymbolFunction)funOproc).parList;
+                else
+                    params = ((SymbolProcedure)funOproc).parList;
+            } else {
+                printError(String.format("\"%s\" no es una función o procedimiento??.", identificador.image));
+                return;
+            }
+            // Comprobar que el número de parámetros es el adecuado
+            if(params.size() != parametros.size()) {
+                printError(String.format("\"%s\" esperaba %d parámetros. Recibidos %d parámetros.",
+                    identificador.image, params.size(), parametros.size()));
+                return;
+            }
+            // Comprobar validez parámetro a parámetro
+            for(int i = 0; i < params.size(); ++i) {
+                // Comprobar que parámetro pasado es del tipo correcto
+                if(params.get(i).type != parametros.get(i).type) {
+                    printError(String.format("Parámetro no compatible con valor dado. Tipo esperado: %s. Tipo recibido: %s.",
+                        params.get(i).type, parametros.get(i).type));
+                }
+                // Comprobar que parámetro pasado es una variable si se requiere paso por referencia
+                if(params.get(i).parClass == Symbol.ParameterClass.REF && parametros.get(i).isConst) {
+                    printError("Parámetro por referencia. Espera variable, recibido constante.");
+                }
+            }
+        } catch(SymbolNotFoundException e) {
+            printError(String.format("\"%s\" no es una función o procedimiento????.", identificador.image));
+        }
+        catch (Exception e) {
+            System.err.println("Ha ocurrido una excepción:");
+            e.printStackTrace(System.err);
+        }
+
+    }
+
+    private static void checkParameters(Token identificador, ArrayList<AtribExp> parametros) {
+        System.out.println("checkParameters");
+        try {
+            Symbol funOproc = st.getSubprogram(identificador.image);
             ArrayList<Symbol> params;
             if(funOproc.type == Symbol.Types.FUNCTION || funOproc.type == Symbol.Types.PROCEDURE) {
                 if(funOproc.type == Symbol.Types.FUNCTION)
@@ -228,6 +274,11 @@ public class gcl {
         } catch(SymbolNotFoundException e) {
             printError(String.format("\"%s\" no es una función o procedimiento.", identificador.image));
         }
+        catch (Exception e) {
+            System.err.println("Ha ocurrido una excepción:");
+            e.printStackTrace(System.err);
+        }
+
     }
 
     private static void printError(String error) {

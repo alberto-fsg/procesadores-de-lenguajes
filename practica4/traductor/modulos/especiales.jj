@@ -84,38 +84,6 @@ ArrayList<AtribExp> escribir_params() :
     { return args; }
 }
 
-CodeBlock leer_linea() :
-{
-    ArrayList<String> lVars = new ArrayList<String>();
-    CodeBlock c = new CodeBlock();
-}
-{
-    <tLEER_LIN>
-    <tOPENING_PARENTHESIS>
-    (
-        (lVars = listaIDs())
-        {
-            typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
-            for (String id : lVars) {
-                try {
-                    Symbol s = st.getSymbol(id);
-                    c.addComment("Comienzo leer");
-                    c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
-                    int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
-                    c.addInst(OpCode.DRF);
-                    c.addInst(OpCode.RD, tipo);
-                    c.addComment("Fin leer");
-                } catch (SymbolNotFoundException e) {
-                    printError("Variable \"" + id + "\" no encontrada.");
-                }
-            }
-        }
-    )?
-    <tCLOSING_PARENTHESIS>
-
-    { return c; }
-}
-
 CodeBlock leer() :
 {
     ArrayList<String> lVars = new ArrayList<String>();
@@ -130,10 +98,39 @@ CodeBlock leer() :
         for(String id : lVars) {
             try {
                 Symbol s = st.getSymbol(id);
+                c.addComment("Comienzo leer");
+                c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
+                int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
+                if(s.parClass == Symbol.ParameterClass.REF) c.addInst(OpCode.DRF);
+                c.addInst(OpCode.RD, tipo);
+                c.addComment("Fin leer");
+            } catch (SymbolNotFoundException e) {
+                printError("Variable \"" + id + "\" no encontrada.");
+            }
+        }
+    }
+    <tCLOSING_PARENTHESIS> 
+    { return c; }
+}
+
+CodeBlock leer_linea() :
+{
+    ArrayList<String> lVars = new ArrayList<String>();
+    CodeBlock c = new CodeBlock();
+}
+{
+    <tLEER_LIN> 
+    <tOPENING_PARENTHESIS>
+    (lVars = listaIDs())?
+    {
+        typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
+        for(String id : lVars) {
+            try {
+                Symbol s = st.getSymbol(id);
                 c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
-                c.addInst(OpCode.DRF);
+                if(s.parClass == Symbol.ParameterClass.REF) c.addInst(OpCode.DRF);
                 c.addInst(OpCode.RD, tipo);
                 c.addComment("Fin leer línea");
             } catch (SymbolNotFoundException e) {
