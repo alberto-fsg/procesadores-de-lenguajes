@@ -223,8 +223,6 @@ L21:
   ASG
 ; --call max
   STC  1
-  SRF  0  4
-  DRF
   SRF  0  3
   OSF 15  0 L18
 ; --call max

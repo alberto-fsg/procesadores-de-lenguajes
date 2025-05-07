@@ -92,6 +92,7 @@ CodeBlock declaracion_func() :
     CodeBlock aux = new CodeBlock();
     SymbolFunction sFunc;
     AtribTipo aT;
+    Symbol s;
 }
 {
     aT = tipoEscalar()
@@ -148,7 +149,8 @@ CodeBlock declaracion_func() :
         cres.addBlock(cinst);
 
         // Fin procedimiento
-        cres.addInst(OpCode.SRF, 0, CGUtils.memorySpaces[st.level] - 1);
+        s = st.getSymbol(t.image);
+        cres.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
         cres.addInst(OpCode.DRF);
         cres.addInst(OpCode.CSF);
         cres.addComment("fin procedimiento " + t.image);
