@@ -51,7 +51,7 @@ L2:
   ASG
 L1:
 ; --fin select
-  SRF  0  5
+  SRF  0  7
   DRF
   CSF
 ; --fin procedimiento b_dec
@@ -110,7 +110,7 @@ L5:
   ASG
 L4:
 ; --fin select
-  SRF  0  5
+  SRF  0  7
   DRF
   CSF
 ; --fin procedimiento dec_b

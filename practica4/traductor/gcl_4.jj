@@ -773,46 +773,16 @@ AtribExp primario() :
             try {
                 s = st.getSymbol(t.image);
                 prim = new AtribExp(s.type, false);
-
-                if (s instanceof SymbolArray) {
-                    SymbolArray arr = (SymbolArray) s;
-
-                    // 1) calcular cuántos elementos hay realmente
-                    int length = arr.maxInd - arr.minInd + 1;
-                    if (length <= 0) {
-                        // nada que copiar: array vacío o mal definido
-                    } else {
-                        // 2) apilar una sola vez el puntero-base y cargar DRF (igual que SRF…; DRF)
-                        prim.codeVal.addInst(PCodeInstruction.OpCode.SRF,
-                                            st.level - s.nivel,
-                                            s.offset);
-                        prim.codeVal.addInst(PCodeInstruction.OpCode.DRF);
-
-                        // 3) unroll 0 .. length-1
-                        for (int i = 0; i < length; i++) {
-                            prim.codeVal.addInst(PCodeInstruction.OpCode.DUP);       // dup base
-                            prim.codeVal.addInst(PCodeInstruction.OpCode.STC, i);    // literal i
-                            prim.codeVal.addInst(PCodeInstruction.OpCode.PLUS);      // base + i
-                            prim.codeVal.addInst(PCodeInstruction.OpCode.DRF);       // load element[i]
-                            prim.codeVal.addInst(PCodeInstruction.OpCode.SWP);       // swap para dejar base arriba
-                        }
-
-                        // 4) limpiar el stack (igual que el POP final)
-                        prim.codeVal.addInst(PCodeInstruction.OpCode.POP);
-                    }
-                }
-                else {
                 prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
                 prim.code.addInst(PCodeInstruction.OpCode.DRF);
                 if(s.parClass == Symbol.ParameterClass.REF) prim.code.addInst(PCodeInstruction.OpCode.DRF);
-                /*
+                
                 if(s instanceof SymbolArray) {
                     SymbolArray arr = (SymbolArray) s;
                     for(int offset = s.offset; offset <= s.offset + arr.maxInd - arr.minInd; ++offset) {
                         prim.codeVal.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, offset);
                         prim.codeVal.addInst(PCodeInstruction.OpCode.DRF);
                     }
-                }*/
                 }
 
                 return prim;
@@ -1182,7 +1152,6 @@ CodeBlock declaracion_func() :
     CodeBlock aux = new CodeBlock();
     SymbolFunction sFunc;
     AtribTipo aT;
-    Symbol s;
 }
 {
     aT = tipoEscalar()
@@ -1239,8 +1208,7 @@ CodeBlock declaracion_func() :
         cres.addBlock(cinst);
 
         // Fin procedimiento
-        s = st.getSymbol(t.image);
-        cres.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
+        cres.addInst(OpCode.SRF, 0, CGUtils.memorySpaces[st.level] - 1);
         cres.addInst(OpCode.DRF);
         cres.addInst(OpCode.CSF);
         cres.addComment("fin procedimiento " + t.image);
