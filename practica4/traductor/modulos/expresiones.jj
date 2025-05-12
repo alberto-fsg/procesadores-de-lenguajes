@@ -45,25 +45,6 @@ AtribExp primario() :
         ae = expresion()
         <tCLOSING_SQUARE_BRACKET>
         {
-            /*try {
-                s = st.getSymbol(t.image);
-            } catch (SymbolNotFoundException e) {
-                printError(String.format("Array \"%s\" no encontrada en tabla de símbolos.", t.image));
-                return new AtribExp();
-            }
-            SymbolArray s_array = (SymbolArray) s;
-            prim = new AtribExp(s_array.baseType, false);
-            prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
-            if(s.parClass == Symbol.ParameterClass.REF) prim.code.addInst(PCodeInstruction.OpCode.DRF);
-            prim.code.addBlock(ae.code);
-            prim.code.addInst(PCodeInstruction.OpCode.STC, s_array.minInd);
-            prim.code.addInst(PCodeInstruction.OpCode.SBT);
-            prim.code.addInst(PCodeInstruction.OpCode.STC, 1);
-            prim.code.addInst(PCodeInstruction.OpCode.TMS);
-            prim.code.addInst(PCodeInstruction.OpCode.PLUS);
-            prim.code.addInst(PCodeInstruction.OpCode.DRF);
-            return prim;*/
-
             try {
                 s = st.getSymbol(t.image);
             } catch(SymbolNotFoundException e) {
@@ -93,9 +74,23 @@ AtribExp primario() :
                 
                 if(s instanceof SymbolArray) {
                     SymbolArray arr = (SymbolArray) s;
-                    for(int offset = s.offset; offset <= s.offset + arr.maxInd - arr.minInd; ++offset) {
-                        prim.codeVal.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, offset);
-                        prim.codeVal.addInst(PCodeInstruction.OpCode.DRF);
+                    if(s.parClass == Symbol.ParameterClass.REF) {
+                        prim.codeCall.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
+                        prim.codeCall.addInst(PCodeInstruction.OpCode.DRF);
+                        prim.codeCall.addInst(PCodeInstruction.OpCode.DUP);
+                        for(int offset = 0; offset < arr.maxInd - arr.minInd + 1; ++offset) {
+                            prim.codeCall.addInst(PCodeInstruction.OpCode.DUP);
+                            prim.codeCall.addInst(PCodeInstruction.OpCode.STC, offset);
+                            prim.codeCall.addInst(PCodeInstruction.OpCode.PLUS);
+                            prim.codeCall.addInst(PCodeInstruction.OpCode.DRF);
+                            prim.codeCall.addInst(PCodeInstruction.OpCode.SWP);
+                        }
+                        prim.codeCall.addInst(PCodeInstruction.OpCode.POP);
+                    } else {
+                        for(int offset = s.offset; offset <= s.offset + arr.maxInd - arr.minInd; ++offset) {
+                            prim.codeCall.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, offset);
+                            prim.codeCall.addInst(PCodeInstruction.OpCode.DRF);
+                        }
                     }
                 }
 

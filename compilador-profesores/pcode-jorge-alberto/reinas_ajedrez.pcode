@@ -790,7 +790,7 @@ L42:
   DRF
   LT
   ASG
-  SRF  0  6
+  SRF  0  5
   DRF
   CSF
 ; --fin procedimiento libre

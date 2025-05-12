@@ -148,7 +148,11 @@ CodeBlock declaracion_func() :
         cres.addBlock(cinst);
 
         // Fin procedimiento
-        cres.addInst(OpCode.SRF, 0, CGUtils.memorySpaces[st.level] - 1);
+        int offset = CGUtils.memorySpaces[st.level - 1] - 1;
+        try {
+            offset = st.getSymbol(t.image).offset;
+        } catch(SymbolNotFoundException e) {}
+        cres.addInst(OpCode.SRF, 0, offset);
         cres.addInst(OpCode.DRF);
         cres.addInst(OpCode.CSF);
         cres.addComment("fin procedimiento " + t.image);
@@ -166,7 +170,6 @@ CodeBlock llamar_funcion() :
     CodeBlock c = new CodeBlock();
 }
 {
-            { System.out.println("LLAMAR FUNCION"); }
     t = < tIDENTIFICADOR >
     < tOPENING_PARENTHESIS >
     lPar = parametros_llamada_funcion()
@@ -177,7 +180,6 @@ CodeBlock llamar_funcion() :
     < tSEMICOLON >
 
     {
-        System.out.println("LLAMAR FUNCION");
         // GENERACIÓN DE CÓDIGO
         try {
             fun = st.getSubprogram(t.image);
@@ -194,7 +196,7 @@ CodeBlock llamar_funcion() :
                     lPar.get(i).code.pop();
                     c.addBlock(lPar.get(i).code);
                 } else if(f.parList.get(i).type == Symbol.Types.ARRAY) {
-                    c.addBlock(lPar.get(i).codeVal);
+                    c.addBlock(lPar.get(i).codeCall);
                 } else {
                     c.addBlock(lPar.get(i).code);
                 }
@@ -208,7 +210,7 @@ CodeBlock llamar_funcion() :
                     lPar.get(i).code.pop();
                     c.addBlock(lPar.get(i).code);
                 } else if(p.parList.get(i).type == Symbol.Types.ARRAY) {
-                    c.addBlock(lPar.get(i).codeVal);
+                    c.addBlock(lPar.get(i).codeCall);
                 } else {
                     c.addBlock(lPar.get(i).code);
                 }

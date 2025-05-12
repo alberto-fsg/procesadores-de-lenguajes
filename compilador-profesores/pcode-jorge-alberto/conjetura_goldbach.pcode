@@ -95,7 +95,7 @@ L1:
   SRF  0  4
   DRF
   ASG
-  SRF  0  4
+  SRF  0  3
   DRF
   CSF
 ; --fin procedimiento pedir_entero
@@ -148,7 +148,7 @@ L4:
   SRF  0  6
   DRF
   ASG
-  SRF  0  6
+  SRF  0  4
   DRF
   CSF
 ; --fin procedimiento es_primo
@@ -366,7 +366,7 @@ L11:
   STC  0
   GT
   ASG
-  SRF  0  8
+  SRF  0  4
   DRF
   CSF
 ; --fin procedimiento hay_un_par

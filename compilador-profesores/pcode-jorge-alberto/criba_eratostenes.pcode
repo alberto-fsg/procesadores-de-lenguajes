@@ -89,7 +89,7 @@ L1:
   SRF  0  4
   DRF
   ASG
-  SRF  0  4
+  SRF  0  3
   DRF
   CSF
 ; --fin procedimiento pedir_entero
@@ -463,206 +463,513 @@ L21:
 ; --call escrib_vect
   SRF  0  3
   DRF
-  SRF  0  4
-  DRF
-  SRF  0  5
-  DRF
-  SRF  0  6
-  DRF
-  SRF  0  7
-  DRF
-  SRF  0  8
-  DRF
-  SRF  0  9
-  DRF
-  SRF  0 10
-  DRF
-  SRF  0 11
-  DRF
-  SRF  0 12
-  DRF
-  SRF  0 13
-  DRF
-  SRF  0 14
-  DRF
-  SRF  0 15
-  DRF
-  SRF  0 16
-  DRF
-  SRF  0 17
-  DRF
-  SRF  0 18
-  DRF
-  SRF  0 19
-  DRF
-  SRF  0 20
-  DRF
-  SRF  0 21
-  DRF
-  SRF  0 22
-  DRF
-  SRF  0 23
-  DRF
-  SRF  0 24
-  DRF
-  SRF  0 25
-  DRF
-  SRF  0 26
-  DRF
-  SRF  0 27
-  DRF
-  SRF  0 28
-  DRF
-  SRF  0 29
-  DRF
-  SRF  0 30
-  DRF
-  SRF  0 31
-  DRF
-  SRF  0 32
-  DRF
-  SRF  0 33
-  DRF
-  SRF  0 34
-  DRF
-  SRF  0 35
-  DRF
-  SRF  0 36
-  DRF
-  SRF  0 37
-  DRF
-  SRF  0 38
-  DRF
-  SRF  0 39
-  DRF
-  SRF  0 40
-  DRF
-  SRF  0 41
-  DRF
-  SRF  0 42
-  DRF
-  SRF  0 43
-  DRF
-  SRF  0 44
-  DRF
-  SRF  0 45
-  DRF
-  SRF  0 46
-  DRF
-  SRF  0 47
-  DRF
-  SRF  0 48
-  DRF
-  SRF  0 49
-  DRF
-  SRF  0 50
-  DRF
-  SRF  0 51
-  DRF
-  SRF  0 52
-  DRF
-  SRF  0 53
-  DRF
-  SRF  0 54
-  DRF
-  SRF  0 55
-  DRF
-  SRF  0 56
-  DRF
-  SRF  0 57
-  DRF
-  SRF  0 58
-  DRF
-  SRF  0 59
-  DRF
-  SRF  0 60
-  DRF
-  SRF  0 61
-  DRF
-  SRF  0 62
-  DRF
-  SRF  0 63
-  DRF
-  SRF  0 64
-  DRF
-  SRF  0 65
-  DRF
-  SRF  0 66
-  DRF
-  SRF  0 67
-  DRF
-  SRF  0 68
-  DRF
-  SRF  0 69
-  DRF
-  SRF  0 70
-  DRF
-  SRF  0 71
-  DRF
-  SRF  0 72
-  DRF
-  SRF  0 73
-  DRF
-  SRF  0 74
-  DRF
-  SRF  0 75
-  DRF
-  SRF  0 76
-  DRF
-  SRF  0 77
-  DRF
-  SRF  0 78
-  DRF
-  SRF  0 79
-  DRF
-  SRF  0 80
-  DRF
-  SRF  0 81
-  DRF
-  SRF  0 82
-  DRF
-  SRF  0 83
-  DRF
-  SRF  0 84
-  DRF
-  SRF  0 85
-  DRF
-  SRF  0 86
-  DRF
-  SRF  0 87
-  DRF
-  SRF  0 88
-  DRF
-  SRF  0 89
-  DRF
-  SRF  0 90
-  DRF
-  SRF  0 91
-  DRF
-  SRF  0 92
-  DRF
-  SRF  0 93
-  DRF
-  SRF  0 94
-  DRF
-  SRF  0 95
-  DRF
-  SRF  0 96
-  DRF
-  SRF  0 97
-  DRF
-  SRF  0 98
-  DRF
-  SRF  0 99
-  DRF
-  SRF  0 100
-  DRF
-  SRF  0 101
-  DRF
-  SRF  0 102
-  DRF
-  SRF  0 103
-  DRF
+  DUP
+  DUP
+  STC  0
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  1
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  2
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  3
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  4
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  5
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  6
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  7
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  8
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC  9
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 10
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 11
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 12
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 13
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 14
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 15
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 16
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 17
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 18
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 19
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 20
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 21
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 22
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 23
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 24
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 25
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 26
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 27
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 28
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 29
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 30
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 31
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 32
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 33
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 34
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 35
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 36
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 37
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 38
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 39
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 40
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 41
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 42
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 43
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 44
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 45
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 46
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 47
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 48
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 49
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 50
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 51
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 52
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 53
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 54
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 55
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 56
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 57
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 58
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 59
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 60
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 61
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 62
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 63
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 64
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 65
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 66
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 67
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 68
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 69
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 70
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 71
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 72
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 73
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 74
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 75
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 76
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 77
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 78
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 79
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 80
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 81
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 82
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 83
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 84
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 85
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 86
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 87
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 88
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 89
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 90
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 91
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 92
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 93
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 94
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 95
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 96
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 97
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 98
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 99
+  PLUS
+  DRF
+  SWP
+  DUP
+  STC 100
+  PLUS
+  DRF
+  SWP
+  POP
   OSF  4  1 L3
   CSF
 ; --fin procedimiento procesar
