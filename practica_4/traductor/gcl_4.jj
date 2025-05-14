@@ -36,6 +36,8 @@ public class gcl {
 
     // código generado
     static CodeBlock code = new CodeBlock();
+
+    static Boolean crear_codigo = true;
     
     public static void main(String[] args) {
 	   gcl parser = null;
@@ -57,11 +59,14 @@ public class gcl {
 		   //Programa es el símbolo inicial de la gramática
 		   parser.Programa();
 
-		   System.out.println("***** Análisis terminado con éxito *****");
+           if (crear_codigo) {
+        
+            System.out.println("***** Análisis terminado con éxito *****");
 
-           System.out.println("\n" + code.toString());
+            System.out.println("\n" + code.toString());
 
-           System.out.println("***** P-Code generado *****");
+            System.out.println("***** P-Code generado *****");
+          }
 	   }
 	   catch (java.io.FileNotFoundException e) {
 		   System.out.println ("Fichero " + args[0] + " no encontrado.");
@@ -119,7 +124,7 @@ public class gcl {
         Symbol s;
         for(String i : real) {
             try {
-                s = st.getSymbol(i);
+                s = st.getData(i);
                 ok = ok && typeNotEqual(esperado, s.type, String.format("leer_lin o leer incompatible con tipo de dato \"%s\"", s.type));
             } catch(SymbolNotFoundException e) {
                 printError(String.format("Variable \"%s\" no encontrada en tabla de símbolos.", i));
@@ -290,6 +295,7 @@ public class gcl {
         String reset = "\u001B[0m";
         System.err.printf("%sError: (%d, %d):%s %s\n", crojo, 
             token.beginLine, token.beginColumn, reset, error);
+        crear_codigo = false;
     }
 
     private static void printMessage(String label, String message) {
@@ -368,7 +374,7 @@ public class gcl {
         try {
 
             // Validación de que la variable tiene asociado un trozo de memoria
-            Symbol simbolo_var = st.getSymbol(nombre_variable);
+            Symbol simbolo_var = st.getData(nombre_variable);
             int offset = simbolo_var.offset;
             if (offset == -1) {
                 printError(String.format("Variable \"%s\" no declarada (sin offset).", nombre_variable));
@@ -732,7 +738,7 @@ AtribExp primario() :
         <tCLOSING_SQUARE_BRACKET>
         {
             try {
-                s = st.getSymbol(t.image);
+                s = st.getData(t.image);
             } catch(SymbolNotFoundException e) {
                 printError(String.format("Array \"%s\" no encontrada en tabla de símbolos.", t.image));
                 return new AtribExp();
@@ -752,7 +758,7 @@ AtribExp primario() :
         t = <tIDENTIFICADOR>
         {
             try {
-                s = st.getSymbol(t.image);
+                s = st.getData(t.image);
                 prim = new AtribExp(s.type, false);
                 prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
                 prim.code.addInst(PCodeInstruction.OpCode.DRF);
@@ -1074,6 +1080,7 @@ CodeBlock declaracion_proc() :
     CodeBlock cinst = new CodeBlock();
     CodeBlock aux = new CodeBlock();
     SymbolProcedure sProc;
+    CodeBlock nested;
 }
 {
     t = <tIDENTIFICADOR>
@@ -1085,7 +1092,10 @@ CodeBlock declaracion_proc() :
         sProc = insertProcedure(t, parametros, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_proc() | declaracion_func() )*
+    (
+      nested = declaracion_proc() { cres.addBlock(nested); }
+    | nested = declaracion_func() { cres.addBlock(nested); }
+    )*
     <tBEGGINING>
     ( aux = instruccion() { cinst.addBlock(aux); } )*
     <tEND>
@@ -1147,6 +1157,7 @@ CodeBlock declaracion_func() :
     CodeBlock aux = new CodeBlock();
     SymbolFunction sFunc;
     AtribTipo aT;
+    CodeBlock nested;
 }
 {
     aT = tipoEscalar()
@@ -1159,7 +1170,10 @@ CodeBlock declaracion_func() :
         sFunc = insertFunction(t, parametros,  aT, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_proc() | declaracion_func() )*
+    (
+      nested = declaracion_proc() { cres.addBlock(nested); }
+    | nested = declaracion_func() { cres.addBlock(nested); }
+    )*
     <tBEGGINING>
     ( aux = instruccion() { cinst.addBlock(aux); } )*
     < tEND >
@@ -1205,7 +1219,7 @@ CodeBlock declaracion_func() :
         // Fin procedimiento
         int offset = CGUtils.memorySpaces[st.level - 1] - 1;
         try {
-            offset = st.getSymbol(t.image).offset;
+            offset = st.getData(t.image).offset;
         } catch(SymbolNotFoundException e) {}
         cres.addInst(OpCode.SRF, 0, offset);
         cres.addInst(OpCode.DRF);
@@ -1590,7 +1604,7 @@ CodeBlock leer() :
         typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         for(String id : lVars) {
             try {
-                Symbol s = st.getSymbol(id);
+                Symbol s = st.getData(id);
                 c.addComment("Comienzo leer");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
@@ -1619,7 +1633,7 @@ CodeBlock leer_linea() :
         typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         for(String id : lVars) {
             try {
-                Symbol s = st.getSymbol(id);
+                Symbol s = st.getData(id);
                 c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;

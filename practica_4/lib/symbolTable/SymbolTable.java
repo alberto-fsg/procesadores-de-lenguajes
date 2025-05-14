@@ -128,4 +128,26 @@ public class SymbolTable {
         }
         return sp;
     }
+
+        private Symbol findData(String name) {
+        String key = name.toLowerCase();
+        for (int i = st.size() - 1; i >= 0; i--) {
+            Symbol s = st.get(i).get(key);
+            if (s != null && s.type != Symbol.Types.FUNCTION && s.type != Symbol.Types.PROCEDURE) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Devuelve un símbolo que sea variable escalar o arreglo.
+     */
+    public Symbol getData(String name) throws SymbolNotFoundException {
+        Symbol sym = findData(name);
+        if (sym == null) {
+            throw new SymbolNotFoundException();
+        }
+        return sym;
+    }
 }

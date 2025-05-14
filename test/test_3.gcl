@@ -2,7 +2,7 @@
 -- punto 7. gcl.pdf: caracter literal '
 -- punto 4. gcl.pdf: probar que el lenguaje es case-insensitive
 
-pRogRAMa Test3
+PRogRAMa Test3
 ENTERo VaLor_123;
 CARacTeR _var_mixta;
 
@@ -21,7 +21,6 @@ PRinCIPIO
 Fin
 
 PRinCIPIO
-    
     VALOR_123 := 42;
     _Var_Mixta := ''';
     
@@ -38,7 +37,7 @@ PRinCIPIO
             mQ x[1] >= 0
                 mQ x[1] >= 0
                     mQ x[1] >= 0
-                        NaDa;
+                       x[1] := -1;
                     FmQ
                 FmQ
             FmQ
@@ -47,4 +46,5 @@ PRinCIPIO
     Fsel
 
     Mix(x[0], x);
+    escribir_lin("Test3 OK");  -- confirmación final
 Fin

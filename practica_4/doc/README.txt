@@ -62,18 +62,14 @@ Características generales:
                    variables/funciones para hacer comprobaciones semánticas
 
     - Organización en directorios de las prácticas:
-        .
-        ├── build.sh // construye gcl_4.jj y compila el traductor
-        ├── clean.sh  // limpia la compilación del traductor de build.sh
-        ├── ejecutar_tests.sh // ./build.sh + ./tests.sh + ./clean.sh
-        ├── enunciados
-        ├── practica3
+        procesadores-de-lenguajes
+        ├── practica_4
         │   ├── build.xml
         │   ├── doc
         │   │   └── README.txt
         │   ├── lib/
         │   └── traductor
-        │       ├── gcl_4.jj // concatenación de los modulos (mirar build.sh)
+        │       ├── gcl_4.jj
         │       └── modulos // descomposición modular de nuestro traductor
         │           ├── especiales.jj
         │           ├── expresiones.jj
@@ -84,13 +80,10 @@ Características generales:
         │           ├── tipos.jj
         │           ├── tokens.jj
         │           └── variables.jj
-        ├── README.md // para github
         ├── test
-        │   ├── errores.gcl // banco de pruebas para errores semánticos
-        │   ├── test_1.al
-        │   ├── test_2.al
-        │   ├── test_3.al
-        │   └── las pruebas que nos dieron en el equeleto de la práctica 1 ...
-        ├── test_gcl.py // auxiliar de tests.sh, nos lo dieron
-        └── tests.sh // script que nos dieron para probar la práctica 2
+            ├── errores.gcl // banco de pruebas para errores semánticos
+            ├── test_1.gcl
+            ├── test_2.gcl
+            ├── test_3.gcl
+            └── las pruebas que nos dieron en el equeleto de la práctica 1 ...
 

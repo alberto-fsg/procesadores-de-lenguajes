@@ -20,10 +20,16 @@ principio
 fin
 
 principio
+    -- inicializamos los valores para que todo sea determinista
+    matriz[3] := 1;    -- porque luego usas matriz[1*3 + 0] ⇒ matriz[3]
+    j := 0;            -- evita j indefinido en las expresiones
+    b2 := falso;       -- idem para b2
 
-    i := (5 * (3 + matriz[1*3 + 0])) mod (carAent(procesarCar(65)) - 10);
+    i := (5 * (3 + matriz[1*3 + 0])) 
+         mod (carAent(procesarCar(65)) - 10);
 
-    b1 := ((i > 10) & (procesarCar(66) = 'B')) | !(j < 5);
+    b1 := ((i > 10) & (procesarCar(66) = 'B')) 
+          | !(j < 5);
     
     flags[(i + j) mod 5] := b1 & (b2 | (i <> j));
     
@@ -38,8 +44,9 @@ principio
                 j := j + carAent(procesarCar(i + 65));
         FSel
         
-        i := i + 1;
+        i := i + 1;    -- garantiza que el bucle avance
     FMq
     
     escribir_lin("Mensaje ""importante"": ", 'A');
+    escribir_lin("Test2 OK");  -- confirmación final
 fin

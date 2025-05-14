@@ -46,7 +46,7 @@ AtribExp primario() :
         <tCLOSING_SQUARE_BRACKET>
         {
             try {
-                s = st.getSymbol(t.image);
+                s = st.getData(t.image);
             } catch(SymbolNotFoundException e) {
                 printError(String.format("Array \"%s\" no encontrada en tabla de símbolos.", t.image));
                 return new AtribExp();
@@ -66,7 +66,7 @@ AtribExp primario() :
         t = <tIDENTIFICADOR>
         {
             try {
-                s = st.getSymbol(t.image);
+                s = st.getData(t.image);
                 prim = new AtribExp(s.type, false);
                 prim.code.addInst(PCodeInstruction.OpCode.SRF, st.level - s.nivel, s.offset);
                 prim.code.addInst(PCodeInstruction.OpCode.DRF);

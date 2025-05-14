@@ -18,25 +18,8 @@ entero funcionExterna(entero ref x; entero y)
             escribir_lin("Interno:", arr[z], c);
         Fin
 
-    entero funcionExterna(entero ref x; entero y)
-        entero z;
-        Interno(entero[10] ref arr; caracter c)
-            Principio
-                arr[z] := entAcar(65);
-                c := 'X';
-                escribir_lin("Interno:", arr[z], c);
-            Fin
-        Principio
-            z := x + y;
-            
-            -- llamar procedimiento anidado
-            Interno(globalArr, c);
-            funcionExterna := z * 2;
-        Fin
     Principio
         z := x + y;
-        
-        -- llamar procedimiento anidado
         Interno(globalArr, c);
         funcionExterna := z * 2;
     Fin
@@ -47,6 +30,7 @@ Vacio()
     Fin
 
 Principio
+    -- inicializamos
     a := 5;
     globalArr[0] := 100;
     
@@ -57,11 +41,16 @@ Principio
         caso a < 10:
             escribir("Segundo caso");
         dlc:
+            escribir("Abandonando");
             abandonar;
     FSel
     
+    -- bucle finito: decrementa b hasta 0
     Mq b > 0
         Vacio();
         b := b - 1;
     FMq
+
+    -- Confirmación de que todo terminó
+    escribir_lin("Test1 OK");
 Fin

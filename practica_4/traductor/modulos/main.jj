@@ -32,6 +32,8 @@ public class gcl {
 
     // código generado
     static CodeBlock code = new CodeBlock();
+
+    static Boolean crear_codigo = true;
     
     public static void main(String[] args) {
 	   gcl parser = null;
@@ -53,11 +55,14 @@ public class gcl {
 		   //Programa es el símbolo inicial de la gramática
 		   parser.Programa();
 
-		   System.out.println("***** Análisis terminado con éxito *****");
+           if (crear_codigo) {
+        
+            System.out.println("***** Análisis terminado con éxito *****");
 
-           System.out.println("\n" + code.toString());
+            System.out.println("\n" + code.toString());
 
-           System.out.println("***** P-Code generado *****");
+            System.out.println("***** P-Code generado *****");
+          }
 	   }
 	   catch (java.io.FileNotFoundException e) {
 		   System.out.println ("Fichero " + args[0] + " no encontrado.");
@@ -115,7 +120,7 @@ public class gcl {
         Symbol s;
         for(String i : real) {
             try {
-                s = st.getSymbol(i);
+                s = st.getData(i);
                 ok = ok && typeNotEqual(esperado, s.type, String.format("leer_lin o leer incompatible con tipo de dato \"%s\"", s.type));
             } catch(SymbolNotFoundException e) {
                 printError(String.format("Variable \"%s\" no encontrada en tabla de símbolos.", i));
@@ -286,6 +291,7 @@ public class gcl {
         String reset = "\u001B[0m";
         System.err.printf("%sError: (%d, %d):%s %s\n", crojo, 
             token.beginLine, token.beginColumn, reset, error);
+        crear_codigo = false;
     }
 
     private static void printMessage(String label, String message) {
@@ -364,7 +370,7 @@ public class gcl {
         try {
 
             // Validación de que la variable tiene asociado un trozo de memoria
-            Symbol simbolo_var = st.getSymbol(nombre_variable);
+            Symbol simbolo_var = st.getData(nombre_variable);
             int offset = simbolo_var.offset;
             if (offset == -1) {
                 printError(String.format("Variable \"%s\" no declarada (sin offset).", nombre_variable));

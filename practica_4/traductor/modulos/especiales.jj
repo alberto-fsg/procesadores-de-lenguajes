@@ -97,7 +97,7 @@ CodeBlock leer() :
         typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         for(String id : lVars) {
             try {
-                Symbol s = st.getSymbol(id);
+                Symbol s = st.getData(id);
                 c.addComment("Comienzo leer");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;
@@ -126,7 +126,7 @@ CodeBlock leer_linea() :
         typeNotEqual(Arrays.asList(Symbol.Types.ARRAY, Symbol.Types.PROCEDURE, Symbol.Types.UNDEFINED, Symbol.Types.PROCEDURE), lVars);
         for(String id : lVars) {
             try {
-                Symbol s = st.getSymbol(id);
+                Symbol s = st.getData(id);
                 c.addComment("Comienzo leer línea");
                 c.addInst(OpCode.SRF, st.level - s.nivel, s.offset);
                 int tipo = (s.type == Symbol.Types.CHAR) ? 0 : 1;

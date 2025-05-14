@@ -19,6 +19,7 @@ CodeBlock declaracion_proc() :
     CodeBlock cinst = new CodeBlock();
     CodeBlock aux = new CodeBlock();
     SymbolProcedure sProc;
+    CodeBlock nested;
 }
 {
     t = <tIDENTIFICADOR>
@@ -30,7 +31,10 @@ CodeBlock declaracion_proc() :
         sProc = insertProcedure(t, parametros, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_proc() | declaracion_func() )*
+    (
+      nested = declaracion_proc() { cres.addBlock(nested); }
+    | nested = declaracion_func() { cres.addBlock(nested); }
+    )*
     <tBEGGINING>
     ( aux = instruccion() { cinst.addBlock(aux); } )*
     <tEND>
@@ -92,6 +96,7 @@ CodeBlock declaracion_func() :
     CodeBlock aux = new CodeBlock();
     SymbolFunction sFunc;
     AtribTipo aT;
+    CodeBlock nested;
 }
 {
     aT = tipoEscalar()
@@ -104,7 +109,10 @@ CodeBlock declaracion_func() :
         sFunc = insertFunction(t, parametros,  aT, etiqInicioProc);
     }
     ( LOOKAHEAD(3) declaracionVariables() )*
-    ( declaracion_proc() | declaracion_func() )*
+    (
+      nested = declaracion_proc() { cres.addBlock(nested); }
+    | nested = declaracion_func() { cres.addBlock(nested); }
+    )*
     <tBEGGINING>
     ( aux = instruccion() { cinst.addBlock(aux); } )*
     < tEND >
@@ -150,7 +158,7 @@ CodeBlock declaracion_func() :
         // Fin procedimiento
         int offset = CGUtils.memorySpaces[st.level - 1] - 1;
         try {
-            offset = st.getSymbol(t.image).offset;
+            offset = st.getData(t.image).offset;
         } catch(SymbolNotFoundException e) {}
         cres.addInst(OpCode.SRF, 0, offset);
         cres.addInst(OpCode.DRF);
